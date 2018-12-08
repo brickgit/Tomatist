@@ -11,6 +11,7 @@ import com.brickgit.tomatist.data.Database;
 import com.brickgit.tomatist.data.DatabaseLoader;
 import com.brickgit.tomatist.data.Project;
 import com.brickgit.tomatist.data.ProjectDao;
+import com.brickgit.tomatist.view.ItemTouchHelperCallback;
 import com.brickgit.tomatist.view.ProjectListAdapter;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +51,9 @@ public class MainActivityFragment extends Fragment {
 
     mProjectListAdapter = new ProjectListAdapter();
     mTaskList.setAdapter(mProjectListAdapter);
+    ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mProjectListAdapter);
+    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+    touchHelper.attachToRecyclerView(mTaskList);
 
     mDatabase = DatabaseLoader.getAppDatabase();
     ProjectDao dao = mDatabase.projectDao();

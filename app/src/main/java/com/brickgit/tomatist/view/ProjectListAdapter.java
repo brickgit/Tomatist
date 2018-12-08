@@ -5,16 +5,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.brickgit.tomatist.R;
+import com.brickgit.tomatist.data.DatabaseLoader;
 import com.brickgit.tomatist.data.Project;
+import com.brickgit.tomatist.data.ProjectDao;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /** Created by Daniel Lin on 2018/10/14. */
-public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+    implements ItemTouchHelperListener {
 
   private static final int VIEW_TYPE_ADD_PROJECT = 0;
   private static final int VIEW_TYPE_PROJECT = 1;
@@ -29,7 +33,7 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     void onProjectCheck(Project project);
   }
 
-  private List<Project> mProjects = new ArrayList<>();
+  private List<Project> mProjects = new LinkedList<>();
   private OnProjectClickListener mOnProjectClickListener;
 
   public ProjectListAdapter() {}
@@ -80,5 +84,42 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
   @Override
   public int getItemCount() {
     return mProjects.size() + 1;
+  }
+
+  @Override
+  public void onItemMove(int fromPosition, int toPosition) {
+    int fromData = fromPosition - 1;
+    int toData = toPosition - 1;
+    if (fromData < toPosition) {
+      for (int i = fromData; i < toData; i++) {
+        swapProjects(i, i + 1);
+      }
+    } else {
+      for (int i = fromData; i > toData; i--) {
+        swapProjects(i, i - 1);
+      }
+    }
+
+    ProjectDao dao = DatabaseLoader.getAppDatabase().projectDao();
+    dao.updateProjects(mProjects);
+
+    notifyItemMoved(fromPosition, toPosition);
+  }
+
+  @Override
+  public void onItemDismiss(int position) {
+    mProjects.remove(position);
+    notifyItemRemoved(position);
+  }
+
+  private void swapProjects(int from, int to) {
+    Project fromProject = mProjects.get(from);
+    Project toProject = mProjects.get(to);
+
+    Collections.swap(mProjects, from, to);
+
+    long order = fromProject.getOrder();
+    fromProject.setOrder(toProject.getOrder());
+    toProject.setOrder(order);
   }
 }

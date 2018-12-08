@@ -13,4 +13,7 @@ public class Project {
 
   @ColumnInfo(name = "title")
   private String title;
+
+  @ColumnInfo(name = "order")
+  private long order;
 }

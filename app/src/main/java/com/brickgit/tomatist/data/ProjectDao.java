@@ -6,15 +6,32 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Transaction;
+import androidx.room.Update;
 
 @Dao
-public interface ProjectDao {
-  @Query("SELECT * FROM projects")
-  List<Project> getProjects();
+public abstract class ProjectDao {
+  @Query("SELECT * FROM projects ORDER BY `order`")
+  public abstract List<Project> getProjects();
 
-  @Insert
-  void insertProject(Project project);
+  @Transaction
+  public Project insertProject(Project project) {
+    long id = insertProjectWithoutOrder(project);
+    project.setProjectId(id);
+    project.setOrder(id);
+    updateProject(project);
+    return project;
+  }
+
+  @Update
+  public abstract void updateProject(Project project);
+
+  @Update
+  public abstract void updateProjects(List<Project> projects);
 
   @Delete
-  void deleteProject(Project project);
+  public abstract void deleteProject(Project project);
+
+  @Insert
+  protected abstract long insertProjectWithoutOrder(Project project);
 }
