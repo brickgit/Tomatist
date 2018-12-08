@@ -10,8 +10,8 @@ import androidx.room.Query;
 /** Created by Daniel Lin on 2018/10/13. */
 @Dao
 public interface TaskDao {
-  @Query("SELECT * FROM tasks WHERE parent_task_id IS 0")
-  List<Task> getRootTasks();
+  @Query("SELECT * FROM tasks WHERE project_id IS :projectId")
+  List<Task> getTasks(long projectId);
 
   @Insert
   void insertTask(Task task);

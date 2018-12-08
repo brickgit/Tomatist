@@ -9,9 +9,9 @@ import android.widget.EditText;
 
 import com.brickgit.tomatist.data.Database;
 import com.brickgit.tomatist.data.DatabaseLoader;
-import com.brickgit.tomatist.data.Task;
-import com.brickgit.tomatist.data.TaskDao;
-import com.brickgit.tomatist.view.TaskListAdapter;
+import com.brickgit.tomatist.data.Project;
+import com.brickgit.tomatist.data.ProjectDao;
+import com.brickgit.tomatist.view.ProjectListAdapter;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class MainActivityFragment extends Fragment {
 
   private RecyclerView mTaskList;
   private LinearLayoutManager mLayoutManager;
-  private TaskListAdapter mTaskListAdapter;
+  private ProjectListAdapter mProjectListAdapter;
 
   private Database mDatabase;
 
@@ -41,83 +41,85 @@ public class MainActivityFragment extends Fragment {
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    mTaskList = view.findViewById(R.id.task_list);
+    mTaskList = view.findViewById(R.id.project_list);
     mTaskList.setHasFixedSize(true);
 
     mLayoutManager = new LinearLayoutManager(getActivity());
     mTaskList.setLayoutManager(mLayoutManager);
 
-    mTaskListAdapter = new TaskListAdapter();
-    mTaskList.setAdapter(mTaskListAdapter);
+    mProjectListAdapter = new ProjectListAdapter();
+    mTaskList.setAdapter(mProjectListAdapter);
 
     mDatabase = DatabaseLoader.getAppDatabase();
-    TaskDao dao = mDatabase.taskDao();
-    List<Task> tasks = dao.getRootTasks();
-    mTaskListAdapter.updateTasks(tasks);
-    mTaskListAdapter.setOnTaskClickListener(
-        new TaskListAdapter.OnTaskClickListener() {
+    ProjectDao dao = mDatabase.projectDao();
+    List<Project> projects = dao.getProjects();
+    mProjectListAdapter.updateProjects(projects);
+    mProjectListAdapter.setOnTaskClickListener(
+        new ProjectListAdapter.OnProjectClickListener() {
           @Override
-          public void onNewTaskLick() {
-            showNewTaskDialog();
+          public void onAddProjectClick() {
+            showNewProjectDialog();
           }
 
           @Override
-          public void onTaskClick(Task task) {
-            showDeleteTaskDialog(task);
+          public void onProjectClick(Project project) {
+            showDeleteProjectDialog(project);
           }
 
           @Override
-          public void onTaskCheck(Task task) {
-            mTaskListAdapter.notifyDataSetChanged();
+          public void onProjectCheck(Project project) {
+            mProjectListAdapter.notifyDataSetChanged();
           }
         });
   }
 
-  private void showNewTaskDialog() {
+  private void showNewProjectDialog() {
     final EditText editText = new EditText(getActivity());
     AlertDialog.Builder inputDialog = new AlertDialog.Builder(getActivity());
-    inputDialog.setTitle("Adding task").setMessage("Please input task name.").setView(editText);
+    inputDialog.setTitle("New Project").setMessage("Please input project name").setView(editText);
     inputDialog
         .setPositiveButton(
             "Add",
             new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int which) {
-                addTask(editText.getText().toString());
+                String newProjectName = editText.getText().toString();
+                if (newProjectName.isEmpty()) return;
+                addProject(newProjectName);
               }
             })
         .show();
   }
 
-  private void addTask(String taskTitle) {
-    Task task = new Task();
-    task.setTitle(taskTitle);
-    TaskDao dao = mDatabase.taskDao();
-    dao.insertTask(task);
-    List<Task> tasks = dao.getRootTasks();
-    mTaskListAdapter.updateTasks(tasks);
+  private void addProject(String projectTitle) {
+    Project project = new Project();
+    project.setTitle(projectTitle);
+    ProjectDao dao = mDatabase.projectDao();
+    dao.insertProject(project);
+    List<Project> projects = dao.getProjects();
+    mProjectListAdapter.updateProjects(projects);
   }
 
-  private void showDeleteTaskDialog(final Task task) {
+  private void showDeleteProjectDialog(final Project project) {
     final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getActivity());
-    normalDialog.setTitle("Deleting task");
-    normalDialog.setMessage("Are you sure to delete " + task.getTitle() + "?");
+    normalDialog.setTitle("Deleting project");
+    normalDialog.setMessage("Are you sure to delete " + project.getTitle() + "?");
     normalDialog.setPositiveButton(
         "Confirm",
         new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
-            deleteTask(task);
+            deleteProject(project);
           }
         });
     normalDialog.setNegativeButton("Cancel", null);
     normalDialog.show();
   }
 
-  private void deleteTask(Task task) {
-    TaskDao dao = mDatabase.taskDao();
-    dao.deleteTask(task);
-    List<Task> tasks = dao.getRootTasks();
-    mTaskListAdapter.updateTasks(tasks);
+  private void deleteProject(Project project) {
+    ProjectDao dao = mDatabase.projectDao();
+    dao.deleteProject(project);
+    List<Project> projects = dao.getProjects();
+    mProjectListAdapter.updateProjects(projects);
   }
 }

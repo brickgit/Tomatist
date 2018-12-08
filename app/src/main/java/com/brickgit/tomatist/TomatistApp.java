@@ -9,7 +9,6 @@ public class TomatistApp extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-
     DatabaseLoader.init(this);
   }
 }

@@ -5,21 +5,21 @@ import android.view.View;
 import androidx.recyclerview.widget.RecyclerView;
 
 /** Created by Daniel Lin on 2018/10/16. */
-public class AddTaskItemViewHolder extends RecyclerView.ViewHolder {
+public class AddProjectItemViewHolder extends RecyclerView.ViewHolder {
 
-  public AddTaskItemViewHolder(
-      View view, final TaskListAdapter.OnTaskClickListener onTaskClickListener) {
+  public AddProjectItemViewHolder(
+      View view, final ProjectListAdapter.OnProjectClickListener onProjectClickListener) {
     super(view);
 
     itemView.setOnClickListener(
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            if (onTaskClickListener == null) {
+            if (onProjectClickListener == null) {
               return;
             }
 
-            onTaskClickListener.onNewTaskLick();
+            onProjectClickListener.onAddProjectClick();
           }
         });
   }
