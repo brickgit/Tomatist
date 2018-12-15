@@ -11,8 +11,8 @@ import com.brickgit.tomatist.data.Database;
 import com.brickgit.tomatist.data.DatabaseLoader;
 import com.brickgit.tomatist.data.Project;
 import com.brickgit.tomatist.data.ProjectDao;
-import com.brickgit.tomatist.view.ItemTouchHelperCallback;
-import com.brickgit.tomatist.view.ProjectListAdapter;
+import com.brickgit.tomatist.view.projectlist.ProjectListTouchHelperCallback;
+import com.brickgit.tomatist.view.projectlist.ProjectListAdapter;
 
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class MainActivityFragment extends Fragment {
 
     mProjectListAdapter = new ProjectListAdapter();
     mTaskList.setAdapter(mProjectListAdapter);
-    ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(mProjectListAdapter);
+    ItemTouchHelper.Callback callback = new ProjectListTouchHelperCallback(mProjectListAdapter);
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(mTaskList);
 
