@@ -54,12 +54,12 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     if (viewType == VIEW_TYPE_ADD_PROJECT) {
       View view =
           LayoutInflater.from(parent.getContext())
-              .inflate(R.layout.add_project_item_view_holder, parent, false);
+              .inflate(R.layout.view_holder_add_project, parent, false);
       return new ProjectListAddViewHolder(view, mOnProjectClickListener);
     } else {
       View view =
           LayoutInflater.from(parent.getContext())
-              .inflate(R.layout.project_item_view_holder, parent, false);
+              .inflate(R.layout.view_holder_project, parent, false);
       return new ProjectListViewHolder(view, mOnProjectClickListener);
     }
   }
