@@ -1,6 +1,7 @@
 package com.brickgit.tomatist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +64,7 @@ public class ProjectListFragment extends Fragment {
         new ProjectListAdapter.OnProjectClickListener() {
           @Override
           public void onAddProjectClick() {
-            showNewProjectDialog();
+            gotoAddProjectActivity();
           }
 
           @Override
@@ -78,31 +79,9 @@ public class ProjectListFragment extends Fragment {
         });
   }
 
-  private void showNewProjectDialog() {
-    final EditText editText = new EditText(getActivity());
-    AlertDialog.Builder inputDialog = new AlertDialog.Builder(getActivity());
-    inputDialog.setTitle("New Project").setMessage("Please input project name").setView(editText);
-    inputDialog
-        .setPositiveButton(
-            "Add",
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                String newProjectName = editText.getText().toString();
-                if (newProjectName.isEmpty()) return;
-                addProject(newProjectName);
-              }
-            })
-        .show();
-  }
-
-  private void addProject(String projectTitle) {
-    Project project = new Project();
-    project.setTitle(projectTitle);
-    ProjectDao dao = mDatabase.projectDao();
-    dao.insertProject(project);
-    List<Project> projects = dao.getProjects();
-    mProjectListAdapter.updateProjects(projects);
+  private void gotoAddProjectActivity() {
+    Intent intent = new Intent(getActivity(), AddProjectActivity.class);
+    startActivity(intent);
   }
 
   private void showDeleteProjectDialog(final Project project) {

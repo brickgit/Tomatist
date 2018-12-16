@@ -3,4 +3,5 @@
   <dimen name="project_item_padding">10dp</dimen>
   <dimen name="project_item_icon_margin_end">8dp</dimen>
   <dimen name="project_item_title_text_size">20sp</dimen>
+  <dimen name="activity_add_project_margin">16dp</dimen>
 </resources>
