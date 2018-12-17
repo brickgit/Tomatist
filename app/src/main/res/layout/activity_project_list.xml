@@ -21,13 +21,12 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <fragment
-    android:id="@+id/fragment"
-    android:name="com.brickgit.tomatist.ProjectListFragment"
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/project_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:layout="@layout/fragment_project_list" />
+    android:scrollbars="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/fab"
