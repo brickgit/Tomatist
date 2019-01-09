@@ -2,6 +2,8 @@ package com.brickgit.tomatist.view.projectlist;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +22,7 @@ public class ProjectListTouchHelperCallback extends ItemTouchHelper.Callback {
 
   @Override
   public boolean isItemViewSwipeEnabled() {
-    return true;
+    return false;
   }
 
   @Override
@@ -37,7 +39,6 @@ public class ProjectListTouchHelperCallback extends ItemTouchHelper.Callback {
       RecyclerView.ViewHolder target) {
     int from = viewHolder.getAdapterPosition();
     int to = target.getAdapterPosition();
-    Log.i("Daniel", "from " + from + " to " + to);
     if (from == 0 || to == 0) return false;
 
     mListener.onItemMove(from, to);
@@ -47,5 +48,18 @@ public class ProjectListTouchHelperCallback extends ItemTouchHelper.Callback {
   @Override
   public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
     mListener.onItemDismiss(viewHolder.getAdapterPosition());
+  }
+
+  @Override
+  public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+    super.onSelectedChanged(viewHolder, actionState);
+    mListener.onItemSelect();
+  }
+
+  @Override
+  public void clearView(
+      @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+    super.clearView(recyclerView, viewHolder);
+    mListener.onItemUnselect();
   }
 }

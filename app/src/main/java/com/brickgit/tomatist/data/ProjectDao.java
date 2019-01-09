@@ -2,6 +2,7 @@ package com.brickgit.tomatist.data;
 
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -12,7 +13,7 @@ import androidx.room.Update;
 @Dao
 public abstract class ProjectDao {
   @Query("SELECT * FROM projects ORDER BY `order`")
-  public abstract List<Project> getProjects();
+  public abstract LiveData<List<Project>> getProjects();
 
   @Transaction
   public Project insertProject(Project project) {

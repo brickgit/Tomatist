@@ -11,6 +11,7 @@ import com.brickgit.tomatist.data.Database;
 import com.brickgit.tomatist.data.DatabaseLoader;
 import com.brickgit.tomatist.data.Project;
 import com.brickgit.tomatist.data.ProjectDao;
+import com.brickgit.tomatist.data.viewmodel.ProjectListViewModel;
 import com.brickgit.tomatist.view.projectlist.ProjectListAdapter;
 import com.brickgit.tomatist.view.projectlist.ProjectListTouchHelperCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,15 +22,19 @@ import java.util.List;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ProjectListActivity extends AppCompatActivity {
 
-  private RecyclerView mTaskList;
+  private RecyclerView mProjectList;
   private LinearLayoutManager mLayoutManager;
   private ProjectListAdapter mProjectListAdapter;
+
+  private ProjectListViewModel mViewModel;
 
   private Database mDatabase;
 
@@ -51,22 +56,17 @@ public class ProjectListActivity extends AppCompatActivity {
           }
         });
 
-    mTaskList = findViewById(R.id.project_list);
-    mTaskList.setHasFixedSize(true);
+    mProjectList = findViewById(R.id.project_list);
+    mProjectList.setHasFixedSize(true);
 
     mLayoutManager = new LinearLayoutManager(this);
-    mTaskList.setLayoutManager(mLayoutManager);
+    mProjectList.setLayoutManager(mLayoutManager);
 
     mProjectListAdapter = new ProjectListAdapter();
-    mTaskList.setAdapter(mProjectListAdapter);
+    mProjectList.setAdapter(mProjectListAdapter);
     ItemTouchHelper.Callback callback = new ProjectListTouchHelperCallback(mProjectListAdapter);
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-    touchHelper.attachToRecyclerView(mTaskList);
-
-    mDatabase = DatabaseLoader.getAppDatabase();
-    ProjectDao dao = mDatabase.projectDao();
-    List<Project> projects = dao.getProjects();
-    mProjectListAdapter.updateProjects(projects);
+    touchHelper.attachToRecyclerView(mProjectList);
     mProjectListAdapter.setOnTaskClickListener(
         new ProjectListAdapter.OnProjectClickListener() {
           @Override
@@ -84,6 +84,20 @@ public class ProjectListActivity extends AppCompatActivity {
             mProjectListAdapter.notifyDataSetChanged();
           }
         });
+
+    mDatabase = DatabaseLoader.getAppDatabase();
+
+    mViewModel = ViewModelProviders.of(this).get(ProjectListViewModel.class);
+    mViewModel
+        .getProjects()
+        .observe(
+            this,
+            new Observer<List<Project>>() {
+              @Override
+              public void onChanged(List<Project> projects) {
+                mProjectListAdapter.updateProjects(projects);
+              }
+            });
   }
 
   private void gotoAddProjectActivity() {
@@ -110,8 +124,6 @@ public class ProjectListActivity extends AppCompatActivity {
   private void deleteProject(Project project) {
     ProjectDao dao = mDatabase.projectDao();
     dao.deleteProject(project);
-    List<Project> projects = dao.getProjects();
-    mProjectListAdapter.updateProjects(projects);
   }
 
   @Override

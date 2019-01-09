@@ -33,12 +33,17 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     void onProjectCheck(Project project);
   }
 
+  private boolean mIsReordering = false;
+
   private List<Project> mProjects = new LinkedList<>();
   private OnProjectClickListener mOnProjectClickListener;
 
   public ProjectListAdapter() {}
 
   public void updateProjects(List<Project> projects) {
+
+    if (mIsReordering) return;
+
     mProjects.clear();
     mProjects.addAll(projects);
     notifyDataSetChanged();
@@ -87,6 +92,16 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
   }
 
   @Override
+  public void onItemSelect() {
+    mIsReordering = true;
+  }
+
+  @Override
+  public void onItemUnselect() {
+    mIsReordering = false;
+  }
+
+  @Override
   public void onItemMove(int fromPosition, int toPosition) {
     int fromData = fromPosition - 1;
     int toData = toPosition - 1;
@@ -99,9 +114,6 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         swapProjects(i, i - 1);
       }
     }
-
-    ProjectDao dao = DatabaseLoader.getAppDatabase().projectDao();
-    dao.updateProjects(mProjects);
 
     notifyItemMoved(fromPosition, toPosition);
   }
@@ -121,5 +133,9 @@ public class ProjectListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     long order = fromProject.getOrder();
     fromProject.setOrder(toProject.getOrder());
     toProject.setOrder(order);
+
+    ProjectDao dao = DatabaseLoader.getAppDatabase().projectDao();
+    dao.updateProject(fromProject);
+    dao.updateProject(toProject);
   }
 }
