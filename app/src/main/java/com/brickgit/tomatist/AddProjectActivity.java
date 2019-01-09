@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.brickgit.tomatist.data.Database;
-import com.brickgit.tomatist.data.DatabaseLoader;
-import com.brickgit.tomatist.data.Project;
-import com.brickgit.tomatist.data.ProjectDao;
+import com.brickgit.tomatist.data.database.Database;
+import com.brickgit.tomatist.data.database.DatabaseLoader;
+import com.brickgit.tomatist.data.database.Project;
+import com.brickgit.tomatist.data.database.ProjectDao;
 import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;

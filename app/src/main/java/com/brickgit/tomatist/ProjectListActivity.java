@@ -7,10 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.brickgit.tomatist.data.Database;
-import com.brickgit.tomatist.data.DatabaseLoader;
-import com.brickgit.tomatist.data.Project;
-import com.brickgit.tomatist.data.ProjectDao;
+import com.brickgit.tomatist.data.database.Database;
+import com.brickgit.tomatist.data.database.DatabaseLoader;
+import com.brickgit.tomatist.data.database.Project;
+import com.brickgit.tomatist.data.database.ProjectDao;
 import com.brickgit.tomatist.data.viewmodel.ProjectListViewModel;
 import com.brickgit.tomatist.view.projectlist.ProjectListAdapter;
 import com.brickgit.tomatist.view.projectlist.ProjectListTouchHelperCallback;

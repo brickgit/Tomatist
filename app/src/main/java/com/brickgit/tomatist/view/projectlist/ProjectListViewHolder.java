@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
-import com.brickgit.tomatist.data.Project;
+import com.brickgit.tomatist.data.database.Project;
 
 import androidx.recyclerview.widget.RecyclerView;
 

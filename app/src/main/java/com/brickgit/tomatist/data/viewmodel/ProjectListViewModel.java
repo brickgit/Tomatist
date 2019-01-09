@@ -1,7 +1,7 @@
 package com.brickgit.tomatist.data.viewmodel;
 
 import com.brickgit.tomatist.data.DataRepository;
-import com.brickgit.tomatist.data.Project;
+import com.brickgit.tomatist.data.database.Project;
 
 import java.util.List;
 

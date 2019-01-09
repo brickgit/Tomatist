@@ -5,9 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.brickgit.tomatist.R;
-import com.brickgit.tomatist.data.DatabaseLoader;
-import com.brickgit.tomatist.data.Project;
-import com.brickgit.tomatist.data.ProjectDao;
+import com.brickgit.tomatist.data.database.DatabaseLoader;
+import com.brickgit.tomatist.data.database.Project;
+import com.brickgit.tomatist.data.database.ProjectDao;
 
 import java.util.Collections;
 import java.util.LinkedList;
