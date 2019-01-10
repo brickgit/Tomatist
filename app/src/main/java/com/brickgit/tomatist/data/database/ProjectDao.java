@@ -16,12 +16,11 @@ public abstract class ProjectDao {
   public abstract LiveData<List<Project>> getProjects();
 
   @Transaction
-  public Project insertProject(Project project) {
+  public void insertProject(Project project) {
     long id = insertProjectWithoutOrder(project);
     project.setProjectId(id);
     project.setOrder(id);
     updateProject(project);
-    return project;
   }
 
   @Update

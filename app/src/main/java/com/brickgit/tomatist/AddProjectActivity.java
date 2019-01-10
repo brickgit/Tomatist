@@ -4,21 +4,22 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.brickgit.tomatist.data.database.Database;
-import com.brickgit.tomatist.data.database.DatabaseLoader;
 import com.brickgit.tomatist.data.database.Project;
-import com.brickgit.tomatist.data.database.ProjectDao;
+import com.brickgit.tomatist.data.viewmodel.ProjectViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 
-/** Created by Daniel Lin on 2018/12/15. */
+/**
+ * Created by Daniel Lin on 2018/12/15.
+ */
 public class AddProjectActivity extends AppCompatActivity {
 
   private TextInputEditText mNewProjectName;
 
-  private Database mDatabase;
+  private ProjectViewModel mViewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class AddProjectActivity extends AppCompatActivity {
 
     mNewProjectName = findViewById(R.id.new_project_name);
 
-    mDatabase = DatabaseLoader.getAppDatabase();
+    mViewModel = ViewModelProviders.of(this).get(ProjectViewModel.class);
   }
 
   private void addProject() {
@@ -44,8 +45,7 @@ public class AddProjectActivity extends AppCompatActivity {
 
     Project project = new Project();
     project.setTitle(newProjectName);
-    ProjectDao dao = mDatabase.projectDao();
-    dao.insertProject(project);
+    mViewModel.insertProject(project);
 
     finish();
   }

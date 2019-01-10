@@ -7,11 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.brickgit.tomatist.data.database.Database;
-import com.brickgit.tomatist.data.database.DatabaseLoader;
 import com.brickgit.tomatist.data.database.Project;
-import com.brickgit.tomatist.data.database.ProjectDao;
-import com.brickgit.tomatist.data.viewmodel.ProjectListViewModel;
+import com.brickgit.tomatist.data.viewmodel.ProjectViewModel;
 import com.brickgit.tomatist.view.projectlist.ProjectListAdapter;
 import com.brickgit.tomatist.view.projectlist.ProjectListTouchHelperCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,9 +31,7 @@ public class ProjectListActivity extends AppCompatActivity {
   private LinearLayoutManager mLayoutManager;
   private ProjectListAdapter mProjectListAdapter;
 
-  private ProjectListViewModel mViewModel;
-
-  private Database mDatabase;
+  private ProjectViewModel mViewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +80,7 @@ public class ProjectListActivity extends AppCompatActivity {
           }
         });
 
-    mDatabase = DatabaseLoader.getAppDatabase();
-
-    mViewModel = ViewModelProviders.of(this).get(ProjectListViewModel.class);
+    mViewModel = ViewModelProviders.of(this).get(ProjectViewModel.class);
     mViewModel
         .getProjects()
         .observe(
@@ -122,8 +115,7 @@ public class ProjectListActivity extends AppCompatActivity {
   }
 
   private void deleteProject(Project project) {
-    ProjectDao dao = mDatabase.projectDao();
-    dao.deleteProject(project);
+    mViewModel.deleteProject(project);
   }
 
   @Override

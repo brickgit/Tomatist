@@ -10,7 +10,9 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 
-/** Created by Daniel Lin on 2019/1/7. */
+/**
+ * Created by Daniel Lin on 2019/1/7.
+ */
 public class DataRepository {
 
   private static volatile DataRepository INSTANCE;
@@ -34,7 +36,17 @@ public class DataRepository {
     mTaskDao = mDatabase.taskDao();
   }
 
+  public void insertProject(Project project) {
+    mProjectDao.insertProject(project);
+  }
+
+  public void deleteProject(Project project) {
+    mProjectDao.deleteProject(project);
+  }
+
   public LiveData<List<Project>> getProjects() {
     return mProjectDao.getProjects();
   }
+
+
 }
