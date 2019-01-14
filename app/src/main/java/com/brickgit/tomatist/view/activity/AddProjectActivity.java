@@ -39,7 +39,7 @@ public class AddProjectActivity extends BaseActivity {
 
     Project project = new Project();
     project.setTitle(newProjectName);
-    mViewModel.insertProject(project);
+    mProjectViewModel.insertProject(project);
 
     finish();
   }

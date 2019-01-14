@@ -1,11 +1,9 @@
 package com.brickgit.tomatist.view.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Project;
@@ -14,11 +12,8 @@ import com.brickgit.tomatist.view.projectlist.ProjectListTouchHelperCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.List;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,23 +32,25 @@ public class ProjectListActivity extends BaseActivity {
     setSupportActionBar(toolbar);
 
     FloatingActionButton fab = findViewById(R.id.fab);
-    fab.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .show();
-          }
-        });
+    fab.setOnClickListener((view) -> {
+      Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+          .setAction("Action", null)
+          .show();
+    });
 
-    mProjectList = findViewById(R.id.project_list);
+    mProjectList =
+
+        findViewById(R.id.project_list);
     mProjectList.setHasFixedSize(true);
 
-    mLayoutManager = new LinearLayoutManager(this);
+    mLayoutManager = new
+
+        LinearLayoutManager(this);
     mProjectList.setLayoutManager(mLayoutManager);
 
-    mProjectListAdapter = new ProjectListAdapter();
+    mProjectListAdapter = new
+
+        ProjectListAdapter();
     mProjectList.setAdapter(mProjectListAdapter);
     ItemTouchHelper.Callback callback = new ProjectListTouchHelperCallback(mProjectListAdapter);
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -76,16 +73,9 @@ public class ProjectListActivity extends BaseActivity {
           }
         });
 
-    mViewModel
+    mProjectViewModel
         .getProjects()
-        .observe(
-            this,
-            new Observer<List<Project>>() {
-              @Override
-              public void onChanged(List<Project> projects) {
-                mProjectListAdapter.updateProjects(projects);
-              }
-            });
+        .observe(this, (projects) -> mProjectListAdapter.updateProjects(projects));
   }
 
   private void gotoAddProjectActivity() {
@@ -98,19 +88,13 @@ public class ProjectListActivity extends BaseActivity {
     normalDialog.setTitle("Deleting project");
     normalDialog.setMessage("Are you sure to delete " + project.getTitle() + "?");
     normalDialog.setPositiveButton(
-        "Confirm",
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            deleteProject(project);
-          }
-        });
+        "Confirm", (dialog, which) -> deleteProject(project));
     normalDialog.setNegativeButton("Cancel", null);
     normalDialog.show();
   }
 
   private void deleteProject(Project project) {
-    mViewModel.deleteProject(project);
+    mProjectViewModel.deleteProject(project);
   }
 
   @Override

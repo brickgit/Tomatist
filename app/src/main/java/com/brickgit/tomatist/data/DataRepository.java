@@ -1,5 +1,7 @@
 package com.brickgit.tomatist.data;
 
+import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.ActivityDao;
 import com.brickgit.tomatist.data.database.Database;
 import com.brickgit.tomatist.data.database.DatabaseLoader;
 import com.brickgit.tomatist.data.database.Project;
@@ -20,6 +22,7 @@ public class DataRepository {
   private Database mDatabase;
   private ProjectDao mProjectDao;
   private TaskDao mTaskDao;
+  private ActivityDao mActivityDao;
 
   public static DataRepository getInstance() {
     if (INSTANCE == null) {
@@ -34,6 +37,7 @@ public class DataRepository {
     mDatabase = DatabaseLoader.getAppDatabase();
     mProjectDao = mDatabase.projectDao();
     mTaskDao = mDatabase.taskDao();
+    mActivityDao = mDatabase.activityDao();
   }
 
   public void insertProject(Project project) {
@@ -48,5 +52,11 @@ public class DataRepository {
     return mProjectDao.getProjects();
   }
 
+  public void insertActivity(Activity activity) {
+    mActivityDao.insertActivity(activity);
+  }
 
+  public LiveData<List<Activity>> getActivities(int year, int month, int day) {
+    return mActivityDao.getActivitiesForDate(year, month, day);
+  }
 }
