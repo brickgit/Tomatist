@@ -11,13 +11,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/item_icon_margin_end"
-    app:srcCompat="@drawable/ic_project_blue" />
+    app:srcCompat="@drawable/view_holder_icon_add" />
 
   <TextView
-    android:id="@+id/project_title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:text="@string/add_activity"
     android:textColor="@color/colorPrimary"
-    android:textSize="@dimen/project_item_title_text_size" />
+    android:textSize="@dimen/activity_item_title_text_size" />
 
 </LinearLayout>

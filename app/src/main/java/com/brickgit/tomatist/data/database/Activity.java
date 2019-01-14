@@ -11,6 +11,9 @@ public class Activity {
   @PrimaryKey(autoGenerate = true)
   private long activityId;
 
+  @ColumnInfo(name = "title")
+  private String title;
+
   @ColumnInfo(name = "start_time")
   private Date startTime;
 
@@ -29,6 +32,14 @@ public class Activity {
 
   public void setActivityId(long activityId) {
     this.activityId = activityId;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 
   public Date getStartTime() {

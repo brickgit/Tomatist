@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:gravity="center_vertical"
+  android:orientation="horizontal"
+  android:padding="@dimen/item_padding">
+
+  <LinearLayout
+    android:layout_width="80dp"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/start_time"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="07:00" />
+
+    <TextView
+      android:id="@+id/end_time"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="5dp"
+      android:text="10:00" />
+
+  </LinearLayout>
+
+  <TextView
+    android:id="@+id/activity_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/colorPrimary"
+    android:textSize="@dimen/activity_item_title_text_size" />
+
+</LinearLayout>

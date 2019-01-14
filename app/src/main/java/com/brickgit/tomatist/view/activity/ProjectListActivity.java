@@ -38,19 +38,13 @@ public class ProjectListActivity extends BaseActivity {
           .show();
     });
 
-    mProjectList =
-
-        findViewById(R.id.project_list);
+    mProjectList = findViewById(R.id.project_list);
     mProjectList.setHasFixedSize(true);
 
-    mLayoutManager = new
-
-        LinearLayoutManager(this);
+    mLayoutManager = new LinearLayoutManager(this);
     mProjectList.setLayoutManager(mLayoutManager);
 
-    mProjectListAdapter = new
-
-        ProjectListAdapter();
+    mProjectListAdapter = new ProjectListAdapter();
     mProjectList.setAdapter(mProjectListAdapter);
     ItemTouchHelper.Callback callback = new ProjectListTouchHelperCallback(mProjectListAdapter);
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
