@@ -1,5 +1,6 @@
 package com.brickgit.tomatist.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.style.ForegroundColorSpan;
 
@@ -53,6 +54,7 @@ public class CalendarActivity extends BaseActivity {
     mCalendarView.setOnDateChangedListener((view, day, b) -> {
       if (mActivities != null) mActivities.removeObserver(mObserver);
       mActivities = mActivityViewModel.getActivities(day.getYear(), day.getMonth(), day.getDay());
+      mActivities.observe(CalendarActivity.this, mObserver);
     });
 
     mActivityList = findViewById(R.id.activity_list);
@@ -66,7 +68,7 @@ public class CalendarActivity extends BaseActivity {
     mActivityListAdapter.setOnActivityClickListener(new ActivityListAdapter.OnActivityClickListener() {
       @Override
       public void onAddActivityClick() {
-
+        gotoAddActivityActivity();
       }
 
       @Override
@@ -78,5 +80,10 @@ public class CalendarActivity extends BaseActivity {
     CalendarDay today = CalendarDay.today();
     mActivities = mActivityViewModel.getActivities(today.getYear(), today.getMonth(), today.getDay());
     mActivities.observe(this, mObserver);
+  }
+
+  private void gotoAddActivityActivity() {
+    Intent intent = new Intent(this, AddActivityActivity.class);
+    startActivity(intent);
   }
 }

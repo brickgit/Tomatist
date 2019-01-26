@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ActivityListViewHolder extends RecyclerView.ViewHolder {
 
   private TextView mTitleView;
+  private TextView mNoteView;
 
   private Activity mActivity;
 
@@ -18,7 +19,8 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
       View view, final ActivityListAdapter.OnActivityClickListener onActivityClickListener) {
     super(view);
 
-    mTitleView = view.findViewById(R.id.project_title);
+    mTitleView = view.findViewById(R.id.activity_title);
+    mNoteView = view.findViewById(R.id.activity_note);
 
     itemView.setOnClickListener((v) -> {
       if (onActivityClickListener == null) {
@@ -32,5 +34,6 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
   public void bind(Activity activity) {
     mActivity = activity;
     mTitleView.setText(activity.getTitle());
+    mNoteView.setText(activity.getNote());
   }
 }

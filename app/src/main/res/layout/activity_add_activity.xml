@@ -5,7 +5,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".view.activity.AddProjectActivity">
+  tools:context=".view.activity.AddActivityActivity">
 
   <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
@@ -33,7 +33,7 @@
       android:layout_height="wrap_content">
 
       <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/new_project_name"
+        android:id="@+id/new_activity_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true"

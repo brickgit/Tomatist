@@ -36,9 +36,9 @@
     <View
       android:layout_width="match_parent"
       android:layout_height="1dp"
-      android:layout_marginStart="@dimen/item_padding"
-      android:layout_marginTop="@dimen/item_padding"
-      android:layout_marginEnd="@dimen/item_padding"
+      android:layout_marginStart="@dimen/item_padding_horizontal"
+      android:layout_marginTop="@dimen/item_padding_vertical"
+      android:layout_marginEnd="@dimen/item_padding_horizontal"
       android:background="@color/colorPrimary" />
 
     <androidx.recyclerview.widget.RecyclerView
