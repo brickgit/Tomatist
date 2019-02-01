@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Calendar;
 import java.util.Locale;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 public class AddActivityActivity extends BaseActivity {
@@ -71,6 +72,7 @@ public class AddActivityActivity extends BaseActivity {
             today.get(Calendar.MINUTE)));
     mEndTime.setOnClickListener((v) -> showTimePicker(false));
     mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", 0));
+    mDurationMinutes.setOnClickListener((v) -> showMinuteList());
   }
 
   private void addActivity() {
@@ -174,6 +176,28 @@ public class AddActivityActivity extends BaseActivity {
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
             true)
+        .show();
+  }
+
+  private void showMinuteList() {
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.duration)
+        .setItems(
+            R.array.minutes_string,
+            (dialog, which) -> {
+              int selectedMinutes = getResources().getIntArray(R.array.minutes_int)[which];
+              mEndCalendar = (Calendar) mStartCalendar.clone();
+              mEndCalendar.add(Calendar.MINUTE, selectedMinutes);
+              String time =
+                  String.format(
+                      Locale.getDefault(),
+                      "%02d:%02d",
+                      mEndCalendar.get(Calendar.HOUR_OF_DAY),
+                      mEndCalendar.get(Calendar.MINUTE));
+              mEndTime.setText(time);
+              mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", selectedMinutes));
+            })
+        .create()
         .show();
   }
 
