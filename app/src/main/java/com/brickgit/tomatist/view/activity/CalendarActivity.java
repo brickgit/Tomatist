@@ -31,6 +31,8 @@ public class CalendarActivity extends BaseActivity {
   private Observer<List<Activity>> mObserver =
       (activities) -> mActivityListAdapter.updateActivities(activities);
 
+  private CalendarDay mSelectedDay = CalendarDay.today();
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -40,23 +42,28 @@ public class CalendarActivity extends BaseActivity {
     setSupportActionBar(toolbar);
 
     mCalendarView = findViewById(R.id.calendar_view);
-    mCalendarView.addDecorator(new DayViewDecorator() {
-      @Override
-      public boolean shouldDecorate(CalendarDay day) {
-        return day.equals(CalendarDay.today());
-      }
+    mCalendarView.addDecorator(
+        new DayViewDecorator() {
+          @Override
+          public boolean shouldDecorate(CalendarDay day) {
+            return day.equals(CalendarDay.today());
+          }
 
-      @Override
-      public void decorate(DayViewFacade view) {
-        view.addSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark)));
-      }
-    });
-    mCalendarView.setDateSelected(CalendarDay.today(), true);
-    mCalendarView.setOnDateChangedListener((view, day, b) -> {
-      if (mActivities != null) mActivities.removeObserver(mObserver);
-      mActivities = mActivityViewModel.getActivities(day.getYear(), day.getMonth(), day.getDay());
-      mActivities.observe(CalendarActivity.this, mObserver);
-    });
+          @Override
+          public void decorate(DayViewFacade view) {
+            view.addSpan(
+                new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark)));
+          }
+        });
+    mCalendarView.setDateSelected(mSelectedDay, true);
+    mCalendarView.setOnDateChangedListener(
+        (view, day, b) -> {
+          mSelectedDay = day;
+          if (mActivities != null) mActivities.removeObserver(mObserver);
+          mActivities =
+              mActivityViewModel.getActivities(day.getYear(), day.getMonth(), day.getDay());
+          mActivities.observe(CalendarActivity.this, mObserver);
+        });
 
     mActivityList = findViewById(R.id.activity_list);
     mActivityList.setHasFixedSize(true);
@@ -66,25 +73,28 @@ public class CalendarActivity extends BaseActivity {
 
     mActivityListAdapter = new ActivityListAdapter();
     mActivityList.setAdapter(mActivityListAdapter);
-    mActivityListAdapter.setOnActivityClickListener(new ActivityListAdapter.OnActivityClickListener() {
-      @Override
-      public void onAddActivityClick() {
-        gotoAddActivityActivity();
-      }
+    mActivityListAdapter.setOnActivityClickListener(
+        new ActivityListAdapter.OnActivityClickListener() {
+          @Override
+          public void onAddActivityClick() {
+            gotoAddActivityActivity();
+          }
 
-      @Override
-      public void onActivityClick(Activity activity) {
-
-      }
-    });
+          @Override
+          public void onActivityClick(Activity activity) {}
+        });
 
     CalendarDay today = CalendarDay.today();
-    mActivities = mActivityViewModel.getActivities(today.getYear(), today.getMonth(), today.getDay());
+    mActivities =
+        mActivityViewModel.getActivities(today.getYear(), today.getMonth(), today.getDay());
     mActivities.observe(this, mObserver);
   }
 
   private void gotoAddActivityActivity() {
     Intent intent = new Intent(this, AddActivityActivity.class);
+    intent.putExtra(AddActivityActivity.SELECTED_YEAR_KEY, mSelectedDay.getYear());
+    intent.putExtra(AddActivityActivity.SELECTED_MONTH_KEY, mSelectedDay.getMonth() - 1);
+    intent.putExtra(AddActivityActivity.SELECTED_DAY_KEY, mSelectedDay.getDay());
     startActivity(intent);
   }
 }
