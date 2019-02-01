@@ -19,6 +19,9 @@ import androidx.appcompat.widget.Toolbar;
 
 public class AddActivityActivity extends BaseActivity {
 
+  public static final String SELECTED_ACTIVITY_KEY = "SELECTED_ACTIVITY_KEY";
+  public static final long INVALID_SELECTED_ACTIVITY_ID = -1;
+
   public static final String SELECTED_YEAR_KEY = "SELECTED_YEAR_KEY";
   public static final String SELECTED_MONTH_KEY = "SELECTED_MONTH_KEY";
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
@@ -32,7 +35,9 @@ public class AddActivityActivity extends BaseActivity {
   private TextView mDurationMinutes;
   private TextInputEditText mNewActivityNote;
 
-  private Calendar mStartCalendar = Calendar.getInstance();;
+  private Activity mSelectedActivity;
+
+  private Calendar mStartCalendar = Calendar.getInstance();
   private Calendar mEndCalendar = Calendar.getInstance();
 
   @Override
@@ -54,41 +59,53 @@ public class AddActivityActivity extends BaseActivity {
     mEndTime = findViewById(R.id.end_datetime_time);
     mDurationMinutes = findViewById(R.id.duration_minutes);
 
-    int year = getIntent().getIntExtra(SELECTED_YEAR_KEY, INVALID_SELECTED_DATE);
-    int month = getIntent().getIntExtra(SELECTED_MONTH_KEY, INVALID_SELECTED_DATE);
-    int day = getIntent().getIntExtra(SELECTED_DAY_KEY, INVALID_SELECTED_DATE);
+    long selectedActivityId =
+        getIntent().getLongExtra(SELECTED_ACTIVITY_KEY, INVALID_SELECTED_ACTIVITY_ID);
+    if (selectedActivityId != INVALID_SELECTED_ACTIVITY_ID) {
+      mActivityViewModel
+          .getActivity(selectedActivityId)
+          .observe(
+              this,
+              (selectedActivity) -> {
+                mSelectedActivity = selectedActivity;
+                mStartCalendar.setTime(mSelectedActivity.getStartTime());
+                mEndCalendar.setTime(mSelectedActivity.getEndTime());
+                init();
+              });
+    } else {
+      int year = getIntent().getIntExtra(SELECTED_YEAR_KEY, INVALID_SELECTED_DATE);
+      int month = getIntent().getIntExtra(SELECTED_MONTH_KEY, INVALID_SELECTED_DATE);
+      int day = getIntent().getIntExtra(SELECTED_DAY_KEY, INVALID_SELECTED_DATE);
 
-    if (year != INVALID_SELECTED_DATE
-        && month != INVALID_SELECTED_DATE
-        && day != INVALID_SELECTED_DATE) {
-      mStartCalendar.set(Calendar.YEAR, year);
-      mStartCalendar.set(Calendar.MONTH, month);
-      mStartCalendar.set(Calendar.DAY_OF_MONTH, day);
-      mEndCalendar.set(Calendar.YEAR, year);
-      mEndCalendar.set(Calendar.MONTH, month);
-      mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
+      if (year != INVALID_SELECTED_DATE
+          && month != INVALID_SELECTED_DATE
+          && day != INVALID_SELECTED_DATE) {
+        mStartCalendar.set(Calendar.YEAR, year);
+        mStartCalendar.set(Calendar.MONTH, month);
+        mStartCalendar.set(Calendar.DAY_OF_MONTH, day);
+        mEndCalendar.set(Calendar.YEAR, year);
+        mEndCalendar.set(Calendar.MONTH, month);
+        mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
+      }
+
+      init();
     }
+  }
 
-    mStartDate.setText(String.format(Locale.getDefault(), "%tF", mStartCalendar.getTime()));
+  private void init() {
+    updateDateViews();
     mStartDate.setOnClickListener((v) -> showDatePicker(true));
-    mEndDate.setText(String.format(Locale.getDefault(), "%tF", mEndCalendar.getTime()));
     mEndDate.setOnClickListener((v) -> showDatePicker(false));
-    mStartTime.setText(
-        String.format(
-            Locale.getDefault(),
-            "%02d:%02d",
-            mStartCalendar.get(Calendar.HOUR_OF_DAY),
-            mStartCalendar.get(Calendar.MINUTE)));
+    updateTimeViews();
     mStartTime.setOnClickListener((v) -> showTimePicker(true));
-    mEndTime.setText(
-        String.format(
-            Locale.getDefault(),
-            "%02d:%02d",
-            mEndCalendar.get(Calendar.HOUR_OF_DAY),
-            mEndCalendar.get(Calendar.MINUTE)));
     mEndTime.setOnClickListener((v) -> showTimePicker(false));
-    mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", 0));
+    updateDurationView();
     mDurationMinutes.setOnClickListener((v) -> showMinuteList());
+
+    if (mSelectedActivity != null) {
+      mNewActivityName.setText(mSelectedActivity.getTitle());
+      mNewActivityNote.setText(mSelectedActivity.getNote());
+    }
   }
 
   private void addActivity() {
@@ -105,13 +122,22 @@ public class AddActivityActivity extends BaseActivity {
       minutes = 0;
     }
 
-    Activity activity = new Activity();
-    activity.setTitle(newActivityName);
-    activity.setStartTime(mStartCalendar.getTime());
-    activity.setEndTime(mEndCalendar.getTime());
-    activity.setMinutes(minutes);
-    activity.setNote(mNewActivityNote.getText().toString().trim());
-    mActivityViewModel.insertActivity(activity);
+    if (mSelectedActivity != null) {
+      mSelectedActivity.setTitle(newActivityName);
+      mSelectedActivity.setStartTime(mStartCalendar.getTime());
+      mSelectedActivity.setEndTime(mEndCalendar.getTime());
+      mSelectedActivity.setMinutes(minutes);
+      mSelectedActivity.setNote(mNewActivityNote.getText().toString().trim());
+      mActivityViewModel.updateActivity(mSelectedActivity);
+    } else {
+      Activity activity = new Activity();
+      activity.setTitle(newActivityName);
+      activity.setStartTime(mStartCalendar.getTime());
+      activity.setEndTime(mEndCalendar.getTime());
+      activity.setMinutes(minutes);
+      activity.setNote(mNewActivityNote.getText().toString().trim());
+      mActivityViewModel.insertActivity(activity);
+    }
 
     finish();
   }

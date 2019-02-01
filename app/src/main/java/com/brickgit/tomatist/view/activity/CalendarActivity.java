@@ -77,11 +77,13 @@ public class CalendarActivity extends BaseActivity {
         new ActivityListAdapter.OnActivityClickListener() {
           @Override
           public void onAddActivityClick() {
-            gotoAddActivityActivity();
+            gotoAddActivityActivity(null);
           }
 
           @Override
-          public void onActivityClick(Activity activity) {}
+          public void onActivityClick(Activity activity) {
+            gotoAddActivityActivity(activity.getActivityId());
+          }
         });
 
     CalendarDay today = CalendarDay.today();
@@ -90,11 +92,15 @@ public class CalendarActivity extends BaseActivity {
     mActivities.observe(this, mObserver);
   }
 
-  private void gotoAddActivityActivity() {
+  private void gotoAddActivityActivity(Long activityId) {
     Intent intent = new Intent(this, AddActivityActivity.class);
-    intent.putExtra(AddActivityActivity.SELECTED_YEAR_KEY, mSelectedDay.getYear());
-    intent.putExtra(AddActivityActivity.SELECTED_MONTH_KEY, mSelectedDay.getMonth() - 1);
-    intent.putExtra(AddActivityActivity.SELECTED_DAY_KEY, mSelectedDay.getDay());
+    if (activityId != null) {
+      intent.putExtra(AddActivityActivity.SELECTED_ACTIVITY_KEY, activityId);
+    } else {
+      intent.putExtra(AddActivityActivity.SELECTED_YEAR_KEY, mSelectedDay.getYear());
+      intent.putExtra(AddActivityActivity.SELECTED_MONTH_KEY, mSelectedDay.getMonth() - 1);
+      intent.putExtra(AddActivityActivity.SELECTED_DAY_KEY, mSelectedDay.getDay());
+    }
     startActivity(intent);
   }
 }

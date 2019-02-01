@@ -25,6 +25,14 @@ public class ActivityViewModel extends ViewModel {
     mDataRepository.insertActivity(activity);
   }
 
+  public void updateActivity(Activity activity) {
+    mDataRepository.updateActivity(activity);
+  }
+
+  public LiveData<Activity> getActivity(long id) {
+    return mDataRepository.getActivity(id);
+  }
+
   public LiveData<List<Activity>> getActivities(int year, int month, int day) {
     String key = String.format(Locale.getDefault(), "%d/%d/%d", year, month, day);
     if (mActivities.containsKey(key)) {

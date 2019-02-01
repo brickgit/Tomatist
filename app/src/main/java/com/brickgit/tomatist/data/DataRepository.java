@@ -12,9 +12,7 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 
-/**
- * Created by Daniel Lin on 2019/1/7.
- */
+/** Created by Daniel Lin on 2019/1/7. */
 public class DataRepository {
 
   private static volatile DataRepository INSTANCE;
@@ -54,6 +52,14 @@ public class DataRepository {
 
   public void insertActivity(Activity activity) {
     mActivityDao.insertActivity(activity);
+  }
+
+  public void updateActivity(Activity activity) {
+    mActivityDao.updateActivity(activity);
+  }
+
+  public LiveData<Activity> getActivity(long id) {
+    return mActivityDao.getActivity(id);
   }
 
   public LiveData<List<Activity>> getActivities(int year, int month, int day) {

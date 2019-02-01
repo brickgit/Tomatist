@@ -9,6 +9,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 @Dao
 public abstract class ActivityDao {
@@ -34,9 +35,15 @@ public abstract class ActivityDao {
     return getActivitiesForDate(cFrom.getTime(), cTo.getTime());
   }
 
+  @Query("SELECT * FROM activities WHERE id = :id")
+  public abstract LiveData<Activity> getActivity(long id);
+
   @Insert
   public abstract void insertActivity(Activity activity);
 
-  @Query("SELECT * FROM activities WHERE `start_time` BETWEEN :from AND :to ORDER BY `start_time`")
+  @Update
+  public abstract void updateActivity(Activity activity);
+
+  @Query("SELECT * FROM activities WHERE start_time BETWEEN :from AND :to ORDER BY start_time")
   protected abstract LiveData<List<Activity>> getActivitiesForDate(Date from, Date to);
 }
