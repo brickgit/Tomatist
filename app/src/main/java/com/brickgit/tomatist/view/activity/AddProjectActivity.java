@@ -10,9 +10,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import androidx.appcompat.widget.Toolbar;
 
-/**
- * Created by Daniel Lin on 2018/12/15.
- */
+/** Created by Daniel Lin on 2018/12/15. */
 public class AddProjectActivity extends BaseActivity {
 
   private TextInputEditText mNewProjectName;
