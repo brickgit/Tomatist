@@ -51,6 +51,7 @@ public class CalendarActivity extends BaseActivity {
         view.addSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark)));
       }
     });
+    mCalendarView.setDateSelected(CalendarDay.today(), true);
     mCalendarView.setOnDateChangedListener((view, day, b) -> {
       if (mActivities != null) mActivities.removeObserver(mObserver);
       mActivities = mActivityViewModel.getActivities(day.getYear(), day.getMonth(), day.getDay());
