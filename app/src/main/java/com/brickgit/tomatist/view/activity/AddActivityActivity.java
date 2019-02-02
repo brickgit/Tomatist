@@ -44,9 +44,17 @@ public class AddActivityActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_add_activity);
+
+    long selectedActivityId =
+        getIntent().getLongExtra(SELECTED_ACTIVITY_KEY, INVALID_SELECTED_ACTIVITY_ID);
+
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar().setTitle(R.string.add_project);
+    getSupportActionBar()
+        .setTitle(
+            selectedActivityId != INVALID_SELECTED_ACTIVITY_ID
+                ? R.string.edit_activity
+                : R.string.add_activity);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -59,8 +67,6 @@ public class AddActivityActivity extends BaseActivity {
     mEndTime = findViewById(R.id.end_datetime_time);
     mDurationMinutes = findViewById(R.id.duration_minutes);
 
-    long selectedActivityId =
-        getIntent().getLongExtra(SELECTED_ACTIVITY_KEY, INVALID_SELECTED_ACTIVITY_ID);
     if (selectedActivityId != INVALID_SELECTED_ACTIVITY_ID) {
       mActivityViewModel
           .getActivity(selectedActivityId)
