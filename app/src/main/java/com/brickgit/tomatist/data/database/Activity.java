@@ -4,9 +4,15 @@ import java.util.Date;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "activities")
+@Entity(
+    tableName = "activities",
+    indices = {@Index("category_id")},
+    foreignKeys =
+        @ForeignKey(entity = Category.class, parentColumns = "id", childColumns = "category_id"))
 public class Activity {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
@@ -26,6 +32,9 @@ public class Activity {
 
   @ColumnInfo(name = "note")
   private String note;
+
+  @ColumnInfo(name = "category_id")
+  private long categoryId;
 
   public long getActivityId() {
     return activityId;
@@ -73,5 +82,13 @@ public class Activity {
 
   public void setNote(String note) {
     this.note = note;
+  }
+
+  public long getCategoryId() {
+    return categoryId;
+  }
+
+  public void setCategoryId(long categoryId) {
+    this.categoryId = categoryId;
   }
 }
