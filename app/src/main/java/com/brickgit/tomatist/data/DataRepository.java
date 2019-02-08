@@ -2,6 +2,10 @@ package com.brickgit.tomatist.data;
 
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.ActivityDao;
+import com.brickgit.tomatist.data.database.Category;
+import com.brickgit.tomatist.data.database.CategoryDao;
+import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.CategoryGroupDao;
 import com.brickgit.tomatist.data.database.Database;
 import com.brickgit.tomatist.data.database.DatabaseLoader;
 import com.brickgit.tomatist.data.database.Project;
@@ -21,6 +25,8 @@ public class DataRepository {
   private ProjectDao mProjectDao;
   private TaskDao mTaskDao;
   private ActivityDao mActivityDao;
+  private CategoryGroupDao mCategoryGroupDao;
+  private CategoryDao mCategoryDao;
 
   public static DataRepository getInstance() {
     if (INSTANCE == null) {
@@ -36,6 +42,8 @@ public class DataRepository {
     mProjectDao = mDatabase.projectDao();
     mTaskDao = mDatabase.taskDao();
     mActivityDao = mDatabase.activityDao();
+    mCategoryGroupDao = mDatabase.categoryGroupDao();
+    mCategoryDao = mDatabase.categoryDao();
   }
 
   public void insertProject(Project project) {
@@ -64,5 +72,21 @@ public class DataRepository {
 
   public LiveData<List<Activity>> getActivities(int year, int month, int day) {
     return mActivityDao.getActivitiesForDate(year, month, day);
+  }
+
+  public long insertCategoryGroup(CategoryGroup categoryGroup) {
+    return mCategoryGroupDao.insertCategoryGroup(categoryGroup);
+  }
+
+  public LiveData<List<CategoryGroup>> getCategoryGroups() {
+    return mCategoryGroupDao.getCategoryGroups();
+  }
+
+  public long[] insertCategories(List<Category> categories) {
+    return mCategoryDao.insertCategories(categories);
+  }
+
+  public LiveData<List<Category>> getCategories(long categoryGroupId) {
+    return mCategoryDao.getCategories(categoryGroupId);
   }
 }

@@ -20,7 +20,7 @@ public class Category {
   private String title;
 
   @ColumnInfo(name = "group_id")
-  private String categoryGroupId;
+  private long categoryGroupId;
 
   public long getCategoryId() {
     return categoryId;
@@ -38,11 +38,11 @@ public class Category {
     this.title = title;
   }
 
-  public String getCategoryGroupId() {
+  public long getCategoryGroupId() {
     return categoryGroupId;
   }
 
-  public void setCategoryGroupId(String categoryGroupId) {
+  public void setCategoryGroupId(long categoryGroupId) {
     this.categoryGroupId = categoryGroupId;
   }
 }
