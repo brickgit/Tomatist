@@ -3,6 +3,7 @@ package com.brickgit.tomatist.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.style.ForegroundColorSpan;
+import android.view.View;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
@@ -10,6 +11,8 @@ import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.view.activitylist.ActivityListAdapter;
+import com.brickgit.tomatist.view.activitylist.ActivityListTouchHelperCallback;
+import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -18,31 +21,45 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CalendarActivity extends BaseActivity {
 
+  private View mRootView;
   private MaterialCalendarView mCalendarView;
   private RecyclerView mActivityList;
   private LinearLayoutManager mLayoutManager;
   private ActivityListAdapter mActivityListAdapter;
 
+  private CalendarDay mSelectedDay = CalendarDay.today();
+
   private LiveData<List<Activity>> mActivities;
   private Observer<List<Activity>> mObserver =
-      (activities) -> mActivityListAdapter.updateActivities(activities);
-
-  private CalendarDay mSelectedDay = CalendarDay.today();
+      (activities) -> {
+        String date =
+            String.format(
+                Locale.getDefault(),
+                "%d/%d/%d",
+                mSelectedDay.getYear(),
+                mSelectedDay.getMonth(),
+                mSelectedDay.getDay());
+        mActivityListAdapter.updateActivities(date, activities);
+      };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_calendar);
+
+    mRootView = findViewById(R.id.root_view);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -77,6 +94,15 @@ public class CalendarActivity extends BaseActivity {
     mLayoutManager = new LinearLayoutManager(this);
     mActivityList.setLayoutManager(mLayoutManager);
 
+    ItemTouchHelper.Callback callback =
+        new ActivityListTouchHelperCallback(
+            (position) -> {
+              position = position - 1;
+              removeActivity(position);
+            });
+    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+    touchHelper.attachToRecyclerView(mActivityList);
+
     mActivityListAdapter = new ActivityListAdapter();
     mActivityList.setAdapter(mActivityListAdapter);
     mActivityListAdapter.setOnActivityClickListener(
@@ -92,9 +118,9 @@ public class CalendarActivity extends BaseActivity {
           }
         });
 
-    CalendarDay today = CalendarDay.today();
     mActivities =
-        mActivityViewModel.getActivities(today.getYear(), today.getMonth(), today.getDay());
+        mActivityViewModel.getActivities(
+            mSelectedDay.getYear(), mSelectedDay.getMonth(), mSelectedDay.getDay());
     mActivities.observe(this, mObserver);
 
     mCategoryViewModel
@@ -121,6 +147,25 @@ public class CalendarActivity extends BaseActivity {
             });
 
     firstLaunchSetup();
+  }
+
+  private void removeActivity(int position) {
+    if (mActivities != null) {
+      List<Activity> activities = mActivities.getValue();
+      if (activities != null) {
+        Activity activity = activities.get(position);
+        if (activity != null) {
+          mActivityViewModel.deleteActivity(activity);
+          showActivityDeletedConfirmation(activity);
+        }
+      }
+    }
+  }
+
+  private void showActivityDeletedConfirmation(Activity activity) {
+    Snackbar.make(mRootView, R.string.activity_deleted, Snackbar.LENGTH_SHORT)
+        .setAction(R.string.undo, (view) -> mActivityViewModel.insertActivity(activity))
+        .show();
   }
 
   private void gotoAddActivityActivity(Long activityId) {

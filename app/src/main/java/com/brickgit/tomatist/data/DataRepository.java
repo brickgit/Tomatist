@@ -66,6 +66,10 @@ public class DataRepository {
     mActivityDao.updateActivity(activity);
   }
 
+  public void deleteActivity(Activity activity) {
+    mActivityDao.deleteActivity(activity);
+  }
+
   public LiveData<Activity> getActivity(long id) {
     return mActivityDao.getActivity(id);
   }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
@@ -43,6 +44,9 @@ public abstract class ActivityDao {
 
   @Update
   public abstract void updateActivity(Activity activity);
+
+  @Delete
+  public abstract void deleteActivity(Activity activity);
 
   @Query("SELECT * FROM activities WHERE start_time BETWEEN :from AND :to ORDER BY start_time")
   protected abstract LiveData<List<Activity>> getActivitiesForDate(Date from, Date to);

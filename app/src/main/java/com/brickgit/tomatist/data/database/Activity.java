@@ -91,4 +91,11 @@ public class Activity {
   public void setCategoryId(long categoryId) {
     this.categoryId = categoryId;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) return false;
+    if (!(obj instanceof Activity)) return false;
+    return this.activityId == ((Activity) obj).activityId;
+  }
 }

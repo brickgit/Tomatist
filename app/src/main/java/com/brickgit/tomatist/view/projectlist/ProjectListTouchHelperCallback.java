@@ -1,7 +1,5 @@
 package com.brickgit.tomatist.view.projectlist;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.ItemTouchHelper;

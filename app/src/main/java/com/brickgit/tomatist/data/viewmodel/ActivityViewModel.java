@@ -29,6 +29,10 @@ public class ActivityViewModel extends ViewModel {
     mDataRepository.updateActivity(activity);
   }
 
+  public void deleteActivity(Activity activity) {
+    mDataRepository.deleteActivity(activity);
+  }
+
   public LiveData<Activity> getActivity(long id) {
     return mDataRepository.getActivity(id);
   }
