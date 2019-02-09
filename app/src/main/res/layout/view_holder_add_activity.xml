@@ -21,6 +21,6 @@
     android:layout_height="wrap_content"
     android:text="@string/add_activity"
     android:textColor="@color/colorPrimary"
-    android:textSize="@dimen/activity_item_title_text_size" />
+    android:textSize="@dimen/item_title_text_size" />
 
 </LinearLayout>

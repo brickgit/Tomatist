@@ -6,9 +6,13 @@ import android.view.ViewGroup;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Category;
+import com.brickgit.tomatist.data.database.CategoryGroup;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,13 +33,26 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
   private List<Activity> mActivities = new LinkedList<>();
   private OnActivityClickListener mOnActivityClickListener;
 
-  public ActivityListAdapter() {
-  }
+  private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
+  private Map<Long, Category> mCategories = new HashMap<>();
+
+  public ActivityListAdapter() {}
 
   public void updateActivities(List<Activity> activities) {
-
     mActivities.clear();
     mActivities.addAll(activities);
+    notifyDataSetChanged();
+  }
+
+  public void updateCategoryGroups(Map<Long, CategoryGroup> categoryGroups) {
+    mCategoryGroups.clear();
+    mCategoryGroups.putAll(categoryGroups);
+    notifyDataSetChanged();
+  }
+
+  public void updateCategories(Map<Long, Category> categories) {
+    mCategories.clear();
+    mCategories.putAll(categories);
     notifyDataSetChanged();
   }
 
@@ -63,7 +80,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     if (holder.getItemViewType() == VIEW_TYPE_ACTIVITY) {
       ActivityListViewHolder viewHolder = (ActivityListViewHolder) holder;
-      viewHolder.bind(mActivities.get(position - 1));
+      viewHolder.bind(mActivities.get(position - 1), mCategoryGroups, mCategories);
     }
   }
 

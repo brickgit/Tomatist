@@ -97,6 +97,29 @@ public class CalendarActivity extends BaseActivity {
         mActivityViewModel.getActivities(today.getYear(), today.getMonth(), today.getDay());
     mActivities.observe(this, mObserver);
 
+    mCategoryViewModel
+        .getCategoryGroups()
+        .observe(
+            this,
+            (categoryGroups) -> {
+              Map<Long, CategoryGroup> map = new HashMap<>();
+              for (CategoryGroup group : categoryGroups) {
+                map.put(group.getCategoryGroupId(), group);
+              }
+              mActivityListAdapter.updateCategoryGroups(map);
+            });
+    mCategoryViewModel
+        .getCategories()
+        .observe(
+            this,
+            (categories) -> {
+              Map<Long, Category> map = new HashMap<>();
+              for (Category category : categories) {
+                map.put(category.getCategoryId(), category);
+              }
+              mActivityListAdapter.updateCategories(map);
+            });
+
     firstLaunchSetup();
   }
 

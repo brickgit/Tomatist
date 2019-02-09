@@ -15,15 +15,20 @@ public class CategoryViewModel extends ViewModel {
 
   private DataRepository mDataRepository;
   private LiveData<List<CategoryGroup>> mCategoryGroups;
-  private Map<Long, LiveData<List<Category>>> mCategories;
+  private Map<Long, LiveData<List<Category>>> mCategoriesMap;
+  private LiveData<List<Category>> mCategoriesList;
 
   public CategoryViewModel() {
     mDataRepository = DataRepository.getInstance();
-    mCategories = new HashMap<>();
+    mCategoriesMap = new HashMap<>();
   }
 
   public long insertCategoryGroup(CategoryGroup categoryGroup) {
     return mDataRepository.insertCategoryGroup(categoryGroup);
+  }
+
+  public LiveData<CategoryGroup> getCategoryGroup(long categoryGroupId) {
+    return mDataRepository.getCategoryGroup(categoryGroupId);
   }
 
   public LiveData<List<CategoryGroup>> getCategoryGroups() {
@@ -38,13 +43,25 @@ public class CategoryViewModel extends ViewModel {
     return mDataRepository.insertCategories(categories);
   }
 
+  public LiveData<Category> getCategory(long categoryId) {
+    return mDataRepository.getCategory(categoryId);
+  }
+
   public LiveData<List<Category>> getCategories(long categoryGroupId) {
-    if (mCategories.containsKey(categoryGroupId)) {
-      return mCategories.get(categoryGroupId);
+    if (mCategoriesMap.containsKey(categoryGroupId)) {
+      return mCategoriesMap.get(categoryGroupId);
     }
 
     LiveData<List<Category>> categories = mDataRepository.getCategories(categoryGroupId);
-    mCategories.put(categoryGroupId, categories);
+    mCategoriesMap.put(categoryGroupId, categories);
     return categories;
+  }
+
+  public LiveData<List<Category>> getCategories() {
+    if (mCategoriesList == null) {
+      mCategoriesList = mDataRepository.getCategories();
+    }
+
+    return mCategoriesList;
   }
 }

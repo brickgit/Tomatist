@@ -11,6 +11,7 @@
   <string name="end_time">End Time</string>
   <string name="duration">Duration</string>
   <string name="duration_unit">minute(s)</string>
+  <string name="category">Category</string>
   <string name="note">Note</string>
 
   <string-array name="minutes_string">

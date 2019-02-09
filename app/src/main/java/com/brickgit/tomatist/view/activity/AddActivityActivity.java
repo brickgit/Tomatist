@@ -2,6 +2,7 @@ package com.brickgit.tomatist.view.activity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Category;
+import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
@@ -16,6 +19,8 @@ import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 public class AddActivityActivity extends BaseActivity {
 
@@ -27,18 +32,37 @@ public class AddActivityActivity extends BaseActivity {
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
   public static final int INVALID_SELECTED_DATE = -1;
 
+  public static final long DEFAULT_SELECTED_CATEGORY_ID = 1;
+  public static final long INVALID_SELECTED_CATEGORY_ID = -1;
+
   private TextInputEditText mNewActivityName;
   private TextView mStartDate;
   private TextView mStartTime;
   private TextView mEndDate;
   private TextView mEndTime;
   private TextView mDurationMinutes;
+  private TextView mCategoryView;
   private TextInputEditText mNewActivityNote;
 
   private Activity mSelectedActivity;
 
   private Calendar mStartCalendar = Calendar.getInstance();
   private Calendar mEndCalendar = Calendar.getInstance();
+
+  private LiveData<CategoryGroup> mCategoryGroup;
+  private Observer<CategoryGroup> mCategoryGroupObserver = (categoryGroup) -> updateCategoryView();
+
+  private LiveData<Category> mCategory;
+  private Observer<Category> mCategoryObserver =
+      (category) -> {
+        if (category != null) {
+          if (mCategoryGroup != null) {
+            mCategoryGroup.removeObserver(mCategoryGroupObserver);
+          }
+          mCategoryGroup = mCategoryViewModel.getCategoryGroup(category.getCategoryGroupId());
+          mCategoryGroup.observe(AddActivityActivity.this, mCategoryGroupObserver);
+        }
+      };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +84,8 @@ public class AddActivityActivity extends BaseActivity {
 
     mNewActivityName = findViewById(R.id.new_activity_name);
     mNewActivityNote = findViewById(R.id.new_activity_note);
+    mCategoryView = findViewById(R.id.category);
+    mCategoryView.setOnClickListener((v) -> CategoryActivity.startForResult(this));
 
     mStartDate = findViewById(R.id.start_datetime_date);
     mStartTime = findViewById(R.id.start_datetime_time);
@@ -76,6 +102,10 @@ public class AddActivityActivity extends BaseActivity {
                 mSelectedActivity = selectedActivity;
                 mStartCalendar.setTime(mSelectedActivity.getStartTime());
                 mEndCalendar.setTime(mSelectedActivity.getEndTime());
+
+                mCategory = mCategoryViewModel.getCategory(selectedActivity.getCategoryId());
+                mCategory.observe(this, mCategoryObserver);
+
                 init();
               });
     } else {
@@ -93,6 +123,9 @@ public class AddActivityActivity extends BaseActivity {
         mEndCalendar.set(Calendar.MONTH, month);
         mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
       }
+
+      mCategory = mCategoryViewModel.getCategory(DEFAULT_SELECTED_CATEGORY_ID);
+      mCategory.observe(this, mCategoryObserver);
 
       init();
     }
@@ -114,7 +147,7 @@ public class AddActivityActivity extends BaseActivity {
     }
   }
 
-  private void addActivity() {
+  private void saveActivity() {
     String newActivityName = mNewActivityName.getText().toString().trim();
     if (newActivityName.isEmpty()) {
       mNewActivityName.setError(getString(R.string.error_name_is_required));
@@ -127,12 +160,20 @@ public class AddActivityActivity extends BaseActivity {
     } catch (NumberFormatException ex) {
       minutes = 0;
     }
+    long categoryId = DEFAULT_SELECTED_CATEGORY_ID;
+    if (mCategory != null) {
+      Category category = mCategory.getValue();
+      if (category != null) {
+        categoryId = category.getCategoryId();
+      }
+    }
 
     if (mSelectedActivity != null) {
       mSelectedActivity.setTitle(newActivityName);
       mSelectedActivity.setStartTime(mStartCalendar.getTime());
       mSelectedActivity.setEndTime(mEndCalendar.getTime());
       mSelectedActivity.setMinutes(minutes);
+      mSelectedActivity.setCategoryId(categoryId);
       mSelectedActivity.setNote(mNewActivityNote.getText().toString().trim());
       mActivityViewModel.updateActivity(mSelectedActivity);
     } else {
@@ -141,6 +182,7 @@ public class AddActivityActivity extends BaseActivity {
       activity.setStartTime(mStartCalendar.getTime());
       activity.setEndTime(mEndCalendar.getTime());
       activity.setMinutes(minutes);
+      activity.setCategoryId(categoryId);
       activity.setNote(mNewActivityNote.getText().toString().trim());
       mActivityViewModel.insertActivity(activity);
     }
@@ -164,7 +206,7 @@ public class AddActivityActivity extends BaseActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_add:
-        addActivity();
+        saveActivity();
         return true;
     }
 
@@ -269,5 +311,37 @@ public class AddActivityActivity extends BaseActivity {
   private void updateDurationView() {
     long minute = (mEndCalendar.getTimeInMillis() - mStartCalendar.getTimeInMillis()) / (60 * 1000);
     mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", minute));
+  }
+
+  private void updateCategoryView() {
+    StringBuilder sb = new StringBuilder();
+    if (mCategoryGroup != null) {
+      CategoryGroup group = mCategoryGroup.getValue();
+      if (group != null) {
+        sb.append(group.getTitle());
+        sb.append(" - ");
+      }
+    }
+    if (mCategory != null) {
+      Category category = mCategory.getValue();
+      if (category != null) {
+        sb.append(category.getTitle());
+      }
+    }
+    mCategoryView.setText(sb.toString().trim());
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == CategoryActivity.SELECT_CATEGORY && resultCode == RESULT_OK) {
+      long selectedCategoryId =
+          data.getLongExtra(CategoryActivity.SELECTED_CATEGORY_ID, INVALID_SELECTED_CATEGORY_ID);
+      if (selectedCategoryId != INVALID_SELECTED_CATEGORY_ID) {
+        if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
+        mCategory = mCategoryViewModel.getCategory(selectedCategoryId);
+        mCategory.observe(this, mCategoryObserver);
+      }
+    }
   }
 }

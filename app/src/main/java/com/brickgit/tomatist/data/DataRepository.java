@@ -78,6 +78,10 @@ public class DataRepository {
     return mCategoryGroupDao.insertCategoryGroup(categoryGroup);
   }
 
+  public LiveData<CategoryGroup> getCategoryGroup(long categoryGroupId) {
+    return mCategoryGroupDao.getCategoryGroup(categoryGroupId);
+  }
+
   public LiveData<List<CategoryGroup>> getCategoryGroups() {
     return mCategoryGroupDao.getCategoryGroups();
   }
@@ -86,7 +90,15 @@ public class DataRepository {
     return mCategoryDao.insertCategories(categories);
   }
 
+  public LiveData<Category> getCategory(long categoryId) {
+    return mCategoryDao.getCategory(categoryId);
+  }
+
   public LiveData<List<Category>> getCategories(long categoryGroupId) {
     return mCategoryDao.getCategories(categoryGroupId);
+  }
+
+  public LiveData<List<Category>> getCategories() {
+    return mCategoryDao.getCategories();
   }
 }

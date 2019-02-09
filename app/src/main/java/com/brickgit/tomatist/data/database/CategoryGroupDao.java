@@ -11,6 +11,9 @@ import androidx.room.Query;
 @Dao
 public interface CategoryGroupDao {
 
+  @Query("SELECT * FROM category_groups WHERE id = :id")
+  LiveData<CategoryGroup> getCategoryGroup(long id);
+
   @Query("SELECT * FROM category_groups")
   LiveData<List<CategoryGroup>> getCategoryGroups();
 

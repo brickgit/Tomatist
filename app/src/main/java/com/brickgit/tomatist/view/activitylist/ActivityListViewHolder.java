@@ -5,9 +5,12 @@ import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Category;
+import com.brickgit.tomatist.data.database.CategoryGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +24,9 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
   private TextView mTitleView;
   private TextView mNoteView;
 
+  private TextView mCategoryGroupView;
+  private TextView mCategoryView;
+
   private Activity mActivity;
 
   public ActivityListViewHolder(
@@ -33,6 +39,9 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
     mTitleView = view.findViewById(R.id.activity_title);
     mNoteView = view.findViewById(R.id.activity_note);
 
+    mCategoryGroupView = view.findViewById(R.id.activity_category_group);
+    mCategoryView = view.findViewById(R.id.activity_category);
+
     itemView.setOnClickListener(
         (v) -> {
           if (onActivityClickListener == null) {
@@ -43,7 +52,8 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
         });
   }
 
-  public void bind(Activity activity) {
+  public void bind(
+      Activity activity, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
     mActivity = activity;
 
     mStartDateTime.setText(dateFormat.format(activity.getStartTime()));
@@ -55,5 +65,15 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
 
     mTitleView.setText(activity.getTitle());
     mNoteView.setText(activity.getNote());
+
+    Category category = categories.get(activity.getCategoryId());
+    if (category != null) {
+      mCategoryView.setText(category.getTitle());
+      CategoryGroup group = categoryGroups.get(category.getCategoryGroupId());
+      mCategoryGroupView.setText(group != null ? group.getTitle() : "");
+    } else {
+      mCategoryView.setText("");
+      mCategoryGroupView.setText("");
+    }
   }
 }
