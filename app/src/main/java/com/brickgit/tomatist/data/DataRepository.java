@@ -90,6 +90,10 @@ public class DataRepository {
     return mCategoryGroupDao.getCategoryGroups();
   }
 
+  public long insertCategory(Category category) {
+    return mCategoryDao.insertCategory(category);
+  }
+
   public long[] insertCategories(List<Category> categories) {
     return mCategoryDao.insertCategories(categories);
   }

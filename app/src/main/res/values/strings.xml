@@ -17,6 +17,9 @@
   <string name="activity_deleted">Activity deleted!</string>
   <string name="undo">Undo</string>
 
+  <string name="add_category_group">Add Category Group</string>
+  <string name="add_category">Add Category</string>
+
   <string-array name="minutes_string">
     <item>0 minute</item>
     <item>30 minutes</item>

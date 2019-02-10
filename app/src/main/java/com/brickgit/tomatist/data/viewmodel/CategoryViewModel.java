@@ -39,6 +39,10 @@ public class CategoryViewModel extends ViewModel {
     return mCategoryGroups;
   }
 
+  public long insertCategory(Category category) {
+    return mDataRepository.insertCategory(category);
+  }
+
   public long[] insertCategories(List<Category> categories) {
     return mDataRepository.insertCategories(categories);
   }
