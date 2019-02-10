@@ -39,6 +39,10 @@ public class CategoryViewModel extends ViewModel {
     return mCategoryGroups;
   }
 
+  public void deleteCatgoryGroup(CategoryGroup categoryGroup) {
+    mDataRepository.deleteCategoryGroup(categoryGroup);
+  }
+
   public long insertCategory(Category category) {
     return mDataRepository.insertCategory(category);
   }

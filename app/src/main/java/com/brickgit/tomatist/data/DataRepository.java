@@ -90,6 +90,10 @@ public class DataRepository {
     return mCategoryGroupDao.getCategoryGroups();
   }
 
+  public void deleteCategoryGroup(CategoryGroup categoryGroup) {
+    mCategoryGroupDao.deleteCategoryGroup(categoryGroup);
+  }
+
   public long insertCategory(Category category) {
     return mCategoryDao.insertCategory(category);
   }

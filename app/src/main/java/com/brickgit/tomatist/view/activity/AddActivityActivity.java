@@ -33,7 +33,6 @@ public class AddActivityActivity extends BaseActivity {
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
   public static final int INVALID_SELECTED_DATE = -1;
 
-  public static final long DEFAULT_SELECTED_CATEGORY_ID = 1;
   public static final long INVALID_SELECTED_CATEGORY_ID = -1;
 
   private TextInputEditText mNewActivityName;
@@ -60,9 +59,15 @@ public class AddActivityActivity extends BaseActivity {
           if (mCategoryGroup != null) {
             mCategoryGroup.removeObserver(mCategoryGroupObserver);
           }
-          mCategoryGroup = mCategoryViewModel.getCategoryGroup(category.getCategoryGroupId());
-          mCategoryGroup.observe(AddActivityActivity.this, mCategoryGroupObserver);
+          Long categoryGroupId = category.getCategoryGroupId();
+          if (categoryGroupId != null) {
+            mCategoryGroup = mCategoryViewModel.getCategoryGroup(category.getCategoryGroupId());
+            mCategoryGroup.observe(AddActivityActivity.this, mCategoryGroupObserver);
+          } else {
+            mCategoryGroup = null;
+          }
         }
+        updateCategoryView();
       };
 
   @Override
@@ -104,9 +109,13 @@ public class AddActivityActivity extends BaseActivity {
                 mStartCalendar.setTime(mSelectedActivity.getStartTime());
                 mEndCalendar.setTime(mSelectedActivity.getEndTime());
 
-                mCategory = mCategoryViewModel.getCategory(selectedActivity.getCategoryId());
-                mCategory.observe(this, mCategoryObserver);
-
+                Long categoryId = selectedActivity.getCategoryId();
+                if (categoryId != null) {
+                  mCategory = mCategoryViewModel.getCategory(categoryId);
+                  mCategory.observe(this, mCategoryObserver);
+                } else {
+                  updateCategoryView();
+                }
                 init();
               });
     } else {
@@ -163,7 +172,7 @@ public class AddActivityActivity extends BaseActivity {
     } catch (NumberFormatException ex) {
       minutes = 0;
     }
-    long categoryId = DEFAULT_SELECTED_CATEGORY_ID;
+    Long categoryId = null;
     if (mCategory != null) {
       Category category = mCategory.getValue();
       if (category != null) {
@@ -331,19 +340,22 @@ public class AddActivityActivity extends BaseActivity {
         sb.append(category.getTitle());
       }
     }
-    mCategoryView.setText(sb.toString().trim());
+    String strCategory = sb.toString().trim();
+    mCategoryView.setText(strCategory.isEmpty() ? getString(R.string.uncategorized) : strCategory);
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == CategoryActivity.SELECT_CATEGORY && resultCode == RESULT_OK) {
-      long selectedCategoryId =
-          data.getLongExtra(CategoryActivity.SELECTED_CATEGORY_ID, INVALID_SELECTED_CATEGORY_ID);
-      if (selectedCategoryId != INVALID_SELECTED_CATEGORY_ID) {
-        if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
-        mCategory = mCategoryViewModel.getCategory(selectedCategoryId);
-        mCategory.observe(this, mCategoryObserver);
+    if (requestCode == CategoryActivity.SELECT_CATEGORY) {
+      if (resultCode == RESULT_OK) {
+        long selectedCategoryId =
+            data.getLongExtra(CategoryActivity.SELECTED_CATEGORY_ID, INVALID_SELECTED_CATEGORY_ID);
+        if (selectedCategoryId != INVALID_SELECTED_CATEGORY_ID) {
+          if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
+          mCategory = mCategoryViewModel.getCategory(selectedCategoryId);
+          mCategory.observe(this, mCategoryObserver);
+        }
       }
     }
   }

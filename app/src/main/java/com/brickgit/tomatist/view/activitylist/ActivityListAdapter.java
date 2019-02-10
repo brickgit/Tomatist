@@ -45,8 +45,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
       mActivities.clear();
       mActivities.addAll(activities);
       notifyDataSetChanged();
-    }
-    else {
+    } else {
       if (mActivities.size() > activities.size()) {
         for (int index = 0; index < mActivities.size(); index++) {
           Activity activity = mActivities.get(index);
@@ -56,8 +55,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return;
           }
         }
-      }
-      else if (activities.size() > mActivities.size()) {
+      } else if (activities.size() > mActivities.size()) {
         for (int index = 0; index < activities.size(); index++) {
           Activity activity = activities.get(index);
           if (!mActivities.contains(activity)) {
@@ -66,6 +64,10 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return;
           }
         }
+      } else {
+        mActivities.clear();
+        mActivities.addAll(activities);
+        notifyDataSetChanged();
       }
     }
   }

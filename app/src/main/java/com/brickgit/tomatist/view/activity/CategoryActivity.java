@@ -3,6 +3,7 @@ package com.brickgit.tomatist.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 
 import com.brickgit.tomatist.R;
@@ -10,7 +11,9 @@ import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.view.categorylist.CategoryGroupListAdapter;
+import com.brickgit.tomatist.view.categorylist.CategoryGroupListTouchHelperCallback;
 import com.brickgit.tomatist.view.categorylist.CategoryListAdapter;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -18,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +30,7 @@ public class CategoryActivity extends BaseActivity {
   public static final int SELECT_CATEGORY = 1;
   public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
 
+  private View mRootView;
   private RecyclerView mCategoryGroupsView;
   private CategoryGroupListAdapter mCategoryGroupAdapter;
   private RecyclerView mCategoriesView;
@@ -51,6 +56,8 @@ public class CategoryActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_category);
 
+    mRootView = findViewById(R.id.root_view);
+
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setTitle(R.string.category);
@@ -71,6 +78,10 @@ public class CategoryActivity extends BaseActivity {
           selectCategoryGroup(categoryGroup.getCategoryGroupId());
         });
     mCategoryGroupsView.setAdapter(mCategoryGroupAdapter);
+    ItemTouchHelper.Callback callback =
+        new CategoryGroupListTouchHelperCallback((position) -> removeCategoryGroup(position));
+    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+    touchHelper.attachToRecyclerView(mCategoryGroupsView);
 
     mCategoriesView = findViewById(R.id.categories);
     mCategoriesView.setLayoutManager(new LinearLayoutManager(this));
@@ -94,6 +105,7 @@ public class CategoryActivity extends BaseActivity {
 
   @Override
   public boolean onSupportNavigateUp() {
+    setResult(RESULT_CANCELED);
     onBackPressed();
     return true;
   }
@@ -127,6 +139,25 @@ public class CategoryActivity extends BaseActivity {
         });
 
     dialog.create().show();
+  }
+
+  private void removeCategoryGroup(int position) {
+    if (mCategoryGroups != null) {
+      List<CategoryGroup> categoryGroups = mCategoryGroups.getValue();
+      if (categoryGroups != null) {
+        CategoryGroup categoryGroup = categoryGroups.get(position);
+        if (categoryGroup != null) {
+          mCategoryViewModel.deleteCatgoryGroup(categoryGroup);
+          showCategoryGroupDeletedConfirmation(categoryGroup);
+        }
+      }
+    }
+  }
+
+  private void showCategoryGroupDeletedConfirmation(CategoryGroup categoryGroup) {
+    Snackbar.make(mRootView, R.string.category_group_deleted, Snackbar.LENGTH_SHORT)
+        .setAction(R.string.undo, (view) -> mCategoryViewModel.insertCategoryGroup(categoryGroup))
+        .show();
   }
 
   private void showAddCategoryDialog() {

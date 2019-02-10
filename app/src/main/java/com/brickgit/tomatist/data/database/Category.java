@@ -1,5 +1,7 @@
 package com.brickgit.tomatist.data.database;
 
+import javax.annotation.Nullable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -10,23 +12,28 @@ import androidx.room.PrimaryKey;
     tableName = "categories",
     indices = {@Index("group_id")},
     foreignKeys =
-        @ForeignKey(entity = CategoryGroup.class, parentColumns = "id", childColumns = "group_id"))
+        @ForeignKey(
+            entity = CategoryGroup.class,
+            parentColumns = "id",
+            childColumns = "group_id",
+            onDelete = ForeignKey.SET_NULL))
 public class Category {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  private long categoryId;
+  private Long categoryId;
 
   @ColumnInfo(name = "title")
   private String title;
 
   @ColumnInfo(name = "group_id")
-  private long categoryGroupId;
+  @Nullable
+  private Long categoryGroupId;
 
-  public long getCategoryId() {
+  public Long getCategoryId() {
     return categoryId;
   }
 
-  public void setCategoryId(long categoryId) {
+  public void setCategoryId(Long categoryId) {
     this.categoryId = categoryId;
   }
 
@@ -38,11 +45,18 @@ public class Category {
     this.title = title;
   }
 
-  public long getCategoryGroupId() {
+  public Long getCategoryGroupId() {
     return categoryGroupId;
   }
 
-  public void setCategoryGroupId(long categoryGroupId) {
+  public void setCategoryGroupId(Long categoryGroupId) {
     this.categoryGroupId = categoryGroupId;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) return false;
+    if (!(obj instanceof Category)) return false;
+    return this.categoryId == ((Category) obj).categoryId;
   }
 }

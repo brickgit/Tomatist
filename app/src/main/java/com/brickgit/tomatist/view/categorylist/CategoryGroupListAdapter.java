@@ -26,9 +26,32 @@ public class CategoryGroupListAdapter extends RecyclerView.Adapter<RecyclerView.
   public CategoryGroupListAdapter() {}
 
   public void updateCategoryGroups(List<CategoryGroup> categoryGroups) {
-    mCategoryGroups.clear();
-    mCategoryGroups.addAll(categoryGroups);
-    notifyDataSetChanged();
+    if (mCategoryGroups.isEmpty()) {
+      mCategoryGroups.addAll(categoryGroups);
+      notifyDataSetChanged();
+    } else if (mCategoryGroups.size() > categoryGroups.size()) {
+      for (int index = 0; index < mCategoryGroups.size(); index++) {
+        CategoryGroup categoryGroup = mCategoryGroups.get(index);
+        if (!categoryGroups.contains(categoryGroup)) {
+          mCategoryGroups.remove(index);
+          notifyItemRemoved(index);
+          return;
+        }
+      }
+    } else if (categoryGroups.size() > mCategoryGroups.size()) {
+      for (int index = 0; index < categoryGroups.size(); index++) {
+        CategoryGroup categoryGroup = categoryGroups.get(index);
+        if (!mCategoryGroups.contains(categoryGroup)) {
+          mCategoryGroups.add(index, categoryGroup);
+          notifyItemInserted(index);
+          return;
+        }
+      }
+    } else {
+      mCategoryGroups.clear();
+      mCategoryGroups.addAll(categoryGroups);
+      notifyDataSetChanged();
+    }
   }
 
   public void setOnCategoryGroupClickListener(

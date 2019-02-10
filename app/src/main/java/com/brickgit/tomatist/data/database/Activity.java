@@ -2,6 +2,8 @@ package com.brickgit.tomatist.data.database;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -12,11 +14,15 @@ import androidx.room.PrimaryKey;
     tableName = "activities",
     indices = {@Index("category_id")},
     foreignKeys =
-        @ForeignKey(entity = Category.class, parentColumns = "id", childColumns = "category_id"))
+        @ForeignKey(
+            entity = Category.class,
+            parentColumns = "id",
+            childColumns = "category_id",
+            onDelete = ForeignKey.SET_NULL))
 public class Activity {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  private long activityId;
+  private Long activityId;
 
   @ColumnInfo(name = "title")
   private String title;
@@ -34,13 +40,14 @@ public class Activity {
   private String note;
 
   @ColumnInfo(name = "category_id")
-  private long categoryId;
+  @Nullable
+  private Long categoryId;
 
-  public long getActivityId() {
+  public Long getActivityId() {
     return activityId;
   }
 
-  public void setActivityId(long activityId) {
+  public void setActivityId(Long activityId) {
     this.activityId = activityId;
   }
 
@@ -84,11 +91,11 @@ public class Activity {
     this.note = note;
   }
 
-  public long getCategoryId() {
+  public Long getCategoryId() {
     return categoryId;
   }
 
-  public void setCategoryId(long categoryId) {
+  public void setCategoryId(Long categoryId) {
     this.categoryId = categoryId;
   }
 
