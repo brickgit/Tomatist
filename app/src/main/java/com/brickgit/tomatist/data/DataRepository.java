@@ -113,4 +113,8 @@ public class DataRepository {
   public LiveData<List<Category>> getCategories() {
     return mCategoryDao.getCategories();
   }
+
+  public void deleteCategory(Category category) {
+    mCategoryDao.deleteCategory(category);
+  }
 }

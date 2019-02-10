@@ -327,17 +327,17 @@ public class AddActivityActivity extends BaseActivity {
 
   private void updateCategoryView() {
     StringBuilder sb = new StringBuilder();
-    if (mCategoryGroup != null) {
-      CategoryGroup group = mCategoryGroup.getValue();
-      if (group != null) {
-        sb.append(group.getTitle());
-        sb.append(" - ");
-      }
-    }
     if (mCategory != null) {
       Category category = mCategory.getValue();
       if (category != null) {
         sb.append(category.getTitle());
+
+        if (mCategoryGroup != null) {
+          CategoryGroup group = mCategoryGroup.getValue();
+          if (group != null && category.getCategoryGroupId().equals(group.getCategoryGroupId())) {
+            sb.insert(0, group.getTitle() + " - ");
+          }
+        }
       }
     }
     String strCategory = sb.toString().trim();

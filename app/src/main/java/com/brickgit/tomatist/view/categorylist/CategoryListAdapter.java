@@ -19,16 +19,44 @@ public class CategoryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     void OnCategoryClick(Category category);
   }
 
+  private Long mCategoryGroupId;
   private List<Category> mCategories = new ArrayList<>();
 
   private OnCategoryClickListener mOnCategoryClickListener;
 
   public CategoryListAdapter() {}
 
-  public void updateCategories(List<Category> categories) {
-    mCategories.clear();
-    mCategories.addAll(categories);
-    notifyDataSetChanged();
+  public void updateCategories(Long categoryGroupId, List<Category> categories) {
+    if (!categoryGroupId.equals(mCategoryGroupId)) {
+      mCategoryGroupId = categoryGroupId;
+      mCategories.clear();
+      mCategories.addAll(categories);
+      notifyDataSetChanged();
+    } else {
+      if (mCategories.size() > categories.size()) {
+        for (int index = 0; index < mCategories.size(); index++) {
+          Category category = mCategories.get(index);
+          if (!categories.contains(category)) {
+            mCategories.remove(index);
+            notifyItemRemoved(index);
+            return;
+          }
+        }
+      } else if (categories.size() > mCategories.size()) {
+        for (int index = 0; index < categories.size(); index++) {
+          Category category = categories.get(index);
+          if (!mCategories.contains(category)) {
+            mCategories.add(index, category);
+            notifyItemInserted(index);
+            return;
+          }
+        }
+      } else {
+        mCategories.clear();
+        mCategories.addAll(categories);
+        notifyDataSetChanged();
+      }
+    }
   }
 
   public void setOnCategoryClickListener(OnCategoryClickListener onCategoryClickListener) {
