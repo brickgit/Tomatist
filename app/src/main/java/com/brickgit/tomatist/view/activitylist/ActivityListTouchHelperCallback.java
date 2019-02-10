@@ -23,7 +23,6 @@ public class ActivityListTouchHelperCallback extends ItemTouchHelper.Callback {
 
   @Override
   public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-    if (viewHolder.getAdapterPosition() == 0) return 0;
     return makeMovementFlags(0, ItemTouchHelper.START | ItemTouchHelper.END);
   }
 

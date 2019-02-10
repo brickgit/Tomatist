@@ -64,6 +64,8 @@ public class CalendarActivity extends BaseActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+    findViewById(R.id.add_activity).setOnClickListener((view) -> gotoAddActivityActivity(null));
+
     mCalendarView = findViewById(R.id.calendar_view);
     mCalendarView.addDecorator(
         new DayViewDecorator() {
@@ -97,7 +99,6 @@ public class CalendarActivity extends BaseActivity {
     ItemTouchHelper.Callback callback =
         new ActivityListTouchHelperCallback(
             (position) -> {
-              position = position - 1;
               removeActivity(position);
             });
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -106,17 +107,7 @@ public class CalendarActivity extends BaseActivity {
     mActivityListAdapter = new ActivityListAdapter();
     mActivityList.setAdapter(mActivityListAdapter);
     mActivityListAdapter.setOnActivityClickListener(
-        new ActivityListAdapter.OnActivityClickListener() {
-          @Override
-          public void onAddActivityClick() {
-            gotoAddActivityActivity(null);
-          }
-
-          @Override
-          public void onActivityClick(Activity activity) {
-            gotoAddActivityActivity(activity.getActivityId());
-          }
-        });
+        (activity) -> gotoAddActivityActivity(activity.getActivityId()));
 
     mActivities =
         mActivityViewModel.getActivities(
