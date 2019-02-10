@@ -12,6 +12,7 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
@@ -124,7 +125,9 @@ public class AddActivityActivity extends BaseActivity {
         mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
       }
 
-      mCategory = mCategoryViewModel.getCategory(DEFAULT_SELECTED_CATEGORY_ID);
+      mCategory =
+          mCategoryViewModel.getCategory(
+              TomatistPreferences.getInstance(this).lastUsedCategoryId());
       mCategory.observe(this, mCategoryObserver);
 
       init();

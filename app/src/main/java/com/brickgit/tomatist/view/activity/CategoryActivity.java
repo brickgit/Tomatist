@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.view.categorylist.CategoryGroupListAdapter;
 import com.brickgit.tomatist.view.categorylist.CategoryListAdapter;
 
@@ -57,6 +58,8 @@ public class CategoryActivity extends BaseActivity {
     mCategoryGroupAdapter = new CategoryGroupListAdapter();
     mCategoryGroupAdapter.setOnCategoryGroupClickListener(
         (categoryGroup) -> {
+          TomatistPreferences.getInstance(CategoryActivity.this)
+              .setLastUsedCategoryGroupId(categoryGroup.getCategoryGroupId());
           if (mCategories != null) {
             mCategories.removeObserver(mCategoriesObserver);
           }
@@ -70,6 +73,8 @@ public class CategoryActivity extends BaseActivity {
     mCategoryAdapter = new CategoryListAdapter();
     mCategoryAdapter.setOnCategoryClickListener(
         (category) -> {
+          TomatistPreferences.getInstance(CategoryActivity.this)
+              .setLastUsedCategoryId(category.getCategoryId());
           Intent intent = new Intent();
           intent.putExtra(SELECTED_CATEGORY_ID, category.getCategoryId());
           setResult(RESULT_OK, intent);
@@ -79,6 +84,11 @@ public class CategoryActivity extends BaseActivity {
 
     mCategoryGroups = mCategoryViewModel.getCategoryGroups();
     mCategoryGroups.observe(this, mCategoryGroupsObserver);
+
+    mCategories =
+        mCategoryViewModel.getCategories(
+            TomatistPreferences.getInstance(this).lastUsedCategoryGroupId());
+    mCategories.observe(CategoryActivity.this, mCategoriesObserver);
   }
 
   @Override

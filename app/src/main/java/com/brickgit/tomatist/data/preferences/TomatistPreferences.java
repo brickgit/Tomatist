@@ -7,8 +7,10 @@ public class TomatistPreferences {
 
   private static volatile TomatistPreferences INSTANCE;
 
-  private static String PREFERENCES_NAME = "com.brickgit.tomatist.preferences";
-  private static String IS_FIRST_LAUNCHED = "is_first_launched";
+  private static final String PREFERENCES_NAME = "com.brickgit.tomatist.preferences";
+  private static final String IS_FIRST_LAUNCHED = "is_first_launched";
+  private static final String LAST_USED_CATEGORY_GROUP_ID = "last_used_category_group_id";
+  private static final String LAST_USED_CATEGORY_ID = "last_used_category_id";
 
   private SharedPreferences sharedPreferences;
 
@@ -31,5 +33,21 @@ public class TomatistPreferences {
 
   public void setIsFirstLaunched(boolean isFirstLaunched) {
     sharedPreferences.edit().putBoolean(IS_FIRST_LAUNCHED, isFirstLaunched).apply();
+  }
+
+  public long lastUsedCategoryGroupId() {
+    return sharedPreferences.getLong(LAST_USED_CATEGORY_GROUP_ID, 1);
+  }
+
+  public void setLastUsedCategoryGroupId(long categoryGroupId) {
+    sharedPreferences.edit().putLong(LAST_USED_CATEGORY_GROUP_ID, categoryGroupId).apply();
+  }
+
+  public long lastUsedCategoryId() {
+    return sharedPreferences.getLong(LAST_USED_CATEGORY_ID, 1);
+  }
+
+  public void setLastUsedCategoryId(long categoryId) {
+    sharedPreferences.edit().putLong(LAST_USED_CATEGORY_ID, categoryId).apply();
   }
 }
