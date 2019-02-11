@@ -3,6 +3,7 @@ package com.brickgit.tomatist.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.style.ForegroundColorSpan;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.brickgit.tomatist.R;
@@ -12,6 +13,7 @@ import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.view.activitylist.ActivityListAdapter;
 import com.brickgit.tomatist.view.activitylist.ActivityListTouchHelperCallback;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -25,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -34,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CalendarActivity extends BaseActivity {
 
   private View mRootView;
+  private DrawerLayout mDrawerLayout;
   private MaterialCalendarView mCalendarView;
   private RecyclerView mActivityList;
   private LinearLayoutManager mLayoutManager;
@@ -63,6 +68,22 @@ public class CalendarActivity extends BaseActivity {
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+
+    mDrawerLayout = findViewById(R.id.drawer_layout);
+    NavigationView navigationView = findViewById(R.id.nav_view);
+    navigationView.setNavigationItemSelectedListener(
+        (menuItem) -> {
+          switch (menuItem.getItemId()) {
+            case R.id.nav_tasks:
+              break;
+            default:
+              break;
+          }
+          mDrawerLayout.closeDrawers();
+          return true;
+        });
 
     findViewById(R.id.add_activity).setOnClickListener((view) -> gotoAddActivityActivity(null));
 
@@ -138,6 +159,16 @@ public class CalendarActivity extends BaseActivity {
             });
 
     firstLaunchSetup();
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        mDrawerLayout.openDrawer(GravityCompat.START);
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   private void removeActivity(int position) {
