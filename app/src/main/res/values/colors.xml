@@ -3,4 +3,5 @@
   <color name="colorPrimary">#FF8177</color>
   <color name="colorPrimaryDark">#EC5E54</color>
   <color name="colorAccent">#EC5E54</color>
+  <color name="calendar_activity_background">#F9F9F9</color>
 </resources>

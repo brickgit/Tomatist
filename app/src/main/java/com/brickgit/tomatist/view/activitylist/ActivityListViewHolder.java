@@ -20,6 +20,7 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
 
   private TextView mStartDateTime;
   private TextView mEndDateTime;
+  private TextView mDateTimeDuration;
 
   private TextView mTitleView;
   private TextView mNoteView;
@@ -35,6 +36,7 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
 
     mStartDateTime = view.findViewById(R.id.start_time);
     mEndDateTime = view.findViewById(R.id.end_time);
+    mDateTimeDuration = view.findViewById(R.id.time_duration);
 
     mTitleView = view.findViewById(R.id.activity_title);
     mNoteView = view.findViewById(R.id.activity_note);
@@ -59,8 +61,10 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
     mStartDateTime.setText(dateFormat.format(activity.getStartTime()));
     if (activity.getMinutes() != 0) {
       mEndDateTime.setText(dateFormat.format(activity.getEndTime()));
+      mDateTimeDuration.setVisibility(View.VISIBLE);
     } else {
       mEndDateTime.setText("");
+      mDateTimeDuration.setVisibility(View.INVISIBLE);
     }
 
     mTitleView.setText(activity.getTitle());
