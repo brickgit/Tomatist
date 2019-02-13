@@ -26,7 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -98,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="10dp"
             android:orientation="vertical">
 
             <TextView
@@ -124,20 +123,23 @@
           android:id="@+id/activity_task_layout"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginTop="5dp"
           android:gravity="center_vertical"
           android:orientation="horizontal">
 
           <ImageView
             android:id="@+id/activity_task_icon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:src="@drawable/ic_task" />
 
           <TextView
             android:id="@+id/activity_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp" />
+            android:layout_marginStart="5dp"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
         </LinearLayout>
 
