@@ -10,6 +10,7 @@ import com.brickgit.tomatist.data.database.Database;
 import com.brickgit.tomatist.data.database.DatabaseLoader;
 import com.brickgit.tomatist.data.database.Project;
 import com.brickgit.tomatist.data.database.ProjectDao;
+import com.brickgit.tomatist.data.database.Task;
 import com.brickgit.tomatist.data.database.TaskDao;
 
 import java.util.List;
@@ -56,6 +57,14 @@ public class DataRepository {
 
   public LiveData<List<Project>> getProjects() {
     return mProjectDao.getProjects();
+  }
+
+  public LiveData<List<Task>> getTasks() {
+    return mTaskDao.getTasks();
+  }
+
+  public void insertTask(Task task) {
+    mTaskDao.insertTask(task);
   }
 
   public void insertActivity(Activity activity) {

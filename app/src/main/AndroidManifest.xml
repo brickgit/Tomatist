@@ -23,6 +23,10 @@
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar" />
     <activity
+      android:name=".view.activity.TaskListActivity"
+      android:label="@string/app_name"
+      android:theme="@style/AppTheme.NoActionBar" />
+    <activity
       android:name=".view.activity.AddProjectActivity"
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar"

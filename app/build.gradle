@@ -44,4 +44,5 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     implementation "com.github.prolificinteractive:material-calendarview:2.0.0"
+    implementation "com.thoughtbot:expandablerecyclerview:1.4"
 }
