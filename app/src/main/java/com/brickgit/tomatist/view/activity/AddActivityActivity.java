@@ -33,8 +33,6 @@ public class AddActivityActivity extends BaseActivity {
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
   public static final int INVALID_SELECTED_DATE = -1;
 
-  public static final long INVALID_SELECTED_CATEGORY_ID = -1;
-
   private TextInputEditText mNewActivityName;
   private TextView mStartDate;
   private TextView mStartTime;
@@ -350,8 +348,10 @@ public class AddActivityActivity extends BaseActivity {
     if (requestCode == CategoryActivity.SELECT_CATEGORY) {
       if (resultCode == RESULT_OK) {
         long selectedCategoryId =
-            data.getLongExtra(CategoryActivity.SELECTED_CATEGORY_ID, INVALID_SELECTED_CATEGORY_ID);
-        if (selectedCategoryId != INVALID_SELECTED_CATEGORY_ID) {
+            data.getLongExtra(
+                CategoryActivity.SELECTED_CATEGORY_ID,
+                CategoryActivity.INVALID_SELECTED_CATEGORY_ID);
+        if (selectedCategoryId != CategoryActivity.INVALID_SELECTED_CATEGORY_ID) {
           if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
           mCategory = mCategoryViewModel.getCategory(selectedCategoryId);
           mCategory.observe(this, mCategoryObserver);

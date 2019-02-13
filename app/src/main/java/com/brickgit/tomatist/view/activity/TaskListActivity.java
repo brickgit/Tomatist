@@ -1,5 +1,7 @@
 package com.brickgit.tomatist.view.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.brickgit.tomatist.R;
@@ -29,6 +31,11 @@ public class TaskListActivity extends BaseActivity {
   private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<Long, Category> mCategories = new HashMap<>();
 
+  public static void start(Activity activity) {
+    Intent intent = new Intent(activity, TaskListActivity.class);
+    activity.startActivity(intent);
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -38,6 +45,8 @@ public class TaskListActivity extends BaseActivity {
     getSupportActionBar().setTitle(R.string.tasks);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+    findViewById(R.id.add_task).setOnClickListener((view) -> AddTaskActivity.start(this));
 
     mTaskList = findViewById(R.id.task_list);
     mTaskList.setLayoutManager(new LinearLayoutManager(this));

@@ -77,6 +77,7 @@ public class CalendarActivity extends BaseActivity {
         (menuItem) -> {
           switch (menuItem.getItemId()) {
             case R.id.nav_tasks:
+              TaskListActivity.start(this);
               break;
             default:
               break;
