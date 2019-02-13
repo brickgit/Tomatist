@@ -21,7 +21,7 @@ import androidx.room.PrimaryKey;
 public class Task {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  private long taskId;
+  private Long taskId;
 
   @ColumnInfo(name = "category_id")
   @Nullable
@@ -33,11 +33,11 @@ public class Task {
   @ColumnInfo(name = "is_finished")
   private boolean isFinished;
 
-  public long getTaskId() {
+  public Long getTaskId() {
     return taskId;
   }
 
-  public void setTaskId(long taskId) {
+  public void setTaskId(Long taskId) {
     this.taskId = taskId;
   }
 

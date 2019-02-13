@@ -34,6 +34,9 @@ public class AddActivityActivity extends BaseActivity {
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
   public static final int INVALID_SELECTED_DATE = -1;
 
+  private static final int MODE_NEW = 0;
+  private static final int MODE_EDIT = 1;
+
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
   private static final int REQUEST_CODE_SELECT_TASK = 1;
 
@@ -47,44 +50,34 @@ public class AddActivityActivity extends BaseActivity {
   private TextView mTaskView;
   private TextInputEditText mNewActivityNote;
 
+  private int mMode = MODE_NEW;
+
   private Activity mActivity;
 
   private Calendar mStartCalendar = Calendar.getInstance();
   private Calendar mEndCalendar = Calendar.getInstance();
 
   private LiveData<CategoryGroup> mCategoryGroup;
-  private Observer<CategoryGroup> mCategoryGroupObserver = (categoryGroup) -> updateCategoryView();
+  private Observer<CategoryGroup> mCategoryGroupObserver = (categoryGroup) -> updateViews();
 
   private LiveData<Category> mCategory;
   private Observer<Category> mCategoryObserver =
       (category) -> {
         if (category != null) {
-          if (mCategoryGroup != null) {
-            mCategoryGroup.removeObserver(mCategoryGroupObserver);
-          }
-          Long categoryGroupId = category.getCategoryGroupId();
-          if (categoryGroupId != null) {
-            mCategoryGroup = mCategoryViewModel.getCategoryGroup(category.getCategoryGroupId());
-            mCategoryGroup.observe(AddActivityActivity.this, mCategoryGroupObserver);
-          } else {
-            mCategoryGroup = null;
-          }
+          mActivity.setCategoryId(category.getCategoryId());
+          observeCategoryGroup(category.getCategoryGroupId());
         }
-        updateCategoryView();
+        updateViews();
       };
 
   private LiveData<Task> mTask;
   private Observer<Task> mTaskObserver =
       (task) -> {
         if (task != null) {
-          Long categoryId = task.getCategoryId();
-          if (categoryId != null) {
-            if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
-            mCategory = mCategoryViewModel.getCategory(categoryId);
-            mCategory.observe(this, mCategoryObserver);
-          }
+          mActivity.setTaskId(task.getTaskId());
+          observeCategory(task.getCategoryId());
         }
-        updateTaskView();
+        updateViews();
       };
 
   @Override
@@ -94,14 +87,12 @@ public class AddActivityActivity extends BaseActivity {
 
     long selectedActivityId =
         getIntent().getLongExtra(SELECTED_ACTIVITY_KEY, INVALID_SELECTED_ACTIVITY_ID);
+    mMode = selectedActivityId != INVALID_SELECTED_ACTIVITY_ID ? MODE_EDIT : MODE_NEW;
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar()
-        .setTitle(
-            selectedActivityId != INVALID_SELECTED_ACTIVITY_ID
-                ? R.string.edit_activity
-                : R.string.add_activity);
+        .setTitle(mMode == MODE_EDIT ? R.string.edit_activity : R.string.add_activity);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -115,38 +106,35 @@ public class AddActivityActivity extends BaseActivity {
         (v) -> TaskListActivity.startAsTaskSelector(this, REQUEST_CODE_SELECT_TASK));
 
     mStartDate = findViewById(R.id.start_datetime_date);
+    mStartDate.setOnClickListener((v) -> showDatePicker(true));
     mStartTime = findViewById(R.id.start_datetime_time);
+    mStartTime.setOnClickListener((v) -> showTimePicker(true));
     mEndDate = findViewById(R.id.end_datetime_date);
+    mEndDate.setOnClickListener((v) -> showDatePicker(false));
     mEndTime = findViewById(R.id.end_datetime_time);
+    mEndTime.setOnClickListener((v) -> showTimePicker(false));
     mDurationMinutes = findViewById(R.id.duration_minutes);
+    mDurationMinutes.setOnClickListener((v) -> showMinuteList());
 
-    if (selectedActivityId != INVALID_SELECTED_ACTIVITY_ID) {
+    mActivity = new Activity();
+    updateViews();
+
+    if (mMode == MODE_EDIT) {
       mActivityViewModel
           .getActivity(selectedActivityId)
           .observe(
               this,
-              (selectedActivity) -> {
-                mActivity = selectedActivity;
+              (activity) -> {
+                mActivity = activity;
                 mStartCalendar.setTime(mActivity.getStartTime());
                 mEndCalendar.setTime(mActivity.getEndTime());
 
-                Long categoryId = selectedActivity.getCategoryId();
-                if (categoryId != null) {
-                  mCategory = mCategoryViewModel.getCategory(categoryId);
-                  mCategory.observe(this, mCategoryObserver);
-                } else {
-                  updateCategoryView();
-                }
+                observeCategory(activity.getCategoryId());
+                observeTask(activity.getTaskId());
 
-                Long taskId = selectedActivity.getTaskId();
-                if (taskId != null) {
-                  mTask = mProjectViewModel.getTask(taskId);
-                  mTask.observe(this, mTaskObserver);
-                } else {
-                  updateTaskView();
-                }
-
-                init();
+                mNewActivityName.setText(mActivity.getTitle());
+                mNewActivityNote.setText(mActivity.getNote());
+                updateViews();
               });
     } else {
       int year = getIntent().getIntExtra(SELECTED_YEAR_KEY, INVALID_SELECTED_DATE);
@@ -164,28 +152,7 @@ public class AddActivityActivity extends BaseActivity {
         mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
       }
 
-      mCategory =
-          mCategoryViewModel.getCategory(
-              TomatistPreferences.getInstance(this).lastUsedCategoryId());
-      mCategory.observe(this, mCategoryObserver);
-
-      init();
-    }
-  }
-
-  private void init() {
-    updateDateViews();
-    mStartDate.setOnClickListener((v) -> showDatePicker(true));
-    mEndDate.setOnClickListener((v) -> showDatePicker(false));
-    updateTimeViews();
-    mStartTime.setOnClickListener((v) -> showTimePicker(true));
-    mEndTime.setOnClickListener((v) -> showTimePicker(false));
-    updateDurationView();
-    mDurationMinutes.setOnClickListener((v) -> showMinuteList());
-
-    if (mActivity != null) {
-      mNewActivityName.setText(mActivity.getTitle());
-      mNewActivityNote.setText(mActivity.getNote());
+      observeCategory(TomatistPreferences.getInstance(this).lastUsedCategoryId());
     }
   }
 
@@ -217,28 +184,75 @@ public class AddActivityActivity extends BaseActivity {
       }
     }
 
-    if (mActivity != null) {
-      mActivity.setTitle(newActivityName);
-      mActivity.setStartTime(mStartCalendar.getTime());
-      mActivity.setEndTime(mEndCalendar.getTime());
-      mActivity.setMinutes(minutes);
-      mActivity.setCategoryId(categoryId);
-      mActivity.setTaskId(taskId);
-      mActivity.setNote(mNewActivityNote.getText().toString().trim());
+    mActivity.setTitle(newActivityName);
+    mActivity.setStartTime(mStartCalendar.getTime());
+    mActivity.setEndTime(mEndCalendar.getTime());
+    mActivity.setMinutes(minutes);
+    mActivity.setCategoryId(categoryId);
+    mActivity.setTaskId(taskId);
+    mActivity.setNote(mNewActivityNote.getText().toString().trim());
+
+    if (mMode == MODE_EDIT) {
       mActivityViewModel.updateActivity(mActivity);
     } else {
-      Activity activity = new Activity();
-      activity.setTitle(newActivityName);
-      activity.setStartTime(mStartCalendar.getTime());
-      activity.setEndTime(mEndCalendar.getTime());
-      activity.setMinutes(minutes);
-      activity.setCategoryId(categoryId);
-      activity.setTaskId(taskId);
-      activity.setNote(mNewActivityNote.getText().toString().trim());
-      mActivityViewModel.insertActivity(activity);
+      mActivityViewModel.insertActivity(mActivity);
     }
 
     finish();
+  }
+
+  private boolean observeCategoryGroup(Long categoryGroupId) {
+    if (mCategoryGroup != null && mCategoryGroup.getValue() != null) {
+      if (mCategoryGroup.getValue().getCategoryGroupId().equals(categoryGroupId)) {
+        return false;
+      } else {
+        mCategoryGroup.removeObserver(mCategoryGroupObserver);
+        mCategoryGroup = null;
+      }
+    }
+
+    if (categoryGroupId != null) {
+      mCategoryGroup = mCategoryViewModel.getCategoryGroup(categoryGroupId);
+      mCategoryGroup.observe(this, mCategoryGroupObserver);
+    }
+
+    return true;
+  }
+
+  private boolean observeCategory(Long categoryId) {
+    if (mCategory != null && mCategory.getValue() != null) {
+      if (mCategory.getValue().getCategoryId().equals(categoryId)) {
+        return false;
+      } else {
+        mCategory.removeObserver(mCategoryObserver);
+        mCategory = null;
+      }
+    }
+
+    if (categoryId != null) {
+      mCategory = mCategoryViewModel.getCategory(categoryId);
+      mCategory.observe(this, mCategoryObserver);
+    }
+
+    return true;
+  }
+
+  private boolean observeTask(Long taskId) {
+    if (mTask != null && mTask.getValue() != null) {
+      if (mTask.getValue().getTaskId().equals(taskId)) {
+        return false;
+      } else {
+        mTask.removeObserver(mTaskObserver);
+        mTask = null;
+      }
+    }
+
+    if (taskId != null) {
+      mTask = mProjectViewModel.getTask(taskId);
+      mTask.observe(this, mTaskObserver);
+    }
+
+    return true;
   }
 
   @Override
@@ -273,8 +287,7 @@ public class AddActivityActivity extends BaseActivity {
               calendar.set(Calendar.MONTH, month);
               calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
               checkCalendars(isStartDate);
-              updateDateViews();
-              updateDurationView();
+              updateViews();
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -290,8 +303,7 @@ public class AddActivityActivity extends BaseActivity {
               calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
               calendar.set(Calendar.MINUTE, minute);
               checkCalendars(isStartTime);
-              updateTimeViews();
-              updateDurationView();
+              updateViews();
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
@@ -308,8 +320,7 @@ public class AddActivityActivity extends BaseActivity {
               int selectedMinutes = getResources().getIntArray(R.array.minutes_int)[which];
               mEndCalendar = (Calendar) mStartCalendar.clone();
               mEndCalendar.add(Calendar.MINUTE, selectedMinutes);
-              updateTimeViews();
-              updateDurationView();
+              updateViews();
             })
         .create()
         .show();
@@ -327,7 +338,7 @@ public class AddActivityActivity extends BaseActivity {
     }
   }
 
-  private void updateDateViews() {
+  private void updateViews() {
     mStartDate.setText(
         String.format(
             Locale.getDefault(),
@@ -342,9 +353,6 @@ public class AddActivityActivity extends BaseActivity {
             mEndCalendar.get(Calendar.YEAR),
             mEndCalendar.get(Calendar.MONTH) + 1,
             mEndCalendar.get(Calendar.DAY_OF_MONTH)));
-  }
-
-  private void updateTimeViews() {
     mStartTime.setText(
         String.format(
             Locale.getDefault(),
@@ -357,14 +365,10 @@ public class AddActivityActivity extends BaseActivity {
             "%02d:%02d",
             mEndCalendar.get(Calendar.HOUR_OF_DAY),
             mEndCalendar.get(Calendar.MINUTE)));
-  }
 
-  private void updateDurationView() {
     long minute = (mEndCalendar.getTimeInMillis() - mStartCalendar.getTimeInMillis()) / (60 * 1000);
     mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", minute));
-  }
 
-  private void updateCategoryView() {
     StringBuilder sb = new StringBuilder();
     if (mCategory != null) {
       Category category = mCategory.getValue();
@@ -373,7 +377,7 @@ public class AddActivityActivity extends BaseActivity {
 
         if (mCategoryGroup != null) {
           CategoryGroup group = mCategoryGroup.getValue();
-          if (group != null && category.getCategoryGroupId().equals(group.getCategoryGroupId())) {
+          if (group != null && group.getCategoryGroupId().equals(category.getCategoryGroupId())) {
             sb.insert(0, group.getTitle() + " - ");
           }
         }
@@ -381,17 +385,12 @@ public class AddActivityActivity extends BaseActivity {
     }
     String strCategory = sb.toString().trim();
     mCategoryView.setText(strCategory.isEmpty() ? getString(R.string.uncategorized) : strCategory);
-  }
 
-  private void updateTaskView() {
-    if (mTask != null) {
-      Task task = mTask.getValue();
-      if (task != null) {
-        mTaskView.setText(task.getTitle());
-        return;
-      }
+    if (mTask != null && mTask.getValue() != null) {
+      mTaskView.setText(mTask.getValue().getTitle());
+    } else {
+      mTaskView.setText(R.string.no_task);
     }
-    mTaskView.setText(R.string.no_task);
   }
 
   @Override
@@ -404,14 +403,8 @@ public class AddActivityActivity extends BaseActivity {
                 CategoryActivity.SELECTED_CATEGORY_ID,
                 CategoryActivity.INVALID_SELECTED_CATEGORY_ID);
         if (selectedCategoryId != CategoryActivity.INVALID_SELECTED_CATEGORY_ID) {
-          if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
-          mCategory = mCategoryViewModel.getCategory(selectedCategoryId);
-          mCategory.observe(this, mCategoryObserver);
-
-          if (mTask != null) {
-            mTask.removeObserver(mTaskObserver);
-            mTask = null;
-            updateTaskView();
+          if (observeCategory(selectedCategoryId)) {
+            observeTask(null);
           }
         }
       }
@@ -421,9 +414,7 @@ public class AddActivityActivity extends BaseActivity {
             data.getLongExtra(
                 TaskListActivity.SELECTED_TASK_ID, TaskListActivity.INVALID_SELECTED_TASK_ID);
         if (selectedTaskId != TaskListActivity.INVALID_SELECTED_TASK_ID) {
-          if (mTask != null) mTask.removeObserver(mTaskObserver);
-          mTask = mProjectViewModel.getTask(selectedTaskId);
-          mTask.observe(this, mTaskObserver);
+          observeTask(selectedTaskId);
         }
       }
     }
