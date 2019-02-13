@@ -20,6 +20,7 @@ import androidx.room.PrimaryKey;
             onDelete = ForeignKey.SET_NULL))
 public class Task {
   @PrimaryKey(autoGenerate = true)
+  @ColumnInfo(name = "id")
   private long taskId;
 
   @ColumnInfo(name = "category_id")

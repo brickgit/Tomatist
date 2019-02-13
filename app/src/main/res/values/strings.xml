@@ -14,6 +14,8 @@
   <string name="duration">Duration</string>
   <string name="duration_unit">minute(s)</string>
   <string name="category">Category</string>
+  <string name="project">Project</string>
+  <string name="task">Task</string>
   <string name="note">Note</string>
 
   <string name="activity_deleted">Activity deleted!</string>
@@ -25,6 +27,7 @@
   <string name="category_deleted">Category deleted!</string>
 
   <string name="uncategorized">Uncategorized</string>
+  <string name="no_task">No task</string>
 
   <string-array name="minutes_string">
     <item>0 minute</item>

@@ -11,6 +11,10 @@ import androidx.room.Query;
 /** Created by Daniel Lin on 2018/10/13. */
 @Dao
 public interface TaskDao {
+
+  @Query("SELECT * FROM tasks WHERE id = :id")
+  LiveData<Task> getTask(long id);
+
   @Query("SELECT * FROM tasks")
   LiveData<List<Task>> getTasks();
 

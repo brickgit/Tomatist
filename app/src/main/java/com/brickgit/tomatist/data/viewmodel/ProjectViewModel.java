@@ -40,6 +40,10 @@ public class ProjectViewModel extends ViewModel {
     mDataRepository.insertTask(task);
   }
 
+  public LiveData<Task> getTask(Long taskId) {
+    return mDataRepository.getTask(taskId);
+  }
+
   public LiveData<List<Task>> getTasks() {
     if (mTasks == null) {
       mTasks = mDataRepository.getTasks();

@@ -7,6 +7,7 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -28,6 +29,9 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
   private TextView mCategoryGroupView;
   private TextView mCategoryView;
 
+  private View mTaskLayout;
+  private TextView mTaskView;
+
   private Activity mActivity;
 
   public ActivityListViewHolder(
@@ -44,6 +48,9 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
     mCategoryGroupView = view.findViewById(R.id.activity_category_group);
     mCategoryView = view.findViewById(R.id.activity_category);
 
+    mTaskLayout = view.findViewById(R.id.activity_task_layout);
+    mTaskView = view.findViewById(R.id.activity_task);
+
     itemView.setOnClickListener(
         (v) -> {
           if (onActivityClickListener == null) {
@@ -55,7 +62,10 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
   }
 
   public void bind(
-      Activity activity, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
+      Activity activity,
+      Map<Long, CategoryGroup> categoryGroups,
+      Map<Long, Category> categories,
+      Map<Long, Task> tasks) {
     mActivity = activity;
 
     mStartDateTime.setText(dateFormat.format(activity.getStartTime()));
@@ -78,6 +88,15 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
     } else {
       mCategoryView.setText("");
       mCategoryGroupView.setText("");
+    }
+
+    Task task = tasks.get(activity.getTaskId());
+    if (task != null) {
+      mTaskLayout.setVisibility(View.VISIBLE);
+      mTaskView.setText(task.getTitle());
+    } else {
+      mTaskLayout.setVisibility(View.INVISIBLE);
+      mTaskView.setText("");
     }
   }
 }

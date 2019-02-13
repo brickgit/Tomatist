@@ -7,9 +7,11 @@ import android.os.Parcelable;
 public class TaskListTaskViewData implements Parcelable {
 
   private String mTaskTitle;
+  private Long mTaskId;
 
-  public TaskListTaskViewData(String taskTitle) {
+  public TaskListTaskViewData(String taskTitle, Long taskId) {
     mTaskTitle = taskTitle;
+    mTaskId = taskId;
   }
 
   public String getTaskTitle() {
@@ -20,6 +22,14 @@ public class TaskListTaskViewData implements Parcelable {
     this.mTaskTitle = taskTitle;
   }
 
+  public Long getTaskId() {
+    return mTaskId;
+  }
+
+  public void setTaskId(Long mTaskId) {
+    this.mTaskId = mTaskId;
+  }
+
   @Override
   public int describeContents() {
     return 0;
@@ -28,6 +38,7 @@ public class TaskListTaskViewData implements Parcelable {
   @Override
   public void writeToParcel(Parcel parcel, int i) {
     parcel.writeString(mTaskTitle);
+    parcel.writeLong(mTaskId);
   }
 
   public static final Parcelable.Creator<TaskListTaskViewData> CREATOR =
@@ -39,7 +50,7 @@ public class TaskListTaskViewData implements Parcelable {
 
         @Override
         public TaskListTaskViewData createFromParcel(Parcel parcel) {
-          return new TaskListTaskViewData(parcel.readString());
+          return new TaskListTaskViewData(parcel.readString(), parcel.readLong());
         }
       };
 }

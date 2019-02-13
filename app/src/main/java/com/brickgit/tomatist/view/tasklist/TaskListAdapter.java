@@ -14,8 +14,18 @@ import java.util.List;
 public class TaskListAdapter
     extends ExpandableRecyclerViewAdapter<TaskListCategoryViewHolder, TaskListTaskViewHolder> {
 
+  public interface OnTaskClickListener {
+    void onTaskClick(Long taskId);
+  }
+
+  private OnTaskClickListener mOnTaskClickListener;
+
   public TaskListAdapter(List<? extends ExpandableGroup> groups) {
     super(groups);
+  }
+
+  public void setOnTaskClickListener(OnTaskClickListener onTaskClickListener) {
+    mOnTaskClickListener = onTaskClickListener;
   }
 
   public void expandAll() {
@@ -38,7 +48,7 @@ public class TaskListAdapter
   public TaskListTaskViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
     View view =
         LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_task, parent, false);
-    return new TaskListTaskViewHolder(view);
+    return new TaskListTaskViewHolder(view, mOnTaskClickListener);
   }
 
   @Override

@@ -8,6 +8,7 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Task;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,6 +30,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
   private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<Long, Category> mCategories = new HashMap<>();
+  private Map<Long, Task> mTasks = new HashMap<>();
 
   public ActivityListAdapter() {}
 
@@ -77,6 +79,12 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     notifyDataSetChanged();
   }
 
+  public void updateTasks(Map<Long, Task> tasks) {
+    mTasks.clear();
+    mTasks.putAll(tasks);
+    notifyDataSetChanged();
+  }
+
   public void setOnActivityClickListener(OnActivityClickListener onActivityClickListener) {
     mOnActivityClickListener = onActivityClickListener;
   }
@@ -93,7 +101,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     ActivityListViewHolder viewHolder = (ActivityListViewHolder) holder;
-    viewHolder.bind(mActivities.get(position), mCategoryGroups, mCategories);
+    viewHolder.bind(mActivities.get(position), mCategoryGroups, mCategories, mTasks);
   }
 
   @Override

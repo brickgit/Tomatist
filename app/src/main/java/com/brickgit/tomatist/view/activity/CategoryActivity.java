@@ -28,10 +28,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CategoryActivity extends BaseActivity {
 
-  public static final long INVALID_SELECTED_CATEGORY_ID = -1;
-
-  public static final int SELECT_CATEGORY = 1;
   public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
+  public static final long INVALID_SELECTED_CATEGORY_ID = -1;
 
   private View mRootView;
   private RecyclerView mCategoryGroupsView;
@@ -49,9 +47,9 @@ public class CategoryActivity extends BaseActivity {
   private Observer<List<Category>> mCategoriesObserver =
       (categories) -> mCategoryAdapter.updateCategories(mSelectedCategoryGroupId, categories);
 
-  public static void startForResult(Activity activity) {
+  public static void startForResult(Activity activity, int requestCoe) {
     Intent intent = new Intent(activity, CategoryActivity.class);
-    activity.startActivityForResult(intent, SELECT_CATEGORY);
+    activity.startActivityForResult(intent, requestCoe);
   }
 
   @Override

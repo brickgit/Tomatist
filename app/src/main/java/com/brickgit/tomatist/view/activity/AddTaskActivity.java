@@ -21,6 +21,8 @@ import androidx.lifecycle.Observer;
 /** Created by Daniel Lin on 2019/2/13. */
 public class AddTaskActivity extends BaseActivity {
 
+  private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
+
   private TextInputEditText mNewTaskName;
   private TextView mCategoryView;
 
@@ -63,7 +65,8 @@ public class AddTaskActivity extends BaseActivity {
     mNewTaskName = findViewById(R.id.new_task_name);
 
     mCategoryView = findViewById(R.id.category);
-    mCategoryView.setOnClickListener((v) -> CategoryActivity.startForResult(this));
+    mCategoryView.setOnClickListener(
+        (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
 
     mCategory =
         mCategoryViewModel.getCategory(TomatistPreferences.getInstance(this).lastUsedCategoryId());
@@ -138,7 +141,7 @@ public class AddTaskActivity extends BaseActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == CategoryActivity.SELECT_CATEGORY) {
+    if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
       if (resultCode == RESULT_OK) {
         long selectedCategoryId =
             data.getLongExtra(

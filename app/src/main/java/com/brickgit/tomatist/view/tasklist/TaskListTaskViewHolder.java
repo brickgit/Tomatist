@@ -11,12 +11,18 @@ public class TaskListTaskViewHolder extends ChildViewHolder {
 
   private TextView mTaskTitleView;
 
-  public TaskListTaskViewHolder(View view) {
+  private TaskListTaskViewData mViewData;
+
+  public TaskListTaskViewHolder(
+      View view, TaskListAdapter.OnTaskClickListener onTaskClickListener) {
     super(view);
     mTaskTitleView = view.findViewById(R.id.task_title);
+
+    itemView.setOnClickListener((v) -> onTaskClickListener.onTaskClick(mViewData.getTaskId()));
   }
 
   public void bind(TaskListTaskViewData taskListTaskViewData) {
+    mViewData = taskListTaskViewData;
     mTaskTitleView.setText(taskListTaskViewData.getTaskTitle());
   }
 }

@@ -59,6 +59,10 @@ public class DataRepository {
     return mProjectDao.getProjects();
   }
 
+  public LiveData<Task> getTask(Long taskId) {
+    return mTaskDao.getTask(taskId);
+  }
+
   public LiveData<List<Task>> getTasks() {
     return mTaskDao.getTasks();
   }

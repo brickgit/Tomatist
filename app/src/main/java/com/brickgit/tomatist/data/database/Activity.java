@@ -12,13 +12,19 @@ import androidx.room.PrimaryKey;
 
 @Entity(
     tableName = "activities",
-    indices = {@Index("category_id")},
-    foreignKeys =
-        @ForeignKey(
-            entity = Category.class,
-            parentColumns = "id",
-            childColumns = "category_id",
-            onDelete = ForeignKey.SET_NULL))
+    indices = {@Index("task_id"), @Index("category_id")},
+    foreignKeys = {
+      @ForeignKey(
+          entity = Task.class,
+          parentColumns = "id",
+          childColumns = "task_id",
+          onDelete = ForeignKey.SET_NULL),
+      @ForeignKey(
+          entity = Category.class,
+          parentColumns = "id",
+          childColumns = "category_id",
+          onDelete = ForeignKey.SET_NULL)
+    })
 public class Activity {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
@@ -35,6 +41,10 @@ public class Activity {
 
   @ColumnInfo(name = "minutes")
   private long minutes;
+
+  @ColumnInfo(name = "task_id")
+  @Nullable
+  private Long taskId;
 
   @ColumnInfo(name = "note")
   private String note;
@@ -81,6 +91,15 @@ public class Activity {
 
   public void setMinutes(long minutes) {
     this.minutes = minutes;
+  }
+
+  @Nullable
+  public Long getTaskId() {
+    return taskId;
+  }
+
+  public void setTaskId(@Nullable Long taskId) {
+    this.taskId = taskId;
   }
 
   public String getNote() {

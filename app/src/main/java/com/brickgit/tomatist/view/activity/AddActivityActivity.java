@@ -12,6 +12,7 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Task;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -33,6 +34,9 @@ public class AddActivityActivity extends BaseActivity {
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
   public static final int INVALID_SELECTED_DATE = -1;
 
+  private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
+  private static final int REQUEST_CODE_SELECT_TASK = 1;
+
   private TextInputEditText mNewActivityName;
   private TextView mStartDate;
   private TextView mStartTime;
@@ -40,9 +44,10 @@ public class AddActivityActivity extends BaseActivity {
   private TextView mEndTime;
   private TextView mDurationMinutes;
   private TextView mCategoryView;
+  private TextView mTaskView;
   private TextInputEditText mNewActivityNote;
 
-  private Activity mSelectedActivity;
+  private Activity mActivity;
 
   private Calendar mStartCalendar = Calendar.getInstance();
   private Calendar mEndCalendar = Calendar.getInstance();
@@ -68,6 +73,20 @@ public class AddActivityActivity extends BaseActivity {
         updateCategoryView();
       };
 
+  private LiveData<Task> mTask;
+  private Observer<Task> mTaskObserver =
+      (task) -> {
+        if (task != null) {
+          Long categoryId = task.getCategoryId();
+          if (categoryId != null) {
+            if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
+            mCategory = mCategoryViewModel.getCategory(categoryId);
+            mCategory.observe(this, mCategoryObserver);
+          }
+        }
+        updateTaskView();
+      };
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -89,7 +108,11 @@ public class AddActivityActivity extends BaseActivity {
     mNewActivityName = findViewById(R.id.new_activity_name);
     mNewActivityNote = findViewById(R.id.new_activity_note);
     mCategoryView = findViewById(R.id.category);
-    mCategoryView.setOnClickListener((v) -> CategoryActivity.startForResult(this));
+    mCategoryView.setOnClickListener(
+        (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
+    mTaskView = findViewById(R.id.task);
+    mTaskView.setOnClickListener(
+        (v) -> TaskListActivity.startAsTaskSelector(this, REQUEST_CODE_SELECT_TASK));
 
     mStartDate = findViewById(R.id.start_datetime_date);
     mStartTime = findViewById(R.id.start_datetime_time);
@@ -103,9 +126,9 @@ public class AddActivityActivity extends BaseActivity {
           .observe(
               this,
               (selectedActivity) -> {
-                mSelectedActivity = selectedActivity;
-                mStartCalendar.setTime(mSelectedActivity.getStartTime());
-                mEndCalendar.setTime(mSelectedActivity.getEndTime());
+                mActivity = selectedActivity;
+                mStartCalendar.setTime(mActivity.getStartTime());
+                mEndCalendar.setTime(mActivity.getEndTime());
 
                 Long categoryId = selectedActivity.getCategoryId();
                 if (categoryId != null) {
@@ -114,6 +137,15 @@ public class AddActivityActivity extends BaseActivity {
                 } else {
                   updateCategoryView();
                 }
+
+                Long taskId = selectedActivity.getTaskId();
+                if (taskId != null) {
+                  mTask = mProjectViewModel.getTask(taskId);
+                  mTask.observe(this, mTaskObserver);
+                } else {
+                  updateTaskView();
+                }
+
                 init();
               });
     } else {
@@ -151,9 +183,9 @@ public class AddActivityActivity extends BaseActivity {
     updateDurationView();
     mDurationMinutes.setOnClickListener((v) -> showMinuteList());
 
-    if (mSelectedActivity != null) {
-      mNewActivityName.setText(mSelectedActivity.getTitle());
-      mNewActivityNote.setText(mSelectedActivity.getNote());
+    if (mActivity != null) {
+      mNewActivityName.setText(mActivity.getTitle());
+      mNewActivityNote.setText(mActivity.getNote());
     }
   }
 
@@ -177,15 +209,23 @@ public class AddActivityActivity extends BaseActivity {
         categoryId = category.getCategoryId();
       }
     }
+    Long taskId = null;
+    if (mTask != null) {
+      Task task = mTask.getValue();
+      if (task != null) {
+        taskId = task.getTaskId();
+      }
+    }
 
-    if (mSelectedActivity != null) {
-      mSelectedActivity.setTitle(newActivityName);
-      mSelectedActivity.setStartTime(mStartCalendar.getTime());
-      mSelectedActivity.setEndTime(mEndCalendar.getTime());
-      mSelectedActivity.setMinutes(minutes);
-      mSelectedActivity.setCategoryId(categoryId);
-      mSelectedActivity.setNote(mNewActivityNote.getText().toString().trim());
-      mActivityViewModel.updateActivity(mSelectedActivity);
+    if (mActivity != null) {
+      mActivity.setTitle(newActivityName);
+      mActivity.setStartTime(mStartCalendar.getTime());
+      mActivity.setEndTime(mEndCalendar.getTime());
+      mActivity.setMinutes(minutes);
+      mActivity.setCategoryId(categoryId);
+      mActivity.setTaskId(taskId);
+      mActivity.setNote(mNewActivityNote.getText().toString().trim());
+      mActivityViewModel.updateActivity(mActivity);
     } else {
       Activity activity = new Activity();
       activity.setTitle(newActivityName);
@@ -193,6 +233,7 @@ public class AddActivityActivity extends BaseActivity {
       activity.setEndTime(mEndCalendar.getTime());
       activity.setMinutes(minutes);
       activity.setCategoryId(categoryId);
+      activity.setTaskId(taskId);
       activity.setNote(mNewActivityNote.getText().toString().trim());
       mActivityViewModel.insertActivity(activity);
     }
@@ -342,10 +383,21 @@ public class AddActivityActivity extends BaseActivity {
     mCategoryView.setText(strCategory.isEmpty() ? getString(R.string.uncategorized) : strCategory);
   }
 
+  private void updateTaskView() {
+    if (mTask != null) {
+      Task task = mTask.getValue();
+      if (task != null) {
+        mTaskView.setText(task.getTitle());
+        return;
+      }
+    }
+    mTaskView.setText(R.string.no_task);
+  }
+
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == CategoryActivity.SELECT_CATEGORY) {
+    if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
       if (resultCode == RESULT_OK) {
         long selectedCategoryId =
             data.getLongExtra(
@@ -355,6 +407,23 @@ public class AddActivityActivity extends BaseActivity {
           if (mCategory != null) mCategory.removeObserver(mCategoryObserver);
           mCategory = mCategoryViewModel.getCategory(selectedCategoryId);
           mCategory.observe(this, mCategoryObserver);
+
+          if (mTask != null) {
+            mTask.removeObserver(mTaskObserver);
+            mTask = null;
+            updateTaskView();
+          }
+        }
+      }
+    } else if (requestCode == REQUEST_CODE_SELECT_TASK) {
+      if (resultCode == RESULT_OK) {
+        long selectedTaskId =
+            data.getLongExtra(
+                TaskListActivity.SELECTED_TASK_ID, TaskListActivity.INVALID_SELECTED_TASK_ID);
+        if (selectedTaskId != TaskListActivity.INVALID_SELECTED_TASK_ID) {
+          if (mTask != null) mTask.removeObserver(mTaskObserver);
+          mTask = mProjectViewModel.getTask(selectedTaskId);
+          mTask.observe(this, mTaskObserver);
         }
       }
     }

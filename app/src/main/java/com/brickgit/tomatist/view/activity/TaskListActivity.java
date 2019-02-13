@@ -25,21 +25,51 @@ import androidx.recyclerview.widget.RecyclerView;
 /** Created by Daniel Lin on 2019/2/12. */
 public class TaskListActivity extends BaseActivity {
 
+  public static final String SELECTED_TASK_ID = "SELECTED_TASK_ID";
+  public static final long INVALID_SELECTED_TASK_ID = -1;
+
+  public static final int MODE_DEFAULT = 0;
+  public static final int MODE_TASK_SELECTOR = 1;
+  private static final String MODE = "TASK_LIST_MODE";
+
+  private int mMode = MODE_DEFAULT;
+
   private RecyclerView mTaskList;
 
   private List<Task> mTasks = new ArrayList<>();
   private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<Long, Category> mCategories = new HashMap<>();
 
+  private TaskListAdapter.OnTaskClickListener mOnTaskClickListener =
+      (taskId) -> {
+        if (mMode == MODE_TASK_SELECTOR) {
+          Intent intent = new Intent();
+          intent.putExtra(SELECTED_TASK_ID, taskId);
+          setResult(RESULT_OK, intent);
+          finish();
+        } else {
+        }
+      };
+
   public static void start(Activity activity) {
     Intent intent = new Intent(activity, TaskListActivity.class);
+    intent.putExtra(MODE, MODE_DEFAULT);
     activity.startActivity(intent);
+  }
+
+  public static void startAsTaskSelector(Activity activity, int requestCode) {
+    Intent intent = new Intent(activity, TaskListActivity.class);
+    intent.putExtra(MODE, MODE_TASK_SELECTOR);
+    activity.startActivityForResult(intent, requestCode);
   }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_task_list);
+
+    mMode = getIntent().getIntExtra(MODE, MODE_DEFAULT);
+
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setTitle(R.string.tasks);
@@ -53,6 +83,7 @@ public class TaskListActivity extends BaseActivity {
     TaskListAdapter adapter = new TaskListAdapter(new ArrayList<>());
     mTaskList.setAdapter(adapter);
     adapter.expandAll();
+    adapter.setOnTaskClickListener(mOnTaskClickListener);
 
     mProjectViewModel
         .getTasks()
@@ -96,7 +127,7 @@ public class TaskListActivity extends BaseActivity {
     for (Task task : mTasks) {
       Category category = mCategories.get(task.getCategoryId());
       if (category == null) {
-        map.get(uncategorized).add(new TaskListTaskViewData(task.getTitle()));
+        map.get(uncategorized).add(new TaskListTaskViewData(task.getTitle(), task.getTaskId()));
         continue;
       }
 
@@ -104,13 +135,13 @@ public class TaskListActivity extends BaseActivity {
       if (categoryGroup == null) {
         String key = uncategorized + " - " + category.getTitle();
         if (!map.containsKey(key)) map.put(key, new ArrayList<>());
-        map.get(key).add(new TaskListTaskViewData(task.getTitle()));
+        map.get(key).add(new TaskListTaskViewData(task.getTitle(), task.getTaskId()));
         continue;
       }
 
       String key = categoryGroup.getTitle() + " - " + category.getTitle();
       if (!map.containsKey(key)) map.put(key, new ArrayList<>());
-      map.get(key).add(new TaskListTaskViewData(task.getTitle()));
+      map.get(key).add(new TaskListTaskViewData(task.getTitle(), task.getTaskId()));
     }
 
     List<TaskListCategoryViewData> newTaskList = new ArrayList<>();
@@ -124,10 +155,14 @@ public class TaskListActivity extends BaseActivity {
     TaskListAdapter adapter = new TaskListAdapter(newTaskList);
     mTaskList.setAdapter(adapter);
     adapter.expandAll();
+    adapter.setOnTaskClickListener(mOnTaskClickListener);
   }
 
   @Override
   public boolean onSupportNavigateUp() {
+    if (mMode == MODE_TASK_SELECTOR) {
+      setResult(RESULT_CANCELED);
+    }
     onBackPressed();
     return true;
   }
