@@ -13,6 +13,8 @@
     android:id="@+id/category_group_title"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:maxLines="1"
     android:textColor="@color/colorPrimary"
     android:textSize="@dimen/item_title_text_size" />
 
