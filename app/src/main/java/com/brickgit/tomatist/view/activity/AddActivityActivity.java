@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
@@ -41,6 +43,8 @@ public class AddActivityActivity extends BaseActivity {
   private static final int REQUEST_CODE_SELECT_TASK = 1;
 
   private TextInputEditText mNewActivityName;
+  private CheckBox mIsFinished;
+  private View mDatetimeLayout;
   private TextView mStartDate;
   private TextView mStartTime;
   private TextView mEndDate;
@@ -98,6 +102,12 @@ public class AddActivityActivity extends BaseActivity {
 
     mNewActivityName = findViewById(R.id.new_activity_name);
     mNewActivityNote = findViewById(R.id.new_activity_note);
+    mIsFinished = findViewById(R.id.is_finished);
+    mIsFinished.setOnCheckedChangeListener(
+        (view, isChecked) -> {
+          mActivity.setFinished(isChecked);
+          mDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        });
     mCategoryView = findViewById(R.id.category);
     mCategoryView.setOnClickListener(
         (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
@@ -105,6 +115,7 @@ public class AddActivityActivity extends BaseActivity {
     mTaskView.setOnClickListener(
         (v) -> TaskListActivity.startAsTaskSelector(this, REQUEST_CODE_SELECT_TASK));
 
+    mDatetimeLayout = findViewById(R.id.datetime_layout);
     mStartDate = findViewById(R.id.start_datetime_date);
     mStartDate.setOnClickListener((v) -> showDatePicker(true));
     mStartTime = findViewById(R.id.start_datetime_time);
@@ -126,8 +137,14 @@ public class AddActivityActivity extends BaseActivity {
               this,
               (activity) -> {
                 mActivity = activity;
-                mStartCalendar.setTime(mActivity.getStartTime());
-                mEndCalendar.setTime(mActivity.getEndTime());
+                mIsFinished.setChecked(mActivity.isFinished());
+                if (mActivity.isFinished()) {
+                  mDatetimeLayout.setVisibility(View.VISIBLE);
+                  mStartCalendar.setTime(mActivity.getStartTime());
+                  mEndCalendar.setTime(mActivity.getEndTime());
+                } else {
+                  mDatetimeLayout.setVisibility(View.GONE);
+                }
 
                 observeCategory(activity.getCategoryId());
                 observeTask(activity.getTaskId());
@@ -185,9 +202,15 @@ public class AddActivityActivity extends BaseActivity {
     }
 
     mActivity.setTitle(newActivityName);
-    mActivity.setStartTime(mStartCalendar.getTime());
-    mActivity.setEndTime(mEndCalendar.getTime());
-    mActivity.setMinutes(minutes);
+    if (mActivity.isFinished()) {
+      mActivity.setStartTime(mStartCalendar.getTime());
+      mActivity.setEndTime(mEndCalendar.getTime());
+      mActivity.setMinutes(minutes);
+    } else {
+      mActivity.setStartTime(null);
+      mActivity.setEndTime(null);
+      mActivity.setMinutes(0);
+    }
     mActivity.setCategoryId(categoryId);
     mActivity.setTaskId(taskId);
     mActivity.setNote(mNewActivityNote.getText().toString().trim());

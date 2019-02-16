@@ -33,10 +33,15 @@ public class Activity {
   @ColumnInfo(name = "title")
   private String title;
 
+  @ColumnInfo(name = "is_finished")
+  private boolean isFinished;
+
   @ColumnInfo(name = "start_time")
+  @Nullable
   private Date startTime;
 
   @ColumnInfo(name = "end_time")
+  @Nullable
   private Date endTime;
 
   @ColumnInfo(name = "minutes")
@@ -69,6 +74,15 @@ public class Activity {
     this.title = title;
   }
 
+  public boolean isFinished() {
+    return isFinished;
+  }
+
+  public void setFinished(boolean finished) {
+    isFinished = finished;
+  }
+
+  @Nullable
   public Date getStartTime() {
     return startTime;
   }
@@ -77,6 +91,7 @@ public class Activity {
     this.startTime = startTime;
   }
 
+  @Nullable
   public Date getEndTime() {
     return endTime;
   }
