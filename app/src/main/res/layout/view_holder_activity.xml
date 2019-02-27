@@ -119,31 +119,6 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-          android:id="@+id/activity_task_layout"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="5dp"
-          android:gravity="center_vertical"
-          android:orientation="horizontal">
-
-          <ImageView
-            android:id="@+id/activity_task_icon"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:src="@drawable/ic_task" />
-
-          <TextView
-            android:id="@+id/activity_task"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:ellipsize="end"
-            android:maxLines="1" />
-
-        </LinearLayout>
-
-
       </LinearLayout>
 
     </RelativeLayout>

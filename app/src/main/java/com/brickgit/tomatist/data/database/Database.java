@@ -5,12 +5,10 @@ import androidx.room.TypeConverters;
 
 /** Created by Daniel Lin on 2018/10/13. */
 @androidx.room.Database(
-    entities = {Task.class, Activity.class, Category.class, CategoryGroup.class},
+    entities = {Activity.class, Category.class, CategoryGroup.class},
     version = 1)
 @TypeConverters({DataConverters.class})
 public abstract class Database extends RoomDatabase {
-
-  public abstract TaskDao taskDao();
 
   public abstract ActivityDao activityDao();
 

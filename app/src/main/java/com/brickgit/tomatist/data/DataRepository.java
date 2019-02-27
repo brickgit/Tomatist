@@ -8,8 +8,6 @@ import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.CategoryGroupDao;
 import com.brickgit.tomatist.data.database.Database;
 import com.brickgit.tomatist.data.database.DatabaseLoader;
-import com.brickgit.tomatist.data.database.Task;
-import com.brickgit.tomatist.data.database.TaskDao;
 
 import java.util.List;
 
@@ -21,7 +19,6 @@ public class DataRepository {
   private static volatile DataRepository INSTANCE;
 
   private Database mDatabase;
-  private TaskDao mTaskDao;
   private ActivityDao mActivityDao;
   private CategoryGroupDao mCategoryGroupDao;
   private CategoryDao mCategoryDao;
@@ -37,22 +34,9 @@ public class DataRepository {
 
   private DataRepository() {
     mDatabase = DatabaseLoader.getAppDatabase();
-    mTaskDao = mDatabase.taskDao();
     mActivityDao = mDatabase.activityDao();
     mCategoryGroupDao = mDatabase.categoryGroupDao();
     mCategoryDao = mDatabase.categoryDao();
-  }
-
-  public LiveData<Task> getTask(Long taskId) {
-    return mTaskDao.getTask(taskId);
-  }
-
-  public LiveData<List<Task>> getTasks() {
-    return mTaskDao.getTasks();
-  }
-
-  public void insertTask(Task task) {
-    mTaskDao.insertTask(task);
   }
 
   public void insertActivity(Activity activity) {

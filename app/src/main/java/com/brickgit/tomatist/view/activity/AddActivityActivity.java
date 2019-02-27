@@ -14,7 +14,6 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
-import com.brickgit.tomatist.data.database.Task;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -40,7 +39,6 @@ public class AddActivityActivity extends BaseActivity {
   private static final int MODE_EDIT = 1;
 
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
-  private static final int REQUEST_CODE_SELECT_TASK = 1;
 
   private TextInputEditText mNewActivityName;
   private CheckBox mIsFinished;
@@ -51,7 +49,6 @@ public class AddActivityActivity extends BaseActivity {
   private TextView mEndTime;
   private TextView mDurationMinutes;
   private TextView mCategoryView;
-  private TextView mTaskView;
   private TextInputEditText mNewActivityNote;
 
   private int mMode = MODE_NEW;
@@ -70,16 +67,6 @@ public class AddActivityActivity extends BaseActivity {
         if (category != null) {
           mActivity.setCategoryId(category.getCategoryId());
           observeCategoryGroup(category.getCategoryGroupId());
-        }
-        updateViews();
-      };
-
-  private LiveData<Task> mTask;
-  private Observer<Task> mTaskObserver =
-      (task) -> {
-        if (task != null) {
-          mActivity.setTaskId(task.getTaskId());
-          observeCategory(task.getCategoryId());
         }
         updateViews();
       };
@@ -111,9 +98,6 @@ public class AddActivityActivity extends BaseActivity {
     mCategoryView = findViewById(R.id.category);
     mCategoryView.setOnClickListener(
         (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
-    mTaskView = findViewById(R.id.task);
-    mTaskView.setOnClickListener(
-        (v) -> TaskListActivity.startAsTaskSelector(this, REQUEST_CODE_SELECT_TASK));
 
     mDatetimeLayout = findViewById(R.id.datetime_layout);
     mStartDate = findViewById(R.id.start_datetime_date);
@@ -147,7 +131,6 @@ public class AddActivityActivity extends BaseActivity {
                 }
 
                 observeCategory(activity.getCategoryId());
-                observeTask(activity.getTaskId());
 
                 mNewActivityName.setText(mActivity.getTitle());
                 mNewActivityNote.setText(mActivity.getNote());
@@ -193,13 +176,6 @@ public class AddActivityActivity extends BaseActivity {
         categoryId = category.getCategoryId();
       }
     }
-    Long taskId = null;
-    if (mTask != null) {
-      Task task = mTask.getValue();
-      if (task != null) {
-        taskId = task.getTaskId();
-      }
-    }
 
     mActivity.setTitle(newActivityName);
     if (mActivity.isFinished()) {
@@ -212,7 +188,6 @@ public class AddActivityActivity extends BaseActivity {
       mActivity.setMinutes(0);
     }
     mActivity.setCategoryId(categoryId);
-    mActivity.setTaskId(taskId);
     mActivity.setNote(mNewActivityNote.getText().toString().trim());
 
     if (mMode == MODE_EDIT) {
@@ -224,10 +199,9 @@ public class AddActivityActivity extends BaseActivity {
     finish();
   }
 
-  private boolean observeCategoryGroup(Long categoryGroupId) {
+  private void observeCategoryGroup(Long categoryGroupId) {
     if (mCategoryGroup != null && mCategoryGroup.getValue() != null) {
       if (mCategoryGroup.getValue().getCategoryGroupId().equals(categoryGroupId)) {
-        return false;
       } else {
         mCategoryGroup.removeObserver(mCategoryGroupObserver);
         mCategoryGroup = null;
@@ -238,14 +212,11 @@ public class AddActivityActivity extends BaseActivity {
       mCategoryGroup = mCategoryViewModel.getCategoryGroup(categoryGroupId);
       mCategoryGroup.observe(this, mCategoryGroupObserver);
     }
-
-    return true;
   }
 
-  private boolean observeCategory(Long categoryId) {
+  private void observeCategory(Long categoryId) {
     if (mCategory != null && mCategory.getValue() != null) {
       if (mCategory.getValue().getCategoryId().equals(categoryId)) {
-        return false;
       } else {
         mCategory.removeObserver(mCategoryObserver);
         mCategory = null;
@@ -256,26 +227,6 @@ public class AddActivityActivity extends BaseActivity {
       mCategory = mCategoryViewModel.getCategory(categoryId);
       mCategory.observe(this, mCategoryObserver);
     }
-
-    return true;
-  }
-
-  private boolean observeTask(Long taskId) {
-    if (mTask != null && mTask.getValue() != null) {
-      if (mTask.getValue().getTaskId().equals(taskId)) {
-        return false;
-      } else {
-        mTask.removeObserver(mTaskObserver);
-        mTask = null;
-      }
-    }
-
-    if (taskId != null) {
-      mTask = mProjectViewModel.getTask(taskId);
-      mTask.observe(this, mTaskObserver);
-    }
-
-    return true;
   }
 
   @Override
@@ -408,12 +359,6 @@ public class AddActivityActivity extends BaseActivity {
     }
     String strCategory = sb.toString().trim();
     mCategoryView.setText(strCategory.isEmpty() ? getString(R.string.uncategorized) : strCategory);
-
-    if (mTask != null && mTask.getValue() != null) {
-      mTaskView.setText(mTask.getValue().getTitle());
-    } else {
-      mTaskView.setText(R.string.no_task);
-    }
   }
 
   @Override
@@ -426,18 +371,7 @@ public class AddActivityActivity extends BaseActivity {
                 CategoryActivity.SELECTED_CATEGORY_ID,
                 CategoryActivity.INVALID_SELECTED_CATEGORY_ID);
         if (selectedCategoryId != CategoryActivity.INVALID_SELECTED_CATEGORY_ID) {
-          if (observeCategory(selectedCategoryId)) {
-            observeTask(null);
-          }
-        }
-      }
-    } else if (requestCode == REQUEST_CODE_SELECT_TASK) {
-      if (resultCode == RESULT_OK) {
-        long selectedTaskId =
-            data.getLongExtra(
-                TaskListActivity.SELECTED_TASK_ID, TaskListActivity.INVALID_SELECTED_TASK_ID);
-        if (selectedTaskId != TaskListActivity.INVALID_SELECTED_TASK_ID) {
-          observeTask(selectedTaskId);
+          observeCategory(selectedCategoryId);
         }
       }
     }

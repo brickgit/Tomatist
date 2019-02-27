@@ -10,7 +10,6 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
-import com.brickgit.tomatist.data.database.Task;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.view.activitylist.ActivityListAdapter;
 import com.brickgit.tomatist.view.activitylist.ActivityListTouchHelperCallback;
@@ -77,9 +76,6 @@ public class CalendarActivity extends BaseActivity {
     navigationView.setNavigationItemSelectedListener(
         (menuItem) -> {
           switch (menuItem.getItemId()) {
-            case R.id.nav_tasks:
-              TaskListActivity.start(this);
-              break;
             default:
               break;
           }
@@ -158,17 +154,6 @@ public class CalendarActivity extends BaseActivity {
                 map.put(category.getCategoryId(), category);
               }
               mActivityListAdapter.updateCategories(map);
-            });
-    mProjectViewModel
-        .getTasks()
-        .observe(
-            this,
-            (tasks) -> {
-              Map<Long, Task> map = new HashMap<>();
-              for (Task task : tasks) {
-                map.put(task.getTaskId(), task);
-              }
-              mActivityListAdapter.updateTasks(map);
             });
 
     firstLaunchSetup();
