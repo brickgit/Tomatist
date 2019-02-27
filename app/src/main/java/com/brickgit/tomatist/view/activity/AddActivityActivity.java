@@ -202,6 +202,7 @@ public class AddActivityActivity extends BaseActivity {
   private void observeCategoryGroup(Long categoryGroupId) {
     if (mCategoryGroup != null && mCategoryGroup.getValue() != null) {
       if (mCategoryGroup.getValue().getCategoryGroupId().equals(categoryGroupId)) {
+        return;
       } else {
         mCategoryGroup.removeObserver(mCategoryGroupObserver);
         mCategoryGroup = null;
@@ -217,6 +218,7 @@ public class AddActivityActivity extends BaseActivity {
   private void observeCategory(Long categoryId) {
     if (mCategory != null && mCategory.getValue() != null) {
       if (mCategory.getValue().getCategoryId().equals(categoryId)) {
+        return;
       } else {
         mCategory.removeObserver(mCategoryObserver);
         mCategory = null;

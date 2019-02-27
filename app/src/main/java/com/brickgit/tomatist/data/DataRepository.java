@@ -55,8 +55,12 @@ public class DataRepository {
     return mActivityDao.getActivity(id);
   }
 
-  public LiveData<List<Activity>> getActivities(int year, int month, int day) {
-    return mActivityDao.getActivitiesForDate(year, month, day);
+  public LiveData<List<Activity>> getFinishedActivities(int year, int month, int day) {
+    return mActivityDao.getFinishedActivitiesForDate(year, month, day);
+  }
+
+  public LiveData<List<Activity>> getUnfinishedActivities() {
+    return mActivityDao.getUnfinishedActivities();
   }
 
   public long insertCategoryGroup(CategoryGroup categoryGroup) {

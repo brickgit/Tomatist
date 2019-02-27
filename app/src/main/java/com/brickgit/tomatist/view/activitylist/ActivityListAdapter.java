@@ -23,7 +23,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     void onActivityClick(Activity activity);
   }
 
-  private String mDate = "";
+  private String mTag = "";
   private List<Activity> mActivities = new LinkedList<>();
   private OnActivityClickListener mOnActivityClickListener;
 
@@ -32,14 +32,17 @@ public class ActivityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
   public ActivityListAdapter() {}
 
-  public void updateActivities(String date, List<Activity> activities) {
-    if (!mDate.equals(date)) {
-      mDate = date;
+  public void updateActivities(String tag, List<Activity> activities) {
+    if (!mTag.equals(tag)) {
+      mTag = tag;
       mActivities.clear();
       mActivities.addAll(activities);
       notifyDataSetChanged();
     } else {
-      if (mActivities.size() > activities.size()) {
+      if (mActivities.isEmpty()) {
+        mActivities.addAll(activities);
+        notifyDataSetChanged();
+      } else if (mActivities.size() > activities.size()) {
         for (int index = 0; index < mActivities.size(); index++) {
           Activity activity = mActivities.get(index);
           if (!activities.contains(activity)) {

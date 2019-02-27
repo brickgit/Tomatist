@@ -56,10 +56,15 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
       Activity activity, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
     mActivity = activity;
 
-    mStartDateTime.setText(dateFormat.format(activity.getStartTime()));
-    if (activity.getMinutes() != 0) {
-      mEndDateTime.setText(dateFormat.format(activity.getEndTime()));
+    if (activity.getStartTime() != null) {
+      mStartDateTime.setText(dateFormat.format(activity.getStartTime()));
+      if (activity.getMinutes() != 0) {
+        mEndDateTime.setText(dateFormat.format(activity.getEndTime()));
+      } else {
+        mEndDateTime.setText("");
+      }
     } else {
+      mStartDateTime.setText("");
       mEndDateTime.setText("");
     }
 

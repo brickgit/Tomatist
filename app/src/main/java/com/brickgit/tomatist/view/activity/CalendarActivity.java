@@ -76,6 +76,8 @@ public class CalendarActivity extends BaseActivity {
     navigationView.setNavigationItemSelectedListener(
         (menuItem) -> {
           switch (menuItem.getItemId()) {
+            case R.id.nav_unfinished_activities:
+              gotoUnfinishedActivityListActivity();
             default:
               break;
           }
@@ -105,7 +107,7 @@ public class CalendarActivity extends BaseActivity {
           mSelectedDay = day;
           if (mActivities != null) mActivities.removeObserver(mObserver);
           mActivities =
-              mActivityViewModel.getActivities(day.getYear(), day.getMonth(), day.getDay());
+              mActivityViewModel.getFinishedActivities(day.getYear(), day.getMonth(), day.getDay());
           mActivities.observe(CalendarActivity.this, mObserver);
         });
 
@@ -116,10 +118,7 @@ public class CalendarActivity extends BaseActivity {
     mActivityList.setLayoutManager(mLayoutManager);
 
     ItemTouchHelper.Callback callback =
-        new ActivityListTouchHelperCallback(
-            (position) -> {
-              removeActivity(position);
-            });
+        new ActivityListTouchHelperCallback((position) -> removeActivity(position));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(mActivityList);
 
@@ -129,7 +128,7 @@ public class CalendarActivity extends BaseActivity {
         (activity) -> gotoAddActivityActivity(activity.getActivityId()));
 
     mActivities =
-        mActivityViewModel.getActivities(
+        mActivityViewModel.getFinishedActivities(
             mSelectedDay.getYear(), mSelectedDay.getMonth(), mSelectedDay.getDay());
     mActivities.observe(this, mObserver);
 
@@ -197,6 +196,11 @@ public class CalendarActivity extends BaseActivity {
       intent.putExtra(AddActivityActivity.SELECTED_MONTH_KEY, mSelectedDay.getMonth() - 1);
       intent.putExtra(AddActivityActivity.SELECTED_DAY_KEY, mSelectedDay.getDay());
     }
+    startActivity(intent);
+  }
+
+  private void gotoUnfinishedActivityListActivity() {
+    Intent intent = new Intent(this, UnfinishedActivityListActivity.class);
     startActivity(intent);
   }
 

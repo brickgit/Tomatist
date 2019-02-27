@@ -14,11 +14,12 @@ import androidx.lifecycle.ViewModel;
 public class ActivityViewModel extends ViewModel {
 
   private DataRepository mDataRepository;
-  private Map<String, LiveData<List<Activity>>> mActivities;
+  private Map<String, LiveData<List<Activity>>> mFinishedActivities;
+  private LiveData<List<Activity>> mUnfinishedActivities;
 
   public ActivityViewModel() {
     mDataRepository = DataRepository.getInstance();
-    mActivities = new HashMap<>();
+    mFinishedActivities = new HashMap<>();
   }
 
   public void insertActivity(Activity activity) {
@@ -37,14 +38,22 @@ public class ActivityViewModel extends ViewModel {
     return mDataRepository.getActivity(id);
   }
 
-  public LiveData<List<Activity>> getActivities(int year, int month, int day) {
+  public LiveData<List<Activity>> getFinishedActivities(int year, int month, int day) {
     String key = String.format(Locale.getDefault(), "%d/%d/%d", year, month, day);
-    if (mActivities.containsKey(key)) {
-      return mActivities.get(key);
+    if (mFinishedActivities.containsKey(key)) {
+      return mFinishedActivities.get(key);
     }
 
-    LiveData<List<Activity>> activities = mDataRepository.getActivities(year, month, day);
-    mActivities.put(key, activities);
+    LiveData<List<Activity>> activities = mDataRepository.getFinishedActivities(year, month, day);
+    mFinishedActivities.put(key, activities);
     return activities;
+  }
+
+  public LiveData<List<Activity>> getUnfinishedActivities() {
+    if (mUnfinishedActivities == null) {
+      mUnfinishedActivities = mDataRepository.getUnfinishedActivities();
+    }
+
+    return mUnfinishedActivities;
   }
 }

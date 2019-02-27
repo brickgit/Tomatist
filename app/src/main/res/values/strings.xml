@@ -14,6 +14,7 @@
   <string name="end_time">End Time</string>
   <string name="duration">Duration</string>
   <string name="duration_unit">minute(s)</string>
+  <string name="unfinished_activities">Unfinished Activities</string>
   <string name="category">Category</string>
   <string name="project">Project</string>
   <string name="task">Task</string>
