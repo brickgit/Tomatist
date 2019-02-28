@@ -19,6 +19,8 @@
   <string name="project">Project</string>
   <string name="task">Task</string>
   <string name="note">Note</string>
+  <string name="all">All</string>
+  <string name="category_group">Category Group</string>
 
   <string name="activity_deleted">Activity deleted!</string>
   <string name="undo">Undo</string>

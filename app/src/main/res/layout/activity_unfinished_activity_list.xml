@@ -21,19 +21,54 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/unfinished_activity_list"
+  <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
-    android:scrollbars="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toStartOf="@+id/guideline"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:background="@color/colorPrimary">
+
+      <Button
+        android:id="@+id/category_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/clear"
+        android:background="@android:color/transparent"
+        android:text="@string/all"
+        android:textColor="@android:color/white"
+        android:textSize="15sp" />
+
+      <ImageView
+        android:id="@+id/clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:src="@drawable/ic_clear" />
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/unfinished_activity_list"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@android:color/white"
+      android:paddingTop="6dp"
+      android:paddingBottom="6dp"
+      android:scrollbars="vertical"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/guideline"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+  </LinearLayout>
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/add_activity"

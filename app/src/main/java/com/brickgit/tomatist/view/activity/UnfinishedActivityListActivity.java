@@ -3,6 +3,7 @@ package com.brickgit.tomatist.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Activity;
@@ -13,6 +14,7 @@ import com.brickgit.tomatist.view.activitylist.ActivityListTouchHelperCallback;
 import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +28,19 @@ import androidx.recyclerview.widget.RecyclerView;
 /** Created by Daniel Lin on 2019/2/26. */
 public class UnfinishedActivityListActivity extends BaseActivity {
 
+  private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
+
   private View mRootView;
+  private Button mCategoryButton;
   private RecyclerView mActivityList;
   private LinearLayoutManager mLayoutManager;
   private ActivityListAdapter mActivityListAdapter;
 
+  private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
+  private Map<Long, Category> mCategories = new HashMap<>();
   private LiveData<List<Activity>> mActivities;
+  private Long mSelectedCategoryId = null;
+  private List<Activity> mSelectedActivities = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +56,16 @@ public class UnfinishedActivityListActivity extends BaseActivity {
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     findViewById(R.id.add_activity).setOnClickListener((view) -> gotoAddActivityActivity(null));
+
+    mCategoryButton = findViewById(R.id.category_button);
+    mCategoryButton.setOnClickListener(
+        (view) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
+    findViewById(R.id.clear)
+        .setOnClickListener(
+            (view) -> {
+              mSelectedCategoryId = null;
+              updateViews();
+            });
 
     mActivityList = findViewById(R.id.unfinished_activity_list);
     mActivityList.setHasFixedSize(true);
@@ -65,8 +84,7 @@ public class UnfinishedActivityListActivity extends BaseActivity {
         (activity) -> gotoAddActivityActivity(activity.getActivityId()));
 
     mActivities = mActivityViewModel.getUnfinishedActivities();
-    mActivities.observe(
-        this, (activities) -> mActivityListAdapter.updateActivities("", activities));
+    mActivities.observe(this, (activities) -> updateViews());
 
     mCategoryViewModel
         .getCategoryGroups()
@@ -77,6 +95,8 @@ public class UnfinishedActivityListActivity extends BaseActivity {
               for (CategoryGroup group : categoryGroups) {
                 map.put(group.getCategoryGroupId(), group);
               }
+              mCategoryGroups.clear();
+              mCategoryGroups.putAll(map);
               mActivityListAdapter.updateCategoryGroups(map);
             });
     mCategoryViewModel
@@ -88,13 +108,14 @@ public class UnfinishedActivityListActivity extends BaseActivity {
               for (Category category : categories) {
                 map.put(category.getCategoryId(), category);
               }
+              mCategories.clear();
+              mCategories.putAll(map);
               mActivityListAdapter.updateCategories(map);
             });
   }
 
   @Override
   public boolean onSupportNavigateUp() {
-    setResult(RESULT_CANCELED);
     onBackPressed();
     return true;
   }
@@ -113,15 +134,10 @@ public class UnfinishedActivityListActivity extends BaseActivity {
   }
 
   private void removeActivity(int position) {
-    if (mActivities != null) {
-      List<Activity> activities = mActivities.getValue();
-      if (activities != null) {
-        Activity activity = activities.get(position);
-        if (activity != null) {
-          mActivityViewModel.deleteActivity(activity);
-          showActivityDeletedConfirmation(activity);
-        }
-      }
+    Activity activity = mSelectedActivities.get(position);
+    if (activity != null) {
+      mActivityViewModel.deleteActivity(activity);
+      showActivityDeletedConfirmation(activity);
     }
   }
 
@@ -129,5 +145,62 @@ public class UnfinishedActivityListActivity extends BaseActivity {
     Snackbar.make(mRootView, R.string.activity_deleted, Snackbar.LENGTH_SHORT)
         .setAction(R.string.undo, (view) -> mActivityViewModel.insertActivity(activity))
         .show();
+  }
+
+  private void updateViews() {
+    String tag = getString(R.string.all);
+    if (mSelectedCategoryId == null) {
+      mCategoryButton.setText(getString(R.string.all));
+      mSelectedActivities.clear();
+      if (mActivities != null && mActivities.getValue() != null) {
+        mSelectedActivities.addAll(mActivities.getValue());
+      }
+    } else {
+      Category category = mCategories.get(mSelectedCategoryId);
+      if (category != null) {
+        tag = String.valueOf(category.getCategoryId());
+        StringBuilder sb = new StringBuilder();
+        sb.append(category.getTitle());
+        CategoryGroup categoryGroup = mCategoryGroups.get(category.getCategoryGroupId());
+        if (categoryGroup != null) {
+          sb.insert(0, categoryGroup.getTitle() + " - ");
+        }
+        mCategoryButton.setText(sb.toString());
+
+        mSelectedActivities.clear();
+        if (mActivities != null && mActivities.getValue() != null) {
+          for (Activity activity : mActivities.getValue()) {
+            if (activity.getCategoryId().equals(category.getCategoryId())) {
+              mSelectedActivities.add(activity);
+            }
+          }
+        }
+      } else {
+        mCategoryButton.setText(getString(R.string.all));
+        mSelectedActivities.clear();
+        if (mActivities != null && mActivities.getValue() != null) {
+          mSelectedActivities.addAll(mActivities.getValue());
+        }
+      }
+    }
+    mActivityListAdapter.updateActivities(tag, mSelectedActivities);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
+      if (resultCode == RESULT_OK) {
+        long selectedCategoryId =
+            data.getLongExtra(
+                CategoryActivity.SELECTED_CATEGORY_ID,
+                CategoryActivity.INVALID_SELECTED_CATEGORY_ID);
+        mSelectedCategoryId =
+            selectedCategoryId != CategoryActivity.INVALID_SELECTED_CATEGORY_ID
+                ? selectedCategoryId
+                : null;
+        updateViews();
+      }
+    }
   }
 }
