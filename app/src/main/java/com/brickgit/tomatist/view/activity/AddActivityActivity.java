@@ -96,8 +96,9 @@ public class AddActivityActivity extends BaseActivity {
           mDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
     mCategoryView = findViewById(R.id.category);
-    mCategoryView.setOnClickListener(
-        (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
+    findViewById(R.id.category_layout)
+        .setOnClickListener(
+            (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
 
     mDatetimeLayout = findViewById(R.id.datetime_layout);
     mStartDate = findViewById(R.id.start_datetime_date);
@@ -109,7 +110,7 @@ public class AddActivityActivity extends BaseActivity {
     mEndTime = findViewById(R.id.end_datetime_time);
     mEndTime.setOnClickListener((v) -> showTimePicker(false));
     mDurationMinutes = findViewById(R.id.duration_minutes);
-    mDurationMinutes.setOnClickListener((v) -> showMinuteList());
+    findViewById(R.id.duration_layout).setOnClickListener((v) -> showMinuteList());
 
     mActivity = new Activity();
     updateViews();
