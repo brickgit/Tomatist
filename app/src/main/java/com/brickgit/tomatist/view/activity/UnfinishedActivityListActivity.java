@@ -51,7 +51,7 @@ public class UnfinishedActivityListActivity extends BaseActivity {
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar().setTitle(R.string.unfinished_activities);
+    getSupportActionBar().setTitle(R.string.unfinished_actions);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -142,7 +142,7 @@ public class UnfinishedActivityListActivity extends BaseActivity {
   }
 
   private void showActivityDeletedConfirmation(Activity activity) {
-    Snackbar.make(mRootView, R.string.activity_deleted, Snackbar.LENGTH_SHORT)
+    Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
         .setAction(R.string.undo, (view) -> mActivityViewModel.insertActivity(activity))
         .show();
   }

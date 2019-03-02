@@ -2,23 +2,22 @@
   <string name="app_name">Tomatist</string>
   <string name="action_settings">Settings</string>
   <string name="action_add">Add</string>
-  <string name="tasks">Tasks</string>
   <string name="name">Name</string>
   <string name="error_name_is_required">Name is required</string>
-  <string name="add_activity">Add Activity</string>
-  <string name="edit_activity">Edit Activity</string>
+  <string name="add_acton">Add Action</string>
+  <string name="edit_action">Edit Action</string>
   <string name="is_finished">Finished</string>
   <string name="start_time">Start Time</string>
   <string name="end_time">End Time</string>
   <string name="duration">Duration</string>
   <string name="duration_unit">minute(s)</string>
-  <string name="unfinished_activities">Unfinished Activities</string>
+  <string name="unfinished_actions">Unfinished Actions</string>
   <string name="category">Category</string>
   <string name="note">Note</string>
   <string name="all">All</string>
   <string name="category_group">Category Group</string>
 
-  <string name="activity_deleted">Activity deleted!</string>
+  <string name="action_deleted">Action deleted!</string>
   <string name="undo">Undo</string>
 
   <string name="add_category_group">Add Category Group</string>

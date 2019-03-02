@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
   <group android:checkableBehavior="none">
     <item
-      android:id="@+id/nav_unfinished_activities"
-      android:title="@string/unfinished_activities" />
+      android:id="@+id/nav_unfinished_actions"
+      android:title="@string/unfinished_actions" />
   </group>
 </menu>

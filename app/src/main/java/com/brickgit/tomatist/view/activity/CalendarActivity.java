@@ -76,7 +76,7 @@ public class CalendarActivity extends BaseActivity {
     navigationView.setNavigationItemSelectedListener(
         (menuItem) -> {
           switch (menuItem.getItemId()) {
-            case R.id.nav_unfinished_activities:
+            case R.id.nav_unfinished_actions:
               gotoUnfinishedActivityListActivity();
             default:
               break;
@@ -182,7 +182,7 @@ public class CalendarActivity extends BaseActivity {
   }
 
   private void showActivityDeletedConfirmation(Activity activity) {
-    Snackbar.make(mRootView, R.string.activity_deleted, Snackbar.LENGTH_SHORT)
+    Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
         .setAction(R.string.undo, (view) -> mActivityViewModel.insertActivity(activity))
         .show();
   }

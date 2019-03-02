@@ -83,7 +83,7 @@ public class AddActivityActivity extends BaseActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar()
-        .setTitle(mMode == MODE_EDIT ? R.string.edit_activity : R.string.add_activity);
+        .setTitle(mMode == MODE_EDIT ? R.string.edit_action : R.string.add_acton);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
