@@ -1,13 +1,13 @@
-package com.brickgit.tomatist.view.activitylist;
+package com.brickgit.tomatist.view.actionlist;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ActivityListTouchHelperCallback extends ItemTouchHelper.Callback {
+public class ActionListTouchHelperCallback extends ItemTouchHelper.Callback {
 
-  private final ActivityListTouchHelperListener mListener;
+  private final ActionListTouchHelperListener mListener;
 
-  public ActivityListTouchHelperCallback(ActivityListTouchHelperListener listener) {
+  public ActionListTouchHelperCallback(ActionListTouchHelperListener listener) {
     mListener = listener;
   }
 

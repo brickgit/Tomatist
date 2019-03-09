@@ -1,7 +1,7 @@
 package com.brickgit.tomatist.data;
 
-import com.brickgit.tomatist.data.database.Activity;
-import com.brickgit.tomatist.data.database.ActivityDao;
+import com.brickgit.tomatist.data.database.Action;
+import com.brickgit.tomatist.data.database.ActionDao;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryDao;
 import com.brickgit.tomatist.data.database.CategoryGroup;
@@ -19,7 +19,7 @@ public class DataRepository {
   private static volatile DataRepository INSTANCE;
 
   private Database mDatabase;
-  private ActivityDao mActivityDao;
+  private ActionDao mActionDao;
   private CategoryGroupDao mCategoryGroupDao;
   private CategoryDao mCategoryDao;
 
@@ -34,33 +34,33 @@ public class DataRepository {
 
   private DataRepository() {
     mDatabase = DatabaseLoader.getAppDatabase();
-    mActivityDao = mDatabase.activityDao();
+    mActionDao = mDatabase.actionDao();
     mCategoryGroupDao = mDatabase.categoryGroupDao();
     mCategoryDao = mDatabase.categoryDao();
   }
 
-  public void insertActivity(Activity activity) {
-    mActivityDao.insertActivity(activity);
+  public void insertAction(Action action) {
+    mActionDao.insertAction(action);
   }
 
-  public void updateActivity(Activity activity) {
-    mActivityDao.updateActivity(activity);
+  public void updateAction(Action action) {
+    mActionDao.updateAction(action);
   }
 
-  public void deleteActivity(Activity activity) {
-    mActivityDao.deleteActivity(activity);
+  public void deleteAction(Action action) {
+    mActionDao.deleteAction(action);
   }
 
-  public LiveData<Activity> getActivity(long id) {
-    return mActivityDao.getActivity(id);
+  public LiveData<Action> getAction(long id) {
+    return mActionDao.getAction(id);
   }
 
-  public LiveData<List<Activity>> getFinishedActivities(int year, int month, int day) {
-    return mActivityDao.getFinishedActivitiesForDate(year, month, day);
+  public LiveData<List<Action>> getFinishedActions(int year, int month, int day) {
+    return mActionDao.getFinishedActionsForDate(year, month, day);
   }
 
-  public LiveData<List<Activity>> getUnfinishedActivities() {
-    return mActivityDao.getUnfinishedActivities();
+  public LiveData<List<Action>> getUnfinishedActions() {
+    return mActionDao.getUnfinishedActions();
   }
 
   public long insertCategoryGroup(CategoryGroup categoryGroup) {

@@ -8,17 +8,17 @@ import androidx.room.PrimaryKey;
 public class CategoryGroup {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  private Long categoryGroupId;
+  private Long id;
 
   @ColumnInfo(name = "title")
   private String title;
 
-  public Long getCategoryGroupId() {
-    return categoryGroupId;
+  public Long getId() {
+    return id;
   }
 
-  public void setCategoryGroupId(Long categoryGroupId) {
-    this.categoryGroupId = categoryGroupId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getTitle() {
@@ -33,6 +33,6 @@ public class CategoryGroup {
   public boolean equals(Object obj) {
     if (obj == null) return false;
     if (!(obj instanceof CategoryGroup)) return false;
-    return this.categoryGroupId == ((CategoryGroup) obj).categoryGroupId;
+    return this.id == ((CategoryGroup) obj).id;
   }
 }

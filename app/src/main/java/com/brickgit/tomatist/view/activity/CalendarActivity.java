@@ -7,12 +7,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.brickgit.tomatist.R;
-import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
-import com.brickgit.tomatist.view.activitylist.ActivityListAdapter;
-import com.brickgit.tomatist.view.activitylist.ActivityListTouchHelperCallback;
+import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
+import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -40,15 +40,15 @@ public class CalendarActivity extends BaseActivity {
   private View mRootView;
   private DrawerLayout mDrawerLayout;
   private MaterialCalendarView mCalendarView;
-  private RecyclerView mActivityList;
+  private RecyclerView mActionList;
   private LinearLayoutManager mLayoutManager;
-  private ActivityListAdapter mActivityListAdapter;
+  private ActionListAdapter mActionListAdapter;
 
   private CalendarDay mSelectedDay = CalendarDay.today();
 
-  private LiveData<List<Activity>> mActivities;
-  private Observer<List<Activity>> mObserver =
-      (activities) -> {
+  private LiveData<List<Action>> mActions;
+  private Observer<List<Action>> mObserver =
+      (actions) -> {
         String date =
             String.format(
                 Locale.getDefault(),
@@ -56,7 +56,7 @@ public class CalendarActivity extends BaseActivity {
                 mSelectedDay.getYear(),
                 mSelectedDay.getMonth(),
                 mSelectedDay.getDay());
-        mActivityListAdapter.updateActivities(date, activities);
+        mActionListAdapter.updateActions(date, actions);
       };
 
   @Override
@@ -77,7 +77,7 @@ public class CalendarActivity extends BaseActivity {
         (menuItem) -> {
           switch (menuItem.getItemId()) {
             case R.id.nav_unfinished_actions:
-              gotoUnfinishedActivityListActivity();
+              gotoUnfinishedActionListActivity();
             default:
               break;
           }
@@ -85,7 +85,7 @@ public class CalendarActivity extends BaseActivity {
           return true;
         });
 
-    findViewById(R.id.add_activity).setOnClickListener((view) -> gotoAddActivityActivity(null));
+    findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null));
 
     mCalendarView = findViewById(R.id.calendar_view);
     mCalendarView.addDecorator(
@@ -105,32 +105,32 @@ public class CalendarActivity extends BaseActivity {
     mCalendarView.setOnDateChangedListener(
         (view, day, b) -> {
           mSelectedDay = day;
-          if (mActivities != null) mActivities.removeObserver(mObserver);
-          mActivities =
-              mActivityViewModel.getFinishedActivities(day.getYear(), day.getMonth(), day.getDay());
-          mActivities.observe(CalendarActivity.this, mObserver);
+          if (mActions != null) mActions.removeObserver(mObserver);
+          mActions =
+              mActionViewModel.getFinishedActions(day.getYear(), day.getMonth(), day.getDay());
+          mActions.observe(CalendarActivity.this, mObserver);
         });
 
-    mActivityList = findViewById(R.id.activity_list);
-    mActivityList.setHasFixedSize(true);
+    mActionList = findViewById(R.id.action_list);
+    mActionList.setHasFixedSize(true);
 
     mLayoutManager = new LinearLayoutManager(this);
-    mActivityList.setLayoutManager(mLayoutManager);
+    mActionList.setLayoutManager(mLayoutManager);
 
     ItemTouchHelper.Callback callback =
-        new ActivityListTouchHelperCallback((position) -> removeActivity(position));
+        new ActionListTouchHelperCallback((position) -> removeAction(position));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-    touchHelper.attachToRecyclerView(mActivityList);
+    touchHelper.attachToRecyclerView(mActionList);
 
-    mActivityListAdapter = new ActivityListAdapter();
-    mActivityList.setAdapter(mActivityListAdapter);
-    mActivityListAdapter.setOnActivityClickListener(
-        (activity) -> gotoAddActivityActivity(activity.getActivityId()));
+    mActionListAdapter = new ActionListAdapter();
+    mActionList.setAdapter(mActionListAdapter);
+    mActionListAdapter.setOnActionClickListener(
+        (action) -> gotoAddActionActivity(action.getId()));
 
-    mActivities =
-        mActivityViewModel.getFinishedActivities(
+    mActions =
+        mActionViewModel.getFinishedActions(
             mSelectedDay.getYear(), mSelectedDay.getMonth(), mSelectedDay.getDay());
-    mActivities.observe(this, mObserver);
+    mActions.observe(this, mObserver);
 
     mCategoryViewModel
         .getCategoryGroups()
@@ -139,9 +139,9 @@ public class CalendarActivity extends BaseActivity {
             (categoryGroups) -> {
               Map<Long, CategoryGroup> map = new HashMap<>();
               for (CategoryGroup group : categoryGroups) {
-                map.put(group.getCategoryGroupId(), group);
+                map.put(group.getId(), group);
               }
-              mActivityListAdapter.updateCategoryGroups(map);
+              mActionListAdapter.updateCategoryGroups(map);
             });
     mCategoryViewModel
         .getCategories()
@@ -150,9 +150,9 @@ public class CalendarActivity extends BaseActivity {
             (categories) -> {
               Map<Long, Category> map = new HashMap<>();
               for (Category category : categories) {
-                map.put(category.getCategoryId(), category);
+                map.put(category.getId(), category);
               }
-              mActivityListAdapter.updateCategories(map);
+              mActionListAdapter.updateCategories(map);
             });
 
     firstLaunchSetup();
@@ -168,39 +168,39 @@ public class CalendarActivity extends BaseActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private void removeActivity(int position) {
-    if (mActivities != null) {
-      List<Activity> activities = mActivities.getValue();
-      if (activities != null) {
-        Activity activity = activities.get(position);
-        if (activity != null) {
-          mActivityViewModel.deleteActivity(activity);
-          showActivityDeletedConfirmation(activity);
+  private void removeAction(int position) {
+    if (mActions != null) {
+      List<Action> actions = mActions.getValue();
+      if (actions != null) {
+        Action action = actions.get(position);
+        if (action != null) {
+          mActionViewModel.deleteAction(action);
+          showActionDeletedConfirmation(action);
         }
       }
     }
   }
 
-  private void showActivityDeletedConfirmation(Activity activity) {
+  private void showActionDeletedConfirmation(Action action) {
     Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
-        .setAction(R.string.undo, (view) -> mActivityViewModel.insertActivity(activity))
+        .setAction(R.string.undo, (view) -> mActionViewModel.insertAction(action))
         .show();
   }
 
-  private void gotoAddActivityActivity(Long activityId) {
-    Intent intent = new Intent(this, AddActivityActivity.class);
-    if (activityId != null) {
-      intent.putExtra(AddActivityActivity.SELECTED_ACTIVITY_KEY, activityId);
+  private void gotoAddActionActivity(Long actionId) {
+    Intent intent = new Intent(this, AddActionActivity.class);
+    if (actionId != null) {
+      intent.putExtra(AddActionActivity.SELECTED_ACTION_KEY, actionId);
     } else {
-      intent.putExtra(AddActivityActivity.SELECTED_YEAR_KEY, mSelectedDay.getYear());
-      intent.putExtra(AddActivityActivity.SELECTED_MONTH_KEY, mSelectedDay.getMonth() - 1);
-      intent.putExtra(AddActivityActivity.SELECTED_DAY_KEY, mSelectedDay.getDay());
+      intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, mSelectedDay.getYear());
+      intent.putExtra(AddActionActivity.SELECTED_MONTH_KEY, mSelectedDay.getMonth() - 1);
+      intent.putExtra(AddActionActivity.SELECTED_DAY_KEY, mSelectedDay.getDay());
     }
     startActivity(intent);
   }
 
-  private void gotoUnfinishedActivityListActivity() {
-    Intent intent = new Intent(this, UnfinishedActivityListActivity.class);
+  private void gotoUnfinishedActionListActivity() {
+    Intent intent = new Intent(this, UnfinishedActionListActivity.class);
     startActivity(intent);
   }
 
@@ -235,7 +235,7 @@ public class CalendarActivity extends BaseActivity {
       List<String> categories = categoryMap.get(categoryGroupTitle);
       for (String categoryTitle : categories) {
         Category newCategory = new Category();
-        newCategory.setCategoryGroupId(newGroupId);
+        newCategory.setGroupId(newGroupId);
         newCategory.setTitle(categoryTitle);
         newCategories.add(newCategory);
       }

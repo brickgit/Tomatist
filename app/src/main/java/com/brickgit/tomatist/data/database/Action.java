@@ -11,7 +11,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(
-    tableName = "activities",
+    tableName = "actions",
     indices = {@Index("category_id")},
     foreignKeys = {
       @ForeignKey(
@@ -20,10 +20,10 @@ import androidx.room.PrimaryKey;
           childColumns = "category_id",
           onDelete = ForeignKey.SET_NULL)
     })
-public class Activity {
+public class Action {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  private Long activityId;
+  private Long id;
 
   @ColumnInfo(name = "title")
   private String title;
@@ -49,12 +49,12 @@ public class Activity {
   @Nullable
   private Long categoryId;
 
-  public Long getActivityId() {
-    return activityId;
+  public Long getId() {
+    return id;
   }
 
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getTitle() {
@@ -118,7 +118,7 @@ public class Activity {
   @Override
   public boolean equals(Object obj) {
     if (obj == null) return false;
-    if (!(obj instanceof Activity)) return false;
-    return this.activityId == ((Activity) obj).activityId;
+    if (!(obj instanceof Action)) return false;
+    return this.id == ((Action) obj).id;
   }
 }

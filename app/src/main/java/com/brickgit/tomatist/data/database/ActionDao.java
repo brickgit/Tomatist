@@ -13,10 +13,10 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 
 @Dao
-public abstract class ActivityDao {
+public abstract class ActionDao {
 
   @Transaction
-  public LiveData<List<Activity>> getFinishedActivitiesForDate(int year, int month, int day) {
+  public LiveData<List<Action>> getFinishedActionsForDate(int year, int month, int day) {
     Calendar cFrom = Calendar.getInstance();
     cFrom.set(Calendar.YEAR, year);
     cFrom.set(Calendar.MONTH, month - 1);
@@ -33,25 +33,25 @@ public abstract class ActivityDao {
     cTo.set(Calendar.MINUTE, 59);
     cTo.set(Calendar.SECOND, 59);
 
-    return getFinishedActivitiesForDate(cFrom.getTime(), cTo.getTime());
+    return getFinishedActionsForDate(cFrom.getTime(), cTo.getTime());
   }
 
-  @Query("SELECT * FROM activities WHERE is_finished = 0 ORDER BY category_id")
-  public abstract LiveData<List<Activity>> getUnfinishedActivities();
+  @Query("SELECT * FROM `actions` WHERE is_finished = 0 ORDER BY category_id")
+  public abstract LiveData<List<Action>> getUnfinishedActions();
 
-  @Query("SELECT * FROM activities WHERE id = :id")
-  public abstract LiveData<Activity> getActivity(long id);
+  @Query("SELECT * FROM `actions` WHERE id = :id")
+  public abstract LiveData<Action> getAction(long id);
 
   @Insert
-  public abstract void insertActivity(Activity activity);
+  public abstract void insertAction(Action action);
 
   @Update
-  public abstract void updateActivity(Activity activity);
+  public abstract void updateAction(Action action);
 
   @Delete
-  public abstract void deleteActivity(Activity activity);
+  public abstract void deleteAction(Action action);
 
   @Query(
-      "SELECT * FROM activities WHERE is_finished = 1 AND start_time BETWEEN :from AND :to ORDER BY start_time")
-  protected abstract LiveData<List<Activity>> getFinishedActivitiesForDate(Date from, Date to);
+      "SELECT * FROM `actions` WHERE is_finished = 1 AND start_time BETWEEN :from AND :to ORDER BY start_time")
+  protected abstract LiveData<List<Action>> getFinishedActionsForDate(Date from, Date to);
 }

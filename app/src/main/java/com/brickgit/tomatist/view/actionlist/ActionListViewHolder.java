@@ -1,10 +1,10 @@
-package com.brickgit.tomatist.view.activitylist;
+package com.brickgit.tomatist.view.actionlist;
 
 import android.view.View;
 import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
-import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ActivityListViewHolder extends RecyclerView.ViewHolder {
+public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   private static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
@@ -27,39 +27,39 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
   private TextView mCategoryGroupView;
   private TextView mCategoryView;
 
-  private Activity mActivity;
+  private Action mAction;
 
-  public ActivityListViewHolder(
-      View view, final ActivityListAdapter.OnActivityClickListener onActivityClickListener) {
+  public ActionListViewHolder(
+      View view, final ActionListAdapter.OnActionClickListener onActionClickListener) {
     super(view);
 
     mStartDateTime = view.findViewById(R.id.start_time);
     mEndDateTime = view.findViewById(R.id.end_time);
 
-    mTitleView = view.findViewById(R.id.activity_title);
-    mNoteView = view.findViewById(R.id.activity_note);
+    mTitleView = view.findViewById(R.id.action_title);
+    mNoteView = view.findViewById(R.id.action_note);
 
-    mCategoryGroupView = view.findViewById(R.id.activity_category_group);
-    mCategoryView = view.findViewById(R.id.activity_category);
+    mCategoryGroupView = view.findViewById(R.id.action_category_group);
+    mCategoryView = view.findViewById(R.id.action_category);
 
     itemView.setOnClickListener(
         (v) -> {
-          if (onActivityClickListener == null) {
+          if (onActionClickListener == null) {
             return;
           }
 
-          onActivityClickListener.onActivityClick(mActivity);
+          onActionClickListener.onActionClick(mAction);
         });
   }
 
   public void bind(
-      Activity activity, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
-    mActivity = activity;
+      Action action, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
+    mAction = action;
 
-    if (activity.getStartTime() != null) {
-      mStartDateTime.setText(dateFormat.format(activity.getStartTime()));
-      if (activity.getMinutes() != 0) {
-        mEndDateTime.setText(dateFormat.format(activity.getEndTime()));
+    if (action.getStartTime() != null) {
+      mStartDateTime.setText(dateFormat.format(action.getStartTime()));
+      if (action.getMinutes() != 0) {
+        mEndDateTime.setText(dateFormat.format(action.getEndTime()));
       } else {
         mEndDateTime.setText("");
       }
@@ -68,13 +68,13 @@ public class ActivityListViewHolder extends RecyclerView.ViewHolder {
       mEndDateTime.setText("");
     }
 
-    mTitleView.setText(activity.getTitle());
-    mNoteView.setText(activity.getNote());
+    mTitleView.setText(action.getTitle());
+    mNoteView.setText(action.getNote());
 
-    Category category = categories.get(activity.getCategoryId());
+    Category category = categories.get(action.getCategoryId());
     if (category != null) {
       mCategoryView.setText(category.getTitle());
-      CategoryGroup group = categoryGroups.get(category.getCategoryGroupId());
+      CategoryGroup group = categoryGroups.get(category.getGroupId());
       mCategoryGroupView.setText(group != null ? group.getTitle() : "");
     } else {
       mCategoryView.setText("");

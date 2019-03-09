@@ -20,21 +20,21 @@ import androidx.room.PrimaryKey;
 public class Category {
   @PrimaryKey(autoGenerate = true)
   @ColumnInfo(name = "id")
-  private Long categoryId;
+  private Long id;
 
   @ColumnInfo(name = "title")
   private String title;
 
   @ColumnInfo(name = "group_id")
   @Nullable
-  private Long categoryGroupId;
+  private Long groupId;
 
-  public Long getCategoryId() {
-    return categoryId;
+  public Long getId() {
+    return id;
   }
 
-  public void setCategoryId(Long categoryId) {
-    this.categoryId = categoryId;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getTitle() {
@@ -45,18 +45,18 @@ public class Category {
     this.title = title;
   }
 
-  public Long getCategoryGroupId() {
-    return categoryGroupId;
+  public Long getGroupId() {
+    return groupId;
   }
 
-  public void setCategoryGroupId(Long categoryGroupId) {
-    this.categoryGroupId = categoryGroupId;
+  public void setGroupId(Long groupId) {
+    this.groupId = groupId;
   }
 
   @Override
   public boolean equals(Object obj) {
     if (obj == null) return false;
     if (!(obj instanceof Category)) return false;
-    return this.categoryId == ((Category) obj).categoryId;
+    return this.id == ((Category) obj).id;
   }
 }

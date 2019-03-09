@@ -19,7 +19,7 @@
       </intent-filter>
     </activity>
     <activity
-      android:name=".view.activity.AddActivityActivity"
+      android:name=".view.activity.AddActionActivity"
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar"
       android:windowSoftInputMode="stateAlwaysVisible" />
@@ -28,7 +28,7 @@
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar" />
     <activity
-      android:name=".view.activity.UnfinishedActivityListActivity"
+      android:name=".view.activity.UnfinishedActionListActivity"
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar" />
   </application>

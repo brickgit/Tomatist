@@ -75,8 +75,8 @@ public class CategoryActivity extends BaseActivity {
     mCategoryGroupAdapter.setOnCategoryGroupClickListener(
         (categoryGroup) -> {
           TomatistPreferences.getInstance(CategoryActivity.this)
-              .setLastUsedCategoryGroupId(categoryGroup.getCategoryGroupId());
-          selectCategoryGroup(categoryGroup.getCategoryGroupId());
+              .setLastUsedCategoryGroupId(categoryGroup.getId());
+          selectCategoryGroup(categoryGroup.getId());
         });
     mCategoryGroupsView.setAdapter(mCategoryGroupAdapter);
     ItemTouchHelper.Callback categoryGroupsViewCallback =
@@ -90,9 +90,9 @@ public class CategoryActivity extends BaseActivity {
     mCategoryAdapter.setOnCategoryClickListener(
         (category) -> {
           TomatistPreferences.getInstance(CategoryActivity.this)
-              .setLastUsedCategoryId(category.getCategoryId());
+              .setLastUsedCategoryId(category.getId());
           Intent intent = new Intent();
-          intent.putExtra(SELECTED_CATEGORY_ID, category.getCategoryId());
+          intent.putExtra(SELECTED_CATEGORY_ID, category.getId());
           setResult(RESULT_OK, intent);
           finish();
         });
@@ -179,7 +179,7 @@ public class CategoryActivity extends BaseActivity {
           if (!newCategoryTitle.isEmpty()) {
             Category newCategory = new Category();
             newCategory.setTitle(newCategoryTitle);
-            newCategory.setCategoryGroupId(mSelectedCategoryGroupId);
+            newCategory.setGroupId(mSelectedCategoryGroupId);
             mCategoryViewModel.insertCategory(newCategory);
           }
         });

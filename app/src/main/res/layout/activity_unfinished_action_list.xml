@@ -5,7 +5,7 @@
   android:id="@+id/root_view"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".view.activity.AddActivityActivity">
+  tools:context=".view.activity.AddActionActivity">
 
   <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
@@ -56,7 +56,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/unfinished_activity_list"
+      android:id="@+id/unfinished_action_list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:background="@android:color/white"
@@ -71,7 +71,7 @@
   </LinearLayout>
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/add_activity"
+    android:id="@+id/add_action"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="end|bottom"

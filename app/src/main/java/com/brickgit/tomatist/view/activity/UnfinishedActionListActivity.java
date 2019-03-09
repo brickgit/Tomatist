@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.brickgit.tomatist.R;
-import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
-import com.brickgit.tomatist.view.activitylist.ActivityListAdapter;
-import com.brickgit.tomatist.view.activitylist.ActivityListTouchHelperCallback;
+import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
+import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
 import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
@@ -26,26 +26,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /** Created by Daniel Lin on 2019/2/26. */
-public class UnfinishedActivityListActivity extends BaseActivity {
+public class UnfinishedActionListActivity extends BaseActivity {
 
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
 
   private View mRootView;
   private Button mCategoryButton;
-  private RecyclerView mActivityList;
+  private RecyclerView mActionList;
   private LinearLayoutManager mLayoutManager;
-  private ActivityListAdapter mActivityListAdapter;
+  private ActionListAdapter mActionListAdapter;
 
   private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<Long, Category> mCategories = new HashMap<>();
-  private LiveData<List<Activity>> mActivities;
+  private LiveData<List<Action>> mActions;
   private Long mSelectedCategoryId = null;
-  private List<Activity> mSelectedActivities = new ArrayList<>();
+  private List<Action> mSelectedAcions = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_unfinished_activity_list);
+    setContentView(R.layout.activity_unfinished_action_list);
 
     mRootView = findViewById(R.id.root_view);
 
@@ -55,7 +55,7 @@ public class UnfinishedActivityListActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-    findViewById(R.id.add_activity).setOnClickListener((view) -> gotoAddActivityActivity(null));
+    findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null));
 
     mCategoryButton = findViewById(R.id.category_button);
     mCategoryButton.setOnClickListener(
@@ -67,24 +67,24 @@ public class UnfinishedActivityListActivity extends BaseActivity {
               updateViews();
             });
 
-    mActivityList = findViewById(R.id.unfinished_activity_list);
-    mActivityList.setHasFixedSize(true);
+    mActionList = findViewById(R.id.unfinished_action_list);
+    mActionList.setHasFixedSize(true);
 
     mLayoutManager = new LinearLayoutManager(this);
-    mActivityList.setLayoutManager(mLayoutManager);
+    mActionList.setLayoutManager(mLayoutManager);
 
     ItemTouchHelper.Callback callback =
-        new ActivityListTouchHelperCallback((position) -> removeActivity(position));
+        new ActionListTouchHelperCallback((position) -> removeAction(position));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-    touchHelper.attachToRecyclerView(mActivityList);
+    touchHelper.attachToRecyclerView(mActionList);
 
-    mActivityListAdapter = new ActivityListAdapter();
-    mActivityList.setAdapter(mActivityListAdapter);
-    mActivityListAdapter.setOnActivityClickListener(
-        (activity) -> gotoAddActivityActivity(activity.getActivityId()));
+    mActionListAdapter = new ActionListAdapter();
+    mActionList.setAdapter(mActionListAdapter);
+    mActionListAdapter.setOnActionClickListener(
+        (action) -> gotoAddActionActivity(action.getId()));
 
-    mActivities = mActivityViewModel.getUnfinishedActivities();
-    mActivities.observe(this, (activities) -> updateViews());
+    mActions = mActionViewModel.getUnfinishedActions();
+    mActions.observe(this, (actions) -> updateViews());
 
     mCategoryViewModel
         .getCategoryGroups()
@@ -93,11 +93,11 @@ public class UnfinishedActivityListActivity extends BaseActivity {
             (categoryGroups) -> {
               Map<Long, CategoryGroup> map = new HashMap<>();
               for (CategoryGroup group : categoryGroups) {
-                map.put(group.getCategoryGroupId(), group);
+                map.put(group.getId(), group);
               }
               mCategoryGroups.clear();
               mCategoryGroups.putAll(map);
-              mActivityListAdapter.updateCategoryGroups(map);
+              mActionListAdapter.updateCategoryGroups(map);
             });
     mCategoryViewModel
         .getCategories()
@@ -106,11 +106,11 @@ public class UnfinishedActivityListActivity extends BaseActivity {
             (categories) -> {
               Map<Long, Category> map = new HashMap<>();
               for (Category category : categories) {
-                map.put(category.getCategoryId(), category);
+                map.put(category.getId(), category);
               }
               mCategories.clear();
               mCategories.putAll(map);
-              mActivityListAdapter.updateCategories(map);
+              mActionListAdapter.updateCategories(map);
             });
   }
 
@@ -120,30 +120,30 @@ public class UnfinishedActivityListActivity extends BaseActivity {
     return true;
   }
 
-  private void gotoAddActivityActivity(Long activityId) {
-    Intent intent = new Intent(this, AddActivityActivity.class);
-    if (activityId != null) {
-      intent.putExtra(AddActivityActivity.SELECTED_ACTIVITY_KEY, activityId);
+  private void gotoAddActionActivity(Long actionId) {
+    Intent intent = new Intent(this, AddActionActivity.class);
+    if (actionId != null) {
+      intent.putExtra(AddActionActivity.SELECTED_ACTION_KEY, actionId);
     } else {
       CalendarDay today = CalendarDay.today();
-      intent.putExtra(AddActivityActivity.SELECTED_YEAR_KEY, today.getYear());
-      intent.putExtra(AddActivityActivity.SELECTED_MONTH_KEY, today.getMonth() - 1);
-      intent.putExtra(AddActivityActivity.SELECTED_DAY_KEY, today.getDay());
+      intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, today.getYear());
+      intent.putExtra(AddActionActivity.SELECTED_MONTH_KEY, today.getMonth() - 1);
+      intent.putExtra(AddActionActivity.SELECTED_DAY_KEY, today.getDay());
     }
     startActivity(intent);
   }
 
-  private void removeActivity(int position) {
-    Activity activity = mSelectedActivities.get(position);
-    if (activity != null) {
-      mActivityViewModel.deleteActivity(activity);
-      showActivityDeletedConfirmation(activity);
+  private void removeAction(int position) {
+    Action action = mSelectedAcions.get(position);
+    if (action != null) {
+      mActionViewModel.deleteAction(action);
+      showActionDeletedConfirmation(action);
     }
   }
 
-  private void showActivityDeletedConfirmation(Activity activity) {
+  private void showActionDeletedConfirmation(Action action) {
     Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
-        .setAction(R.string.undo, (view) -> mActivityViewModel.insertActivity(activity))
+        .setAction(R.string.undo, (view) -> mActionViewModel.insertAction(action))
         .show();
   }
 
@@ -151,39 +151,39 @@ public class UnfinishedActivityListActivity extends BaseActivity {
     String tag = getString(R.string.all);
     if (mSelectedCategoryId == null) {
       mCategoryButton.setText(getString(R.string.all));
-      mSelectedActivities.clear();
-      if (mActivities != null && mActivities.getValue() != null) {
-        mSelectedActivities.addAll(mActivities.getValue());
+      mSelectedAcions.clear();
+      if (mActions != null && mActions.getValue() != null) {
+        mSelectedAcions.addAll(mActions.getValue());
       }
     } else {
       Category category = mCategories.get(mSelectedCategoryId);
       if (category != null) {
-        tag = String.valueOf(category.getCategoryId());
+        tag = String.valueOf(category.getId());
         StringBuilder sb = new StringBuilder();
         sb.append(category.getTitle());
-        CategoryGroup categoryGroup = mCategoryGroups.get(category.getCategoryGroupId());
+        CategoryGroup categoryGroup = mCategoryGroups.get(category.getGroupId());
         if (categoryGroup != null) {
           sb.insert(0, categoryGroup.getTitle() + " - ");
         }
         mCategoryButton.setText(sb.toString());
 
-        mSelectedActivities.clear();
-        if (mActivities != null && mActivities.getValue() != null) {
-          for (Activity activity : mActivities.getValue()) {
-            if (activity.getCategoryId().equals(category.getCategoryId())) {
-              mSelectedActivities.add(activity);
+        mSelectedAcions.clear();
+        if (mActions != null && mActions.getValue() != null) {
+          for (Action action : mActions.getValue()) {
+            if (action.getCategoryId().equals(category.getId())) {
+              mSelectedAcions.add(action);
             }
           }
         }
       } else {
         mCategoryButton.setText(getString(R.string.all));
-        mSelectedActivities.clear();
-        if (mActivities != null && mActivities.getValue() != null) {
-          mSelectedActivities.addAll(mActivities.getValue());
+        mSelectedAcions.clear();
+        if (mActions != null && mActions.getValue() != null) {
+          mSelectedAcions.addAll(mActions.getValue());
         }
       }
     }
-    mActivityListAdapter.updateActivities(tag, mSelectedActivities);
+    mActionListAdapter.updateActions(tag, mSelectedAcions);
   }
 
   @Override

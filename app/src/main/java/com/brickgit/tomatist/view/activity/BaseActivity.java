@@ -2,7 +2,7 @@ package com.brickgit.tomatist.view.activity;
 
 import android.os.Bundle;
 
-import com.brickgit.tomatist.data.viewmodel.ActivityViewModel;
+import com.brickgit.tomatist.data.viewmodel.ActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.CategoryViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,14 +10,14 @@ import androidx.lifecycle.ViewModelProviders;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-  protected ActivityViewModel mActivityViewModel;
+  protected ActionViewModel mActionViewModel;
   protected CategoryViewModel mCategoryViewModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    mActivityViewModel = ViewModelProviders.of(this).get(ActivityViewModel.class);
+    mActionViewModel = ViewModelProviders.of(this).get(ActionViewModel.class);
     mCategoryViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
   }
 }

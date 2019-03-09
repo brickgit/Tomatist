@@ -55,7 +55,7 @@
         android:orientation="vertical">
 
         <TextView
-          android:id="@+id/activity_title"
+          android:id="@+id/action_title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:ellipsize="end"
@@ -64,7 +64,7 @@
           android:textSize="20sp" />
 
         <TextView
-          android:id="@+id/activity_note"
+          android:id="@+id/action_note"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="3dp"
@@ -84,14 +84,14 @@
         android:orientation="vertical">
 
         <TextView
-          android:id="@+id/activity_category_group"
+          android:id="@+id/action_category_group"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:textAlignment="textEnd"
           android:textSize="14sp" />
 
         <TextView
-          android:id="@+id/activity_category"
+          android:id="@+id/action_category"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="3dp"

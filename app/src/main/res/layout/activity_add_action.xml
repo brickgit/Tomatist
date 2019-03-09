@@ -4,7 +4,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  tools:context=".view.activity.AddActivityActivity">
+  tools:context=".view.activity.AddActionActivity">
 
   <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
@@ -23,7 +23,7 @@
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_content_margin"
+    android:layout_margin="@dimen/action_content_margin"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -32,7 +32,7 @@
       android:layout_height="wrap_content">
 
       <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/new_activity_name"
+        android:id="@+id/new_action_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
@@ -238,7 +238,7 @@
       android:layout_height="wrap_content">
 
       <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/new_activity_note"
+        android:id="@+id/new_action_note"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusableInTouchMode="true"

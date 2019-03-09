@@ -11,7 +11,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
-import com.brickgit.tomatist.data.database.Activity;
+import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
@@ -25,10 +25,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-public class AddActivityActivity extends BaseActivity {
+public class AddActionActivity extends BaseActivity {
 
-  public static final String SELECTED_ACTIVITY_KEY = "SELECTED_ACTIVITY_KEY";
-  public static final long INVALID_SELECTED_ACTIVITY_ID = -1;
+  public static final String SELECTED_ACTION_KEY = "SELECTED_ACTION_KEY";
+  public static final long INVALID_SELECTED_ACTION_ID = -1;
 
   public static final String SELECTED_YEAR_KEY = "SELECTED_YEAR_KEY";
   public static final String SELECTED_MONTH_KEY = "SELECTED_MONTH_KEY";
@@ -40,7 +40,7 @@ public class AddActivityActivity extends BaseActivity {
 
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
 
-  private TextInputEditText mNewActivityName;
+  private TextInputEditText mNewActionName;
   private CheckBox mIsFinished;
   private View mDatetimeLayout;
   private TextView mStartDate;
@@ -49,11 +49,11 @@ public class AddActivityActivity extends BaseActivity {
   private TextView mEndTime;
   private TextView mDurationMinutes;
   private TextView mCategoryView;
-  private TextInputEditText mNewActivityNote;
+  private TextInputEditText mNewActionNote;
 
   private int mMode = MODE_NEW;
 
-  private Activity mActivity;
+  private Action mAction;
 
   private Calendar mStartCalendar = Calendar.getInstance();
   private Calendar mEndCalendar = Calendar.getInstance();
@@ -65,8 +65,8 @@ public class AddActivityActivity extends BaseActivity {
   private Observer<Category> mCategoryObserver =
       (category) -> {
         if (category != null) {
-          mActivity.setCategoryId(category.getCategoryId());
-          observeCategoryGroup(category.getCategoryGroupId());
+          mAction.setCategoryId(category.getId());
+          observeCategoryGroup(category.getGroupId());
         }
         updateViews();
       };
@@ -74,11 +74,11 @@ public class AddActivityActivity extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_add_activity);
+    setContentView(R.layout.activity_add_action);
 
-    long selectedActivityId =
-        getIntent().getLongExtra(SELECTED_ACTIVITY_KEY, INVALID_SELECTED_ACTIVITY_ID);
-    mMode = selectedActivityId != INVALID_SELECTED_ACTIVITY_ID ? MODE_EDIT : MODE_NEW;
+    long selectedActionId =
+        getIntent().getLongExtra(SELECTED_ACTION_KEY, INVALID_SELECTED_ACTION_ID);
+    mMode = selectedActionId != INVALID_SELECTED_ACTION_ID ? MODE_EDIT : MODE_NEW;
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -87,12 +87,12 @@ public class AddActivityActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-    mNewActivityName = findViewById(R.id.new_activity_name);
-    mNewActivityNote = findViewById(R.id.new_activity_note);
+    mNewActionName = findViewById(R.id.new_action_name);
+    mNewActionNote = findViewById(R.id.new_action_note);
     mIsFinished = findViewById(R.id.is_finished);
     mIsFinished.setOnCheckedChangeListener(
         (view, isChecked) -> {
-          mActivity.setFinished(isChecked);
+          mAction.setFinished(isChecked);
           mDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
     mCategoryView = findViewById(R.id.category);
@@ -112,29 +112,29 @@ public class AddActivityActivity extends BaseActivity {
     mDurationMinutes = findViewById(R.id.duration_minutes);
     findViewById(R.id.duration_layout).setOnClickListener((v) -> showMinuteList());
 
-    mActivity = new Activity();
+    mAction = new Action();
     updateViews();
 
     if (mMode == MODE_EDIT) {
-      mActivityViewModel
-          .getActivity(selectedActivityId)
+      mActionViewModel
+          .getaction(selectedActionId)
           .observe(
               this,
-              (activity) -> {
-                mActivity = activity;
-                mIsFinished.setChecked(mActivity.isFinished());
-                if (mActivity.isFinished()) {
+              (action) -> {
+                mAction = action;
+                mIsFinished.setChecked(mAction.isFinished());
+                if (mAction.isFinished()) {
                   mDatetimeLayout.setVisibility(View.VISIBLE);
-                  mStartCalendar.setTime(mActivity.getStartTime());
-                  mEndCalendar.setTime(mActivity.getEndTime());
+                  mStartCalendar.setTime(mAction.getStartTime());
+                  mEndCalendar.setTime(mAction.getEndTime());
                 } else {
                   mDatetimeLayout.setVisibility(View.GONE);
                 }
 
-                observeCategory(activity.getCategoryId());
+                observeCategory(action.getCategoryId());
 
-                mNewActivityName.setText(mActivity.getTitle());
-                mNewActivityNote.setText(mActivity.getNote());
+                mNewActionName.setText(mAction.getTitle());
+                mNewActionNote.setText(mAction.getNote());
                 updateViews();
               });
     } else {
@@ -157,10 +157,10 @@ public class AddActivityActivity extends BaseActivity {
     }
   }
 
-  private void saveActivity() {
-    String newActivityName = mNewActivityName.getText().toString().trim();
-    if (newActivityName.isEmpty()) {
-      mNewActivityName.setError(getString(R.string.error_name_is_required));
+  private void saveAction() {
+    String newActionName = mNewActionName.getText().toString().trim();
+    if (newActionName.isEmpty()) {
+      mNewActionName.setError(getString(R.string.error_name_is_required));
       return;
     }
 
@@ -174,27 +174,27 @@ public class AddActivityActivity extends BaseActivity {
     if (mCategory != null) {
       Category category = mCategory.getValue();
       if (category != null) {
-        categoryId = category.getCategoryId();
+        categoryId = category.getId();
       }
     }
 
-    mActivity.setTitle(newActivityName);
-    if (mActivity.isFinished()) {
-      mActivity.setStartTime(mStartCalendar.getTime());
-      mActivity.setEndTime(mEndCalendar.getTime());
-      mActivity.setMinutes(minutes);
+    mAction.setTitle(newActionName);
+    if (mAction.isFinished()) {
+      mAction.setStartTime(mStartCalendar.getTime());
+      mAction.setEndTime(mEndCalendar.getTime());
+      mAction.setMinutes(minutes);
     } else {
-      mActivity.setStartTime(null);
-      mActivity.setEndTime(null);
-      mActivity.setMinutes(0);
+      mAction.setStartTime(null);
+      mAction.setEndTime(null);
+      mAction.setMinutes(0);
     }
-    mActivity.setCategoryId(categoryId);
-    mActivity.setNote(mNewActivityNote.getText().toString().trim());
+    mAction.setCategoryId(categoryId);
+    mAction.setNote(mNewActionNote.getText().toString().trim());
 
     if (mMode == MODE_EDIT) {
-      mActivityViewModel.updateActivity(mActivity);
+      mActionViewModel.updateAction(mAction);
     } else {
-      mActivityViewModel.insertActivity(mActivity);
+      mActionViewModel.insertAction(mAction);
     }
 
     finish();
@@ -202,7 +202,7 @@ public class AddActivityActivity extends BaseActivity {
 
   private void observeCategoryGroup(Long categoryGroupId) {
     if (mCategoryGroup != null && mCategoryGroup.getValue() != null) {
-      if (mCategoryGroup.getValue().getCategoryGroupId().equals(categoryGroupId)) {
+      if (mCategoryGroup.getValue().getId().equals(categoryGroupId)) {
         return;
       } else {
         mCategoryGroup.removeObserver(mCategoryGroupObserver);
@@ -218,7 +218,7 @@ public class AddActivityActivity extends BaseActivity {
 
   private void observeCategory(Long categoryId) {
     if (mCategory != null && mCategory.getValue() != null) {
-      if (mCategory.getValue().getCategoryId().equals(categoryId)) {
+      if (mCategory.getValue().getId().equals(categoryId)) {
         return;
       } else {
         mCategory.removeObserver(mCategoryObserver);
@@ -248,7 +248,7 @@ public class AddActivityActivity extends BaseActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.action_add:
-        saveActivity();
+        saveAction();
         return true;
     }
 
@@ -354,7 +354,7 @@ public class AddActivityActivity extends BaseActivity {
 
         if (mCategoryGroup != null) {
           CategoryGroup group = mCategoryGroup.getValue();
-          if (group != null && group.getCategoryGroupId().equals(category.getCategoryGroupId())) {
+          if (group != null && group.getId().equals(category.getGroupId())) {
             sb.insert(0, group.getTitle() + " - ");
           }
         }
