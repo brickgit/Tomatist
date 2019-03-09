@@ -117,7 +117,7 @@ public class AddActionActivity extends BaseActivity {
 
     if (mMode == MODE_EDIT) {
       mActionViewModel
-          .getaction(selectedActionId)
+          .getAction(selectedActionId)
           .observe(
               this,
               (action) -> {

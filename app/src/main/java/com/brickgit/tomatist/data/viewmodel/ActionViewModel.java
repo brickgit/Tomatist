@@ -34,7 +34,7 @@ public class ActionViewModel extends ViewModel {
     mDataRepository.deleteAction(action);
   }
 
-  public LiveData<Action> getaction(long id) {
+  public LiveData<Action> getAction(long id) {
     return mDataRepository.getAction(id);
   }
 
