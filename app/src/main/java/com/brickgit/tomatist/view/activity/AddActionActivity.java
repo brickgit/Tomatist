@@ -98,7 +98,7 @@ public class AddActionActivity extends BaseActivity {
     mCategoryView = findViewById(R.id.category);
     findViewById(R.id.category_layout)
         .setOnClickListener(
-            (v) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
+            (v) -> CategorySelectorActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
 
     mDatetimeLayout = findViewById(R.id.datetime_layout);
     mStartDate = findViewById(R.id.start_datetime_date);
@@ -371,9 +371,9 @@ public class AddActionActivity extends BaseActivity {
       if (resultCode == RESULT_OK) {
         long selectedCategoryId =
             data.getLongExtra(
-                CategoryActivity.SELECTED_CATEGORY_ID,
-                CategoryActivity.INVALID_SELECTED_CATEGORY_ID);
-        if (selectedCategoryId != CategoryActivity.INVALID_SELECTED_CATEGORY_ID) {
+                CategorySelectorActivity.SELECTED_CATEGORY_ID,
+                CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID);
+        if (selectedCategoryId != CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID) {
           observeCategory(selectedCategoryId);
         }
       }

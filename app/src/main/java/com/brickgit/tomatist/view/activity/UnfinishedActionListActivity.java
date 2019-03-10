@@ -59,7 +59,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
     mCategoryButton = findViewById(R.id.category_button);
     mCategoryButton.setOnClickListener(
-        (view) -> CategoryActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
+        (view) -> CategorySelectorActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
     findViewById(R.id.clear)
         .setOnClickListener(
             (view) -> {
@@ -193,10 +193,10 @@ public class UnfinishedActionListActivity extends BaseActivity {
       if (resultCode == RESULT_OK) {
         long selectedCategoryId =
             data.getLongExtra(
-                CategoryActivity.SELECTED_CATEGORY_ID,
-                CategoryActivity.INVALID_SELECTED_CATEGORY_ID);
+                CategorySelectorActivity.SELECTED_CATEGORY_ID,
+                CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID);
         mSelectedCategoryId =
-            selectedCategoryId != CategoryActivity.INVALID_SELECTED_CATEGORY_ID
+            selectedCategoryId != CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID
                 ? selectedCategoryId
                 : null;
         updateViews();

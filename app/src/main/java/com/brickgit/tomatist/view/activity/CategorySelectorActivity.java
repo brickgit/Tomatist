@@ -10,26 +10,29 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
+import com.brickgit.tomatist.data.viewmodel.CategorySelectorViewModel;
 import com.brickgit.tomatist.view.categorylist.CategoryGroupListAdapter;
 import com.brickgit.tomatist.view.categorylist.CategoryGroupListTouchHelperCallback;
 import com.brickgit.tomatist.view.categorylist.CategoryListAdapter;
 import com.brickgit.tomatist.view.categorylist.CategoryListTouchHelperCallback;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CategoryActivity extends BaseActivity {
+public class CategorySelectorActivity extends BaseActivity {
 
   public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
   public static final long INVALID_SELECTED_CATEGORY_ID = -1;
+
+  protected CategorySelectorViewModel mCategorySelectorViewModel;
 
   private View mRootView;
   private RecyclerView mCategoryGroupsView;
@@ -37,18 +40,11 @@ public class CategoryActivity extends BaseActivity {
   private RecyclerView mCategoriesView;
   private CategoryListAdapter mCategoryAdapter;
 
-  private long mSelectedCategoryGroupId;
-
-  private LiveData<List<CategoryGroup>> mCategoryGroups;
-  private Observer<List<CategoryGroup>> mCategoryGroupsObserver =
-      (categoryGroups) -> mCategoryGroupAdapter.updateCategoryGroups(categoryGroups);
-
-  private LiveData<List<Category>> mCategories;
-  private Observer<List<Category>> mCategoriesObserver =
-      (categories) -> mCategoryAdapter.updateCategories(mSelectedCategoryGroupId, categories);
+  private List<CategoryGroup> mCategoryGroupList = new ArrayList<>();
+  private List<Category> mCategoryList = new ArrayList<>();
 
   public static void startForResult(Activity activity, int requestCoe) {
-    Intent intent = new Intent(activity, CategoryActivity.class);
+    Intent intent = new Intent(activity, CategorySelectorActivity.class);
     activity.startActivityForResult(intent, requestCoe);
   }
 
@@ -74,7 +70,7 @@ public class CategoryActivity extends BaseActivity {
     mCategoryGroupAdapter = new CategoryGroupListAdapter();
     mCategoryGroupAdapter.setOnCategoryGroupClickListener(
         (categoryGroup) -> {
-          TomatistPreferences.getInstance(CategoryActivity.this)
+          TomatistPreferences.getInstance(CategorySelectorActivity.this)
               .setLastUsedCategoryGroupId(categoryGroup.getId());
           selectCategoryGroup(categoryGroup.getId());
         });
@@ -89,7 +85,7 @@ public class CategoryActivity extends BaseActivity {
     mCategoryAdapter = new CategoryListAdapter();
     mCategoryAdapter.setOnCategoryClickListener(
         (category) -> {
-          TomatistPreferences.getInstance(CategoryActivity.this)
+          TomatistPreferences.getInstance(CategorySelectorActivity.this)
               .setLastUsedCategoryId(category.getId());
           Intent intent = new Intent();
           intent.putExtra(SELECTED_CATEGORY_ID, category.getId());
@@ -102,8 +98,26 @@ public class CategoryActivity extends BaseActivity {
     ItemTouchHelper categoriesViewTouchHelper = new ItemTouchHelper(categoriesViewCallback);
     categoriesViewTouchHelper.attachToRecyclerView(mCategoriesView);
 
-    mCategoryGroups = mCategoryViewModel.getCategoryGroups();
-    mCategoryGroups.observe(this, mCategoryGroupsObserver);
+    mCategorySelectorViewModel = ViewModelProviders.of(this).get(CategorySelectorViewModel.class);
+    mCategorySelectorViewModel
+        .getCategoryGroupList()
+        .observe(
+            this,
+            (categoryGroups) -> {
+              mCategoryGroupList.clear();
+              mCategoryGroupList.addAll(categoryGroups);
+              mCategoryGroupAdapter.updateCategoryGroups(mCategoryGroupList);
+            });
+    mCategorySelectorViewModel
+        .getSelectedCategoryList()
+        .observe(
+            this,
+            (categories) -> {
+              mCategoryList.clear();
+              mCategoryList.addAll(categories);
+              mCategoryAdapter.updateCategories(
+                  mCategorySelectorViewModel.getSelectedCategoryGroupId(), mCategoryList);
+            });
 
     selectCategoryGroup(TomatistPreferences.getInstance(this).lastUsedCategoryGroupId());
   }
@@ -116,12 +130,7 @@ public class CategoryActivity extends BaseActivity {
   }
 
   private void selectCategoryGroup(long categoryGroupId) {
-    mSelectedCategoryGroupId = categoryGroupId;
-    if (mCategories != null) {
-      mCategories.removeObserver(mCategoriesObserver);
-    }
-    mCategories = mCategoryViewModel.getCategories(mSelectedCategoryGroupId);
-    mCategories.observe(CategoryActivity.this, mCategoriesObserver);
+    mCategorySelectorViewModel.selectCategoryGroup(categoryGroupId);
   }
 
   private void showAddCategoryGroupDialog() {
@@ -138,7 +147,8 @@ public class CategoryActivity extends BaseActivity {
           if (!newCategoryGroupTitle.isEmpty()) {
             CategoryGroup newCategoryGroup = new CategoryGroup();
             newCategoryGroup.setTitle(newCategoryGroupTitle);
-            long newCategoryGroupId = mCategoryViewModel.insertCategoryGroup(newCategoryGroup);
+            long newCategoryGroupId =
+                mCategorySelectorViewModel.insertCategoryGroup(newCategoryGroup);
             selectCategoryGroup(newCategoryGroupId);
           }
         });
@@ -147,21 +157,17 @@ public class CategoryActivity extends BaseActivity {
   }
 
   private void removeCategoryGroup(int position) {
-    if (mCategoryGroups != null) {
-      List<CategoryGroup> categoryGroups = mCategoryGroups.getValue();
-      if (categoryGroups != null) {
-        CategoryGroup categoryGroup = categoryGroups.get(position);
-        if (categoryGroup != null) {
-          mCategoryViewModel.deleteCategoryGroup(categoryGroup);
-          showCategoryGroupDeletedConfirmation(categoryGroup);
-        }
-      }
+    CategoryGroup categoryGroup = mCategoryGroupList.get(position);
+    if (categoryGroup != null) {
+      mCategorySelectorViewModel.deleteCategoryGroup(categoryGroup);
+      showCategoryGroupDeletedConfirmation(categoryGroup);
     }
   }
 
   private void showCategoryGroupDeletedConfirmation(CategoryGroup categoryGroup) {
     Snackbar.make(mRootView, R.string.category_group_deleted, Snackbar.LENGTH_SHORT)
-        .setAction(R.string.undo, (view) -> mCategoryViewModel.insertCategoryGroup(categoryGroup))
+        .setAction(
+            R.string.undo, (view) -> mCategorySelectorViewModel.insertCategoryGroup(categoryGroup))
         .show();
   }
 
@@ -169,7 +175,7 @@ public class CategoryActivity extends BaseActivity {
     final EditText newCategoryTitleView = new EditText(this);
 
     AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-    dialog.setTitle(getString(R.string.add_category_group));
+    dialog.setTitle(getString(R.string.add_category));
     dialog.setView(newCategoryTitleView);
 
     dialog.setPositiveButton(
@@ -179,8 +185,8 @@ public class CategoryActivity extends BaseActivity {
           if (!newCategoryTitle.isEmpty()) {
             Category newCategory = new Category();
             newCategory.setTitle(newCategoryTitle);
-            newCategory.setGroupId(mSelectedCategoryGroupId);
-            mCategoryViewModel.insertCategory(newCategory);
+            newCategory.setGroupId(mCategorySelectorViewModel.getSelectedCategoryGroupId());
+            mCategorySelectorViewModel.insertCategory(newCategory);
           }
         });
 
@@ -188,21 +194,16 @@ public class CategoryActivity extends BaseActivity {
   }
 
   private void removeCategory(int position) {
-    if (mCategories != null) {
-      List<Category> categories = mCategories.getValue();
-      if (categories != null) {
-        Category category = categories.get(position);
-        if (category != null) {
-          mCategoryViewModel.deleteCategory(category);
-          showCategoryDeletedConfirmation(category);
-        }
-      }
+    Category category = mCategoryList.get(position);
+    if (category != null) {
+      mCategorySelectorViewModel.deleteCategory(category);
+      showCategoryDeletedConfirmation(category);
     }
   }
 
   private void showCategoryDeletedConfirmation(Category category) {
     Snackbar.make(mRootView, R.string.category_deleted, Snackbar.LENGTH_SHORT)
-        .setAction(R.string.undo, (view) -> mCategoryViewModel.insertCategory(category))
+        .setAction(R.string.undo, (view) -> mCategorySelectorViewModel.insertCategory(category))
         .show();
   }
 }
