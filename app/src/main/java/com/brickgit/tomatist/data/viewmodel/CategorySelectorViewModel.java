@@ -1,6 +1,5 @@
 package com.brickgit.tomatist.data.viewmodel;
 
-import com.brickgit.tomatist.data.DataRepository;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 
@@ -9,21 +8,19 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 
 /** Created by Daniel Lin on 2019/3/9. */
-public class CategorySelectorViewModel extends ViewModel {
+public class CategorySelectorViewModel extends BaseViewModel {
 
   private MutableLiveData<Long> mSelectedCategoryGroupId = new MutableLiveData<>();
 
-  private DataRepository mDataRepository;
   private LiveData<List<CategoryGroup>> mCategoryGroupList;
   private LiveData<List<Category>> mSelectedCategoryList =
       Transformations.switchMap(
           mSelectedCategoryGroupId, (selectedId) -> mDataRepository.getCategories(selectedId));
 
   public CategorySelectorViewModel() {
-    mDataRepository = DataRepository.getInstance();
+    super();
   }
 
   public long insertCategoryGroup(CategoryGroup categoryGroup) {
