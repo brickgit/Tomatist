@@ -63,6 +63,10 @@ public class DataRepository {
     return mActionDao.getUnfinishedActions();
   }
 
+  public LiveData<List<Action>> getUnfinishedActions(long categoryId) {
+    return mActionDao.getUnfinishedActions(categoryId);
+  }
+
   public long insertCategoryGroup(CategoryGroup categoryGroup) {
     return mCategoryGroupDao.insertCategoryGroup(categoryGroup);
   }

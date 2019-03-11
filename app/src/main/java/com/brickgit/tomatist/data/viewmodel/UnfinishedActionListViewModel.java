@@ -6,7 +6,6 @@ import com.brickgit.tomatist.data.database.CategoryGroup;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import androidx.lifecycle.LiveData;
@@ -14,12 +13,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 /** Created by Daniel Lin on 2019/3/10. */
-public class CalendarActivityViewModel extends BaseViewModel {
+public class UnfinishedActionListViewModel extends BaseViewModel {
 
-  private MutableLiveData<String> mSelectedDate = new MutableLiveData<>();
-  private int mSelectedYear;
-  private int mSelectedMonth;
-  private int mSelectedDay;
+  private MutableLiveData<Long> mSelectedCategoryId = new MutableLiveData<>();
 
   private LiveData<Map<Long, CategoryGroup>> mCategoryGroupMap =
       Transformations.map(
@@ -41,22 +37,16 @@ public class CalendarActivityViewModel extends BaseViewModel {
             }
             return map;
           });
-  private LiveData<List<Action>> mFinishedActionList =
+  private LiveData<List<Action>> mSelectedUnfinishedActionList =
       Transformations.switchMap(
-          mSelectedDate,
-          (selectedDate) ->
-              mDataRepository.getFinishedActions(mSelectedYear, mSelectedMonth, mSelectedDay));
+          mSelectedCategoryId,
+          (selectedId) ->
+              selectedId != null
+                  ? mDataRepository.getUnfinishedActions(selectedId)
+                  : mDataRepository.getUnfinishedActions());
 
-  public CalendarActivityViewModel() {
+  public UnfinishedActionListViewModel() {
     super();
-  }
-
-  public long insertCategoryGroup(CategoryGroup categoryGroup) {
-    return mDataRepository.insertCategoryGroup(categoryGroup);
-  }
-
-  public long[] insertCategories(List<Category> categories) {
-    return mDataRepository.insertCategories(categories);
   }
 
   public LiveData<Map<Long, CategoryGroup>> getCategoryGroupMap() {
@@ -67,6 +57,10 @@ public class CalendarActivityViewModel extends BaseViewModel {
     return mCategoryMap;
   }
 
+  public LiveData<List<Action>> getUnfinishedActions() {
+    return mSelectedUnfinishedActionList;
+  }
+
   public void insertAction(Action action) {
     mDataRepository.insertAction(action);
   }
@@ -75,32 +69,11 @@ public class CalendarActivityViewModel extends BaseViewModel {
     mDataRepository.deleteAction(action);
   }
 
-  public LiveData<List<Action>> getFinishedActionList() {
-    return mFinishedActionList;
+  public void selectCategory(Long selectedCategoryId) {
+    mSelectedCategoryId.setValue(selectedCategoryId);
   }
 
-  public void selectDate(int year, int month, int day) {
-    String newSelectedDate = String.format(Locale.getDefault(), "%d/%d/%d", year, month, day);
-    if (newSelectedDate.equals(mSelectedDate.getValue())) return;
-    mSelectedYear = year;
-    mSelectedMonth = month;
-    mSelectedDay = day;
-    mSelectedDate.setValue(newSelectedDate);
-  }
-
-  public String getSelectedDate() {
-    return mSelectedDate.getValue();
-  }
-
-  public int getSelectedYear() {
-    return mSelectedYear;
-  }
-
-  public int getSelectedMonth() {
-    return mSelectedMonth;
-  }
-
-  public int getSelectedDay() {
-    return mSelectedDay;
+  public Long getSelectedCategoryId() {
+    return mSelectedCategoryId.getValue();
   }
 }

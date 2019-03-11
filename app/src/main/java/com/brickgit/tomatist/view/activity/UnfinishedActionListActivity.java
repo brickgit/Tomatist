@@ -9,6 +9,7 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.viewmodel.UnfinishedActionListViewModel;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
 import com.google.android.material.snackbar.Snackbar;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,8 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
 
+  private UnfinishedActionListViewModel mUnfinishedActionListViewModel;
+
   private View mRootView;
   private Button mCategoryButton;
   private RecyclerView mActionList;
@@ -38,9 +41,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
   private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<Long, Category> mCategories = new HashMap<>();
-  private LiveData<List<Action>> mActions;
-  private Long mSelectedCategoryId = null;
-  private List<Action> mSelectedAcions = new ArrayList<>();
+  private List<Action> mUnfinishedActionList = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
     findViewById(R.id.clear)
         .setOnClickListener(
             (view) -> {
-              mSelectedCategoryId = null;
+              mUnfinishedActionListViewModel.selectCategory(null);
               updateViews();
             });
 
@@ -80,38 +81,38 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
     mActionListAdapter = new ActionListAdapter();
     mActionList.setAdapter(mActionListAdapter);
-    mActionListAdapter.setOnActionClickListener(
-        (action) -> gotoAddActionActivity(action.getId()));
+    mActionListAdapter.setOnActionClickListener((action) -> gotoAddActionActivity(action.getId()));
 
-    mActions = mActionViewModel.getUnfinishedActions();
-    mActions.observe(this, (actions) -> updateViews());
-
-    mCategoryViewModel
-        .getCategoryGroups()
+    mUnfinishedActionListViewModel =
+        ViewModelProviders.of(this).get(UnfinishedActionListViewModel.class);
+    mUnfinishedActionListViewModel
+        .getUnfinishedActions()
+        .observe(
+            this,
+            (actions) -> {
+              mUnfinishedActionList.clear();
+              mUnfinishedActionList.addAll(actions);
+              updateViews();
+            });
+    mUnfinishedActionListViewModel
+        .getCategoryGroupMap()
         .observe(
             this,
             (categoryGroups) -> {
-              Map<Long, CategoryGroup> map = new HashMap<>();
-              for (CategoryGroup group : categoryGroups) {
-                map.put(group.getId(), group);
-              }
               mCategoryGroups.clear();
-              mCategoryGroups.putAll(map);
-              mActionListAdapter.updateCategoryGroups(map);
+              mCategoryGroups.putAll(categoryGroups);
+              mActionListAdapter.updateCategoryGroups(mCategoryGroups);
             });
-    mCategoryViewModel
-        .getCategories()
+    mUnfinishedActionListViewModel
+        .getCategoryMap()
         .observe(
             this,
             (categories) -> {
-              Map<Long, Category> map = new HashMap<>();
-              for (Category category : categories) {
-                map.put(category.getId(), category);
-              }
               mCategories.clear();
-              mCategories.putAll(map);
-              mActionListAdapter.updateCategories(map);
+              mCategories.putAll(categories);
+              mActionListAdapter.updateCategories(mCategories);
             });
+    mUnfinishedActionListViewModel.selectCategory(null);
   }
 
   @Override
@@ -134,56 +135,36 @@ public class UnfinishedActionListActivity extends BaseActivity {
   }
 
   private void removeAction(int position) {
-    Action action = mSelectedAcions.get(position);
+    Action action = mUnfinishedActionList.get(position);
     if (action != null) {
-      mActionViewModel.deleteAction(action);
+      mUnfinishedActionListViewModel.deleteAction(action);
       showActionDeletedConfirmation(action);
     }
   }
 
   private void showActionDeletedConfirmation(Action action) {
     Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
-        .setAction(R.string.undo, (view) -> mActionViewModel.insertAction(action))
+        .setAction(R.string.undo, (view) -> mUnfinishedActionListViewModel.insertAction(action))
         .show();
   }
 
   private void updateViews() {
     String tag = getString(R.string.all);
-    if (mSelectedCategoryId == null) {
-      mCategoryButton.setText(getString(R.string.all));
-      mSelectedAcions.clear();
-      if (mActions != null && mActions.getValue() != null) {
-        mSelectedAcions.addAll(mActions.getValue());
+    Long selectedCategoryId = mUnfinishedActionListViewModel.getSelectedCategoryId();
+    if (selectedCategoryId != null && mCategories.get(selectedCategoryId) != null) {
+      Category category = mCategories.get(selectedCategoryId);
+      tag = String.valueOf(category.getId());
+      StringBuilder sb = new StringBuilder();
+      sb.append(category.getTitle());
+      CategoryGroup categoryGroup = mCategoryGroups.get(category.getGroupId());
+      if (categoryGroup != null) {
+        sb.insert(0, categoryGroup.getTitle() + " - ");
       }
+      mCategoryButton.setText(sb.toString());
     } else {
-      Category category = mCategories.get(mSelectedCategoryId);
-      if (category != null) {
-        tag = String.valueOf(category.getId());
-        StringBuilder sb = new StringBuilder();
-        sb.append(category.getTitle());
-        CategoryGroup categoryGroup = mCategoryGroups.get(category.getGroupId());
-        if (categoryGroup != null) {
-          sb.insert(0, categoryGroup.getTitle() + " - ");
-        }
-        mCategoryButton.setText(sb.toString());
-
-        mSelectedAcions.clear();
-        if (mActions != null && mActions.getValue() != null) {
-          for (Action action : mActions.getValue()) {
-            if (action.getCategoryId().equals(category.getId())) {
-              mSelectedAcions.add(action);
-            }
-          }
-        }
-      } else {
-        mCategoryButton.setText(getString(R.string.all));
-        mSelectedAcions.clear();
-        if (mActions != null && mActions.getValue() != null) {
-          mSelectedAcions.addAll(mActions.getValue());
-        }
-      }
+      mCategoryButton.setText(getString(R.string.all));
     }
-    mActionListAdapter.updateActions(tag, mSelectedAcions);
+    mActionListAdapter.updateActions(tag, mUnfinishedActionList);
   }
 
   @Override
@@ -195,10 +176,10 @@ public class UnfinishedActionListActivity extends BaseActivity {
             data.getLongExtra(
                 CategorySelectorActivity.SELECTED_CATEGORY_ID,
                 CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID);
-        mSelectedCategoryId =
+        mUnfinishedActionListViewModel.selectCategory(
             selectedCategoryId != CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID
                 ? selectedCategoryId
-                : null;
+                : null);
         updateViews();
       }
     }

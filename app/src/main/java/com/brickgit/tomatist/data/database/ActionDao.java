@@ -39,6 +39,9 @@ public abstract class ActionDao {
   @Query("SELECT * FROM `actions` WHERE is_finished = 0 ORDER BY category_id")
   public abstract LiveData<List<Action>> getUnfinishedActions();
 
+  @Query("SELECT * FROM `actions` WHERE is_finished = 0 AND category_id = :categoryId")
+  public abstract LiveData<List<Action>> getUnfinishedActions(long categoryId);
+
   @Query("SELECT * FROM `actions` WHERE id = :id")
   public abstract LiveData<Action> getAction(long id);
 
