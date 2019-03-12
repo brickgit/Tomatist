@@ -15,6 +15,9 @@ import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
+import com.brickgit.tomatist.data.viewmodel.action.ActionViewModel;
+import com.brickgit.tomatist.data.viewmodel.action.EditActionViewModel;
+import com.brickgit.tomatist.data.viewmodel.action.NewActionViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
@@ -22,25 +25,20 @@ import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 public class AddActionActivity extends BaseActivity {
 
-  public static final String SELECTED_ACTION_KEY = "SELECTED_ACTION_KEY";
+  public static final String SELECTED_ACTION_ID_KEY = "SELECTED_ACTION_ID_KEY";
   public static final long INVALID_SELECTED_ACTION_ID = -1;
 
   public static final String SELECTED_YEAR_KEY = "SELECTED_YEAR_KEY";
   public static final String SELECTED_MONTH_KEY = "SELECTED_MONTH_KEY";
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
-  public static final int INVALID_SELECTED_DATE = -1;
-
-  private static final int MODE_NEW = 0;
-  private static final int MODE_EDIT = 1;
 
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
 
-  private TextInputEditText mNewActionName;
+  private TextInputEditText mActionTitleView;
   private CheckBox mIsFinished;
   private View mDatetimeLayout;
   private TextView mStartDate;
@@ -49,27 +47,12 @@ public class AddActionActivity extends BaseActivity {
   private TextView mEndTime;
   private TextView mDurationMinutes;
   private TextView mCategoryView;
-  private TextInputEditText mNewActionNote;
+  private TextInputEditText mActionNoteView;
 
-  private int mMode = MODE_NEW;
-
+  private ActionViewModel mActionViewModel;
   private Action mAction;
-
-  private Calendar mStartCalendar = Calendar.getInstance();
-  private Calendar mEndCalendar = Calendar.getInstance();
-
-  private LiveData<CategoryGroup> mCategoryGroup;
-  private Observer<CategoryGroup> mCategoryGroupObserver = (categoryGroup) -> updateViews();
-
-  private LiveData<Category> mCategory;
-  private Observer<Category> mCategoryObserver =
-      (category) -> {
-        if (category != null) {
-          mAction.setCategoryId(category.getId());
-          observeCategoryGroup(category.getGroupId());
-        }
-        updateViews();
-      };
+  private CategoryGroup mCategoryGroup;
+  private Category mCategory;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -77,18 +60,17 @@ public class AddActionActivity extends BaseActivity {
     setContentView(R.layout.activity_add_action);
 
     long selectedActionId =
-        getIntent().getLongExtra(SELECTED_ACTION_KEY, INVALID_SELECTED_ACTION_ID);
-    mMode = selectedActionId != INVALID_SELECTED_ACTION_ID ? MODE_EDIT : MODE_NEW;
+        getIntent().getLongExtra(SELECTED_ACTION_ID_KEY, INVALID_SELECTED_ACTION_ID);
+    boolean isEditingAction = selectedActionId != INVALID_SELECTED_ACTION_ID;
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar()
-        .setTitle(mMode == MODE_EDIT ? R.string.edit_action : R.string.add_acton);
+    getSupportActionBar().setTitle(isEditingAction ? R.string.edit_action : R.string.add_acton);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-    mNewActionName = findViewById(R.id.new_action_name);
-    mNewActionNote = findViewById(R.id.new_action_note);
+    mActionTitleView = findViewById(R.id.new_action_name);
+    mActionNoteView = findViewById(R.id.new_action_note);
     mIsFinished = findViewById(R.id.is_finished);
     mIsFinished.setOnCheckedChangeListener(
         (view, isChecked) -> {
@@ -112,124 +94,72 @@ public class AddActionActivity extends BaseActivity {
     mDurationMinutes = findViewById(R.id.duration_minutes);
     findViewById(R.id.duration_layout).setOnClickListener((v) -> showMinuteList());
 
-    mAction = new Action();
-    updateViews();
+    mActionViewModel =
+        isEditingAction
+            ? ViewModelProviders.of(this).get(EditActionViewModel.class)
+            : ViewModelProviders.of(this).get(NewActionViewModel.class);
+    mActionViewModel
+        .getAction()
+        .observe(
+            this,
+            (action) -> {
+              mAction = action;
+              mActionViewModel.selectCategory(mAction.getCategoryId());
+              mActionTitleView.setText(mAction.getTitle());
+              mActionNoteView.setText(mAction.getNote());
+              mIsFinished.setChecked(mAction.isFinished());
+              updateViews();
+            });
+    mActionViewModel
+        .getSelectedCategory()
+        .observe(
+            this,
+            (category) -> {
+              mCategory = category;
+              if (mAction != null) {
+                mAction.setCategoryId(mCategory != null ? mCategory.getId() : null);
+              }
+              updateViews();
+            });
+    mActionViewModel
+        .getSelectedCategoryGroup()
+        .observe(
+            this,
+            (categoryGroup) -> {
+              mCategoryGroup = categoryGroup;
+              updateViews();
+            });
 
-    if (mMode == MODE_EDIT) {
-      mActionViewModel
-          .getAction(selectedActionId)
-          .observe(
-              this,
-              (action) -> {
-                mAction = action;
-                mIsFinished.setChecked(mAction.isFinished());
-                if (mAction.isFinished()) {
-                  mDatetimeLayout.setVisibility(View.VISIBLE);
-                  mStartCalendar.setTime(mAction.getStartTime());
-                  mEndCalendar.setTime(mAction.getEndTime());
-                } else {
-                  mDatetimeLayout.setVisibility(View.GONE);
-                }
-
-                observeCategory(action.getCategoryId());
-
-                mNewActionName.setText(mAction.getTitle());
-                mNewActionNote.setText(mAction.getNote());
-                updateViews();
-              });
-    } else {
-      int year = getIntent().getIntExtra(SELECTED_YEAR_KEY, INVALID_SELECTED_DATE);
-      int month = getIntent().getIntExtra(SELECTED_MONTH_KEY, INVALID_SELECTED_DATE);
-      int day = getIntent().getIntExtra(SELECTED_DAY_KEY, INVALID_SELECTED_DATE);
-
-      if (year != INVALID_SELECTED_DATE
-          && month != INVALID_SELECTED_DATE
-          && day != INVALID_SELECTED_DATE) {
-        mStartCalendar.set(Calendar.YEAR, year);
-        mStartCalendar.set(Calendar.MONTH, month);
-        mStartCalendar.set(Calendar.DAY_OF_MONTH, day);
-        mEndCalendar.set(Calendar.YEAR, year);
-        mEndCalendar.set(Calendar.MONTH, month);
-        mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
-      }
-
-      observeCategory(TomatistPreferences.getInstance(this).lastUsedCategoryId());
-    }
+    Intent intent = getIntent();
+    intent.putExtra(
+        ActionViewModel.ACTION_ID_KEY,
+        intent.getLongExtra(SELECTED_ACTION_ID_KEY, ActionViewModel.INVALID_ACTION_ID));
+    intent.putExtra(
+        ActionViewModel.ACTION_YEAR_KEY,
+        intent.getIntExtra(SELECTED_YEAR_KEY, ActionViewModel.INVALID_ACTION_DATE));
+    intent.putExtra(
+        ActionViewModel.ACTION_MONTH_KEY,
+        intent.getIntExtra(SELECTED_MONTH_KEY, ActionViewModel.INVALID_ACTION_DATE));
+    intent.putExtra(
+        ActionViewModel.ACTION_DAY_KEY,
+        intent.getIntExtra(SELECTED_DAY_KEY, ActionViewModel.INVALID_ACTION_DATE));
+    intent.putExtra(
+        ActionViewModel.ACTION_CATEGORY_KEY,
+        TomatistPreferences.getInstance(this).lastUsedCategoryId());
+    mActionViewModel.init(intent);
   }
 
   private void saveAction() {
-    String newActionName = mNewActionName.getText().toString().trim();
-    if (newActionName.isEmpty()) {
-      mNewActionName.setError(getString(R.string.error_name_is_required));
+    String actionTitle = mActionTitleView.getText().toString().trim();
+    if (actionTitle.isEmpty()) {
+      mActionTitleView.setError(getString(R.string.error_name_is_required));
       return;
     }
 
-    int minutes;
-    try {
-      minutes = Integer.valueOf(mDurationMinutes.getText().toString());
-    } catch (NumberFormatException ex) {
-      minutes = 0;
-    }
-    Long categoryId = null;
-    if (mCategory != null) {
-      Category category = mCategory.getValue();
-      if (category != null) {
-        categoryId = category.getId();
-      }
-    }
-
-    mAction.setTitle(newActionName);
-    if (mAction.isFinished()) {
-      mAction.setStartTime(mStartCalendar.getTime());
-      mAction.setEndTime(mEndCalendar.getTime());
-      mAction.setMinutes(minutes);
-    } else {
-      mAction.setStartTime(null);
-      mAction.setEndTime(null);
-      mAction.setMinutes(0);
-    }
-    mAction.setCategoryId(categoryId);
-    mAction.setNote(mNewActionNote.getText().toString().trim());
-
-    if (mMode == MODE_EDIT) {
-      mActionViewModel.updateAction(mAction);
-    } else {
-      mActionViewModel.insertAction(mAction);
-    }
+    mActionViewModel.saveAction(
+        actionTitle, mActionNoteView.getText().toString().trim(), mIsFinished.isChecked());
 
     finish();
-  }
-
-  private void observeCategoryGroup(Long categoryGroupId) {
-    if (mCategoryGroup != null && mCategoryGroup.getValue() != null) {
-      if (mCategoryGroup.getValue().getId().equals(categoryGroupId)) {
-        return;
-      } else {
-        mCategoryGroup.removeObserver(mCategoryGroupObserver);
-        mCategoryGroup = null;
-      }
-    }
-
-    if (categoryGroupId != null) {
-      mCategoryGroup = mCategoryViewModel.getCategoryGroup(categoryGroupId);
-      mCategoryGroup.observe(this, mCategoryGroupObserver);
-    }
-  }
-
-  private void observeCategory(Long categoryId) {
-    if (mCategory != null && mCategory.getValue() != null) {
-      if (mCategory.getValue().getId().equals(categoryId)) {
-        return;
-      } else {
-        mCategory.removeObserver(mCategoryObserver);
-        mCategory = null;
-      }
-    }
-
-    if (categoryId != null) {
-      mCategory = mCategoryViewModel.getCategory(categoryId);
-      mCategory.observe(this, mCategoryObserver);
-    }
   }
 
   @Override
@@ -256,7 +186,8 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void showDatePicker(final boolean isStartDate) {
-    final Calendar calendar = isStartDate ? mStartCalendar : mEndCalendar;
+    final Calendar calendar =
+        isStartDate ? mActionViewModel.getStartCalendar() : mActionViewModel.getEndCalendar();
     new DatePickerDialog(
             this,
             (view, year, month, dayOfMonth) -> {
@@ -264,6 +195,11 @@ public class AddActionActivity extends BaseActivity {
               calendar.set(Calendar.MONTH, month);
               calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
               checkCalendars(isStartDate);
+              if (isStartDate) {
+                mAction.setStartTime(calendar.getTime());
+              } else {
+                mAction.setEndTime(calendar.getTime());
+              }
               updateViews();
             },
             calendar.get(Calendar.YEAR),
@@ -273,7 +209,8 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void showTimePicker(final boolean isStartTime) {
-    final Calendar calendar = isStartTime ? mStartCalendar : mEndCalendar;
+    final Calendar calendar =
+        isStartTime ? mActionViewModel.getStartCalendar() : mActionViewModel.getEndCalendar();
     new TimePickerDialog(
             this,
             (view, hourOfDay, minute) -> {
@@ -295,8 +232,9 @@ public class AddActionActivity extends BaseActivity {
             R.array.minutes_string,
             (dialog, which) -> {
               int selectedMinutes = getResources().getIntArray(R.array.minutes_int)[which];
-              mEndCalendar = (Calendar) mStartCalendar.clone();
-              mEndCalendar.add(Calendar.MINUTE, selectedMinutes);
+              mActionViewModel.setEndCalendar(
+                  (Calendar) mActionViewModel.getStartCalendar().clone());
+              mActionViewModel.getEndCalendar().add(Calendar.MINUTE, selectedMinutes);
               updateViews();
             })
         .create()
@@ -304,60 +242,65 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void checkCalendars(boolean isStartDateTime) {
+    Calendar startCalendar = mActionViewModel.getStartCalendar();
+    Calendar endCalendar = mActionViewModel.getEndCalendar();
+
     if (isStartDateTime) {
-      if (mStartCalendar.after(mEndCalendar)) {
-        mEndCalendar = (Calendar) mStartCalendar.clone();
+      if (startCalendar.after(endCalendar)) {
+        mActionViewModel.setEndCalendar((Calendar) startCalendar.clone());
       }
     } else {
-      if (mEndCalendar.before(mStartCalendar)) {
-        mStartCalendar = (Calendar) mEndCalendar.clone();
+      if (endCalendar.before(startCalendar)) {
+        mActionViewModel.setStartCalendar((Calendar) endCalendar.clone());
       }
     }
   }
 
   private void updateViews() {
+
+    if (mIsFinished.isChecked()) {
+      mDatetimeLayout.setVisibility(View.VISIBLE);
+    } else {
+      mDatetimeLayout.setVisibility(View.GONE);
+    }
+
+    Calendar startCalendar = mActionViewModel.getStartCalendar();
+    Calendar endCalendar = mActionViewModel.getEndCalendar();
     mStartDate.setText(
         String.format(
             Locale.getDefault(),
             "%04d-%02d-%02d",
-            mStartCalendar.get(Calendar.YEAR),
-            mStartCalendar.get(Calendar.MONTH) + 1,
-            mStartCalendar.get(Calendar.DAY_OF_MONTH)));
-    mEndDate.setText(
-        String.format(
-            Locale.getDefault(),
-            "%04d-%02d-%02d",
-            mEndCalendar.get(Calendar.YEAR),
-            mEndCalendar.get(Calendar.MONTH) + 1,
-            mEndCalendar.get(Calendar.DAY_OF_MONTH)));
+            startCalendar.get(Calendar.YEAR),
+            startCalendar.get(Calendar.MONTH) + 1,
+            startCalendar.get(Calendar.DAY_OF_MONTH)));
     mStartTime.setText(
         String.format(
             Locale.getDefault(),
             "%02d:%02d",
-            mStartCalendar.get(Calendar.HOUR_OF_DAY),
-            mStartCalendar.get(Calendar.MINUTE)));
+            startCalendar.get(Calendar.HOUR_OF_DAY),
+            startCalendar.get(Calendar.MINUTE)));
+    mEndDate.setText(
+        String.format(
+            Locale.getDefault(),
+            "%04d-%02d-%02d",
+            endCalendar.get(Calendar.YEAR),
+            endCalendar.get(Calendar.MONTH) + 1,
+            endCalendar.get(Calendar.DAY_OF_MONTH)));
     mEndTime.setText(
         String.format(
             Locale.getDefault(),
             "%02d:%02d",
-            mEndCalendar.get(Calendar.HOUR_OF_DAY),
-            mEndCalendar.get(Calendar.MINUTE)));
+            endCalendar.get(Calendar.HOUR_OF_DAY),
+            endCalendar.get(Calendar.MINUTE)));
 
-    long minute = (mEndCalendar.getTimeInMillis() - mStartCalendar.getTimeInMillis()) / (60 * 1000);
+    long minute = (endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (60 * 1000);
     mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", minute));
 
     StringBuilder sb = new StringBuilder();
     if (mCategory != null) {
-      Category category = mCategory.getValue();
-      if (category != null) {
-        sb.append(category.getTitle());
-
-        if (mCategoryGroup != null) {
-          CategoryGroup group = mCategoryGroup.getValue();
-          if (group != null && group.getId().equals(category.getGroupId())) {
-            sb.insert(0, group.getTitle() + " - ");
-          }
-        }
+      sb.append(mCategory.getTitle());
+      if (mCategoryGroup != null) {
+        sb.insert(0, mCategoryGroup.getTitle() + " - ");
       }
     }
     String strCategory = sb.toString().trim();
@@ -374,7 +317,7 @@ public class AddActionActivity extends BaseActivity {
                 CategorySelectorActivity.SELECTED_CATEGORY_ID,
                 CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID);
         if (selectedCategoryId != CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID) {
-          observeCategory(selectedCategoryId);
+          mActionViewModel.selectCategory(selectedCategoryId);
         }
       }
     }

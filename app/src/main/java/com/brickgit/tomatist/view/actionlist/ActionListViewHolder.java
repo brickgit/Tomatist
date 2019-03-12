@@ -56,7 +56,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
       Action action, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
     mAction = action;
 
-    if (action.getStartTime() != null) {
+    if (action.isFinished() && action.getStartTime() != null) {
       mStartDateTime.setText(dateFormat.format(action.getStartTime()));
       if (action.getMinutes() != 0) {
         mEndDateTime.setText(dateFormat.format(action.getEndTime()));

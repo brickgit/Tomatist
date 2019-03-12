@@ -124,7 +124,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
   private void gotoAddActionActivity(Long actionId) {
     Intent intent = new Intent(this, AddActionActivity.class);
     if (actionId != null) {
-      intent.putExtra(AddActionActivity.SELECTED_ACTION_KEY, actionId);
+      intent.putExtra(AddActionActivity.SELECTED_ACTION_ID_KEY, actionId);
     } else {
       CalendarDay today = CalendarDay.today();
       intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, today.getYear());
