@@ -12,7 +12,7 @@ import androidx.lifecycle.Transformations;
 /** Created by Daniel Lin on 2019/3/11. */
 public class EditActionViewModel extends ActionViewModel {
 
-  private MutableLiveData<Long> mSelectedActionId = new MutableLiveData<>();
+  private MutableLiveData<String> mSelectedActionId = new MutableLiveData<>();
   private LiveData<Action> mSelectedAction =
       Transformations.map(
           Transformations.switchMap(
@@ -32,8 +32,8 @@ public class EditActionViewModel extends ActionViewModel {
   }
 
   public void init(Intent intent) {
-    long selectedActionId = intent.getLongExtra(ACTION_ID_KEY, INVALID_ACTION_ID);
-    mSelectedActionId.setValue(selectedActionId);
+    String selectedActionId = intent.getStringExtra(ACTION_ID_KEY);
+    mSelectedActionId.setValue(selectedActionId != null ? selectedActionId : "");
   }
 
   public void saveAction(String title, String note, boolean isFinished) {

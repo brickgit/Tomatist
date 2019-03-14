@@ -30,7 +30,6 @@ import androidx.lifecycle.ViewModelProviders;
 public class AddActionActivity extends BaseActivity {
 
   public static final String SELECTED_ACTION_ID_KEY = "SELECTED_ACTION_ID_KEY";
-  public static final long INVALID_SELECTED_ACTION_ID = -1;
 
   public static final String SELECTED_YEAR_KEY = "SELECTED_YEAR_KEY";
   public static final String SELECTED_MONTH_KEY = "SELECTED_MONTH_KEY";
@@ -59,9 +58,8 @@ public class AddActionActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_add_action);
 
-    long selectedActionId =
-        getIntent().getLongExtra(SELECTED_ACTION_ID_KEY, INVALID_SELECTED_ACTION_ID);
-    boolean isEditingAction = selectedActionId != INVALID_SELECTED_ACTION_ID;
+    String selectedActionId = getIntent().getStringExtra(SELECTED_ACTION_ID_KEY);
+    boolean isEditingAction = selectedActionId != null;
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -131,9 +129,7 @@ public class AddActionActivity extends BaseActivity {
             });
 
     Intent intent = getIntent();
-    intent.putExtra(
-        ActionViewModel.ACTION_ID_KEY,
-        intent.getLongExtra(SELECTED_ACTION_ID_KEY, ActionViewModel.INVALID_ACTION_ID));
+    intent.putExtra(ActionViewModel.ACTION_ID_KEY, intent.getStringExtra(SELECTED_ACTION_ID_KEY));
     intent.putExtra(
         ActionViewModel.ACTION_YEAR_KEY,
         intent.getIntExtra(SELECTED_YEAR_KEY, ActionViewModel.INVALID_ACTION_DATE));

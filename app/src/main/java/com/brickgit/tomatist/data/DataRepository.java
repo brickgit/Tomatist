@@ -51,7 +51,7 @@ public class DataRepository {
     mActionDao.deleteAction(action);
   }
 
-  public LiveData<Action> getAction(long id) {
+  public LiveData<Action> getAction(String id) {
     return mActionDao.getAction(id);
   }
 

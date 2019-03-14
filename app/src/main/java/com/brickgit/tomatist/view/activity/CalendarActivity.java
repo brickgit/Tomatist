@@ -156,7 +156,7 @@ public class CalendarActivity extends BaseActivity {
         .show();
   }
 
-  private void gotoAddActionActivity(Long actionId) {
+  private void gotoAddActionActivity(String actionId) {
     Intent intent = new Intent(this, AddActionActivity.class);
     if (actionId != null) {
       intent.putExtra(AddActionActivity.SELECTED_ACTION_ID_KEY, actionId);

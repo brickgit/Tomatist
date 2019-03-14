@@ -43,7 +43,7 @@ public abstract class ActionDao {
   public abstract LiveData<List<Action>> getUnfinishedActions(long categoryId);
 
   @Query("SELECT * FROM `actions` WHERE id = :id")
-  public abstract LiveData<Action> getAction(long id);
+  public abstract LiveData<Action> getAction(String id);
 
   @Insert
   public abstract void insertAction(Action action);

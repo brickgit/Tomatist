@@ -1,9 +1,11 @@
 package com.brickgit.tomatist.data.database;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.annotation.Nullable;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -21,9 +23,10 @@ import androidx.room.PrimaryKey;
           onDelete = ForeignKey.SET_NULL)
     })
 public class Action {
-  @PrimaryKey(autoGenerate = true)
+  @PrimaryKey
   @ColumnInfo(name = "id")
-  private Long id;
+  @NonNull
+  private String id;
 
   @ColumnInfo(name = "title")
   private String title;
@@ -32,11 +35,9 @@ public class Action {
   private boolean isFinished;
 
   @ColumnInfo(name = "start_time")
-  @Nullable
   private Date startTime;
 
   @ColumnInfo(name = "end_time")
-  @Nullable
   private Date endTime;
 
   @ColumnInfo(name = "minutes")
@@ -49,11 +50,19 @@ public class Action {
   @Nullable
   private Long categoryId;
 
-  public Long getId() {
+  public Action() {
+    id = KeyGenerator.gen("ACT");
+    Calendar today = Calendar.getInstance();
+    startTime = today.getTime();
+    endTime = today.getTime();
+  }
+
+  @NonNull
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(@NonNull String id) {
     this.id = id;
   }
 
@@ -73,7 +82,6 @@ public class Action {
     isFinished = finished;
   }
 
-  @Nullable
   public Date getStartTime() {
     return startTime;
   }
@@ -82,7 +90,6 @@ public class Action {
     this.startTime = startTime;
   }
 
-  @Nullable
   public Date getEndTime() {
     return endTime;
   }
@@ -107,11 +114,12 @@ public class Action {
     this.note = note;
   }
 
+  @Nullable
   public Long getCategoryId() {
     return categoryId;
   }
 
-  public void setCategoryId(Long categoryId) {
+  public void setCategoryId(@Nullable Long categoryId) {
     this.categoryId = categoryId;
   }
 
@@ -119,6 +127,6 @@ public class Action {
   public boolean equals(Object obj) {
     if (obj == null) return false;
     if (!(obj instanceof Action)) return false;
-    return this.id == ((Action) obj).id;
+    return this.id.equals(((Action) obj).id);
   }
 }

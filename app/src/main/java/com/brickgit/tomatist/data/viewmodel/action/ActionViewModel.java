@@ -17,7 +17,6 @@ import androidx.lifecycle.Transformations;
 public abstract class ActionViewModel extends BaseViewModel {
 
   public static final String ACTION_ID_KEY = "ACTION_ID_KEY";
-  public static final long INVALID_ACTION_ID = -1;
 
   public static final String ACTION_YEAR_KEY = "ACTION_YEAR_KEY";
   public static final String ACTION_MONTH_KEY = "ACTION_MONTH_KEY";
