@@ -19,14 +19,14 @@ public class CategoryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     void OnCategoryClick(Category category);
   }
 
-  private Long mCategoryGroupId;
+  private String mCategoryGroupId;
   private List<Category> mCategories = new ArrayList<>();
 
   private OnCategoryClickListener mOnCategoryClickListener;
 
   public CategoryListAdapter() {}
 
-  public void updateCategories(Long categoryGroupId, List<Category> categories) {
+  public void updateCategories(String categoryGroupId, List<Category> categories) {
     if (!categoryGroupId.equals(mCategoryGroupId)) {
       mCategoryGroupId = categoryGroupId;
       mCategories.clear();

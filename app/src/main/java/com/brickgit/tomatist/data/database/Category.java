@@ -29,7 +29,7 @@ public class Category {
 
   @ColumnInfo(name = "group_id")
   @Nullable
-  private Long groupId;
+  private String groupId;
 
   public Category() {
     id = KeyGenerator.gen("CTG");
@@ -53,11 +53,11 @@ public class Category {
   }
 
   @Nullable
-  public Long getGroupId() {
+  public String getGroupId() {
     return groupId;
   }
 
-  public void setGroupId(@Nullable Long groupId) {
+  public void setGroupId(@Nullable String groupId) {
     this.groupId = groupId;
   }
 

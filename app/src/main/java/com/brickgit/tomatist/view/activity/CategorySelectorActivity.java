@@ -128,7 +128,7 @@ public class CategorySelectorActivity extends BaseActivity {
     return true;
   }
 
-  private void selectCategoryGroup(long categoryGroupId) {
+  private void selectCategoryGroup(String categoryGroupId) {
     mCategorySelectorViewModel.selectCategoryGroup(categoryGroupId);
   }
 
@@ -146,9 +146,8 @@ public class CategorySelectorActivity extends BaseActivity {
           if (!newCategoryGroupTitle.isEmpty()) {
             CategoryGroup newCategoryGroup = new CategoryGroup();
             newCategoryGroup.setTitle(newCategoryGroupTitle);
-            long newCategoryGroupId =
-                mCategorySelectorViewModel.insertCategoryGroup(newCategoryGroup);
-            selectCategoryGroup(newCategoryGroupId);
+            mCategorySelectorViewModel.insertCategoryGroup(newCategoryGroup);
+            selectCategoryGroup(newCategoryGroup.getId());
           }
         });
 

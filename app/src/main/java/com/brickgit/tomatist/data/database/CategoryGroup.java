@@ -1,23 +1,30 @@
 package com.brickgit.tomatist.data.database;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "category_groups")
 public class CategoryGroup {
-  @PrimaryKey(autoGenerate = true)
+  @PrimaryKey
   @ColumnInfo(name = "id")
-  private Long id;
+  @NonNull
+  private String id;
 
   @ColumnInfo(name = "title")
   private String title;
 
-  public Long getId() {
+  public CategoryGroup() {
+    id = KeyGenerator.gen("CGG");
+  }
+
+  @NonNull
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(@NonNull String id) {
     this.id = id;
   }
 
@@ -33,6 +40,6 @@ public class CategoryGroup {
   public boolean equals(Object obj) {
     if (obj == null) return false;
     if (!(obj instanceof CategoryGroup)) return false;
-    return this.id == ((CategoryGroup) obj).id;
+    return this.id.equals(((CategoryGroup) obj).id);
   }
 }

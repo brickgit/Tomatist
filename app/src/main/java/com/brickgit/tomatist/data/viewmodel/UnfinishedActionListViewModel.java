@@ -17,11 +17,11 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
 
   private MutableLiveData<String> mSelectedCategoryId = new MutableLiveData<>();
 
-  private LiveData<Map<Long, CategoryGroup>> mCategoryGroupMap =
+  private LiveData<Map<String, CategoryGroup>> mCategoryGroupMap =
       Transformations.map(
           mDataRepository.getCategoryGroups(),
           (groups) -> {
-            Map<Long, CategoryGroup> map = new HashMap<>();
+            Map<String, CategoryGroup> map = new HashMap<>();
             for (CategoryGroup group : groups) {
               map.put(group.getId(), group);
             }
@@ -49,7 +49,7 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
     super();
   }
 
-  public LiveData<Map<Long, CategoryGroup>> getCategoryGroupMap() {
+  public LiveData<Map<String, CategoryGroup>> getCategoryGroupMap() {
     return mCategoryGroupMap;
   }
 

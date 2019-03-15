@@ -15,7 +15,7 @@ public interface CategoryDao {
   LiveData<Category> getCategory(String id);
 
   @Query("SELECT * FROM categories WHERE group_id = :groupId")
-  LiveData<List<Category>> getCategories(long groupId);
+  LiveData<List<Category>> getCategories(String groupId);
 
   @Query("SELECT * FROM categories")
   LiveData<List<Category>> getCategories();

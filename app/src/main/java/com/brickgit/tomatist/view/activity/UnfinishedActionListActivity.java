@@ -39,7 +39,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
   private LinearLayoutManager mLayoutManager;
   private ActionListAdapter mActionListAdapter;
 
-  private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
+  private Map<String, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<String, Category> mCategories = new HashMap<>();
   private List<Action> mUnfinishedActionList = new ArrayList<>();
 

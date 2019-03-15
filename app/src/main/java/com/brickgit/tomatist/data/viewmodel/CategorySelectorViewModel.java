@@ -12,7 +12,7 @@ import androidx.lifecycle.Transformations;
 /** Created by Daniel Lin on 2019/3/9. */
 public class CategorySelectorViewModel extends BaseViewModel {
 
-  private MutableLiveData<Long> mSelectedCategoryGroupId = new MutableLiveData<>();
+  private MutableLiveData<String> mSelectedCategoryGroupId = new MutableLiveData<>();
 
   private LiveData<List<CategoryGroup>> mCategoryGroupList;
   private LiveData<List<Category>> mSelectedCategoryList =
@@ -23,8 +23,8 @@ public class CategorySelectorViewModel extends BaseViewModel {
     super();
   }
 
-  public long insertCategoryGroup(CategoryGroup categoryGroup) {
-    return mDataRepository.insertCategoryGroup(categoryGroup);
+  public void insertCategoryGroup(CategoryGroup categoryGroup) {
+    mDataRepository.insertCategoryGroup(categoryGroup);
   }
 
   public void deleteCategoryGroup(CategoryGroup categoryGroup) {
@@ -50,11 +50,11 @@ public class CategorySelectorViewModel extends BaseViewModel {
     return mSelectedCategoryList;
   }
 
-  public void selectCategoryGroup(Long selectedCategoryGroupId) {
+  public void selectCategoryGroup(String selectedCategoryGroupId) {
     mSelectedCategoryGroupId.setValue(selectedCategoryGroupId);
   }
 
-  public Long getSelectedCategoryGroupId() {
+  public String getSelectedCategoryGroupId() {
     return mSelectedCategoryGroupId.getValue();
   }
 }

@@ -27,7 +27,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
   private List<Action> mActions = new LinkedList<>();
   private OnActionClickListener mOnActionClickListener;
 
-  private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
+  private Map<String, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<String, Category> mCategories = new HashMap<>();
 
   public ActionListAdapter() {}
@@ -68,7 +68,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
   }
 
-  public void updateCategoryGroups(Map<Long, CategoryGroup> categoryGroups) {
+  public void updateCategoryGroups(Map<String, CategoryGroup> categoryGroups) {
     mCategoryGroups.clear();
     mCategoryGroups.putAll(categoryGroups);
     notifyDataSetChanged();

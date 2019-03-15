@@ -67,11 +67,11 @@ public class DataRepository {
     return mActionDao.getUnfinishedActions(categoryId);
   }
 
-  public long insertCategoryGroup(CategoryGroup categoryGroup) {
-    return mCategoryGroupDao.insertCategoryGroup(categoryGroup);
+  public void insertCategoryGroup(CategoryGroup categoryGroup) {
+    mCategoryGroupDao.insertCategoryGroup(categoryGroup);
   }
 
-  public LiveData<CategoryGroup> getCategoryGroup(long categoryGroupId) {
+  public LiveData<CategoryGroup> getCategoryGroup(String categoryGroupId) {
     return mCategoryGroupDao.getCategoryGroup(categoryGroupId);
   }
 
@@ -95,7 +95,7 @@ public class DataRepository {
     return mCategoryDao.getCategory(categoryId);
   }
 
-  public LiveData<List<Category>> getCategories(long categoryGroupId) {
+  public LiveData<List<Category>> getCategories(String categoryGroupId) {
     return mCategoryDao.getCategories(categoryGroupId);
   }
 

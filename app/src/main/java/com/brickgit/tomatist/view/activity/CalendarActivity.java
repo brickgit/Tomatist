@@ -202,9 +202,11 @@ public class CalendarActivity extends BaseActivity {
     }
     for (String categoryGroupTitle : categoryMap.keySet()) {
       CategoryGroup newGroup = new CategoryGroup();
+      if (pref.lastUsedCategoryGroupId().isEmpty()) {
+        pref.setLastUsedCategoryGroupId(newGroup.getId());
+      }
       newGroup.setTitle(categoryGroupTitle);
-      long newGroupId = mCalendarActivityViewModel.insertCategoryGroup(newGroup);
-
+      mCalendarActivityViewModel.insertCategoryGroup(newGroup);
       List<Category> newCategories = new ArrayList<>();
       List<String> categories = categoryMap.get(categoryGroupTitle);
       for (String categoryTitle : categories) {
@@ -212,7 +214,7 @@ public class CalendarActivity extends BaseActivity {
         if (pref.lastUsedCategoryId().isEmpty()) {
           pref.setLastUsedCategoryId(newCategory.getId());
         }
-        newCategory.setGroupId(newGroupId);
+        newCategory.setGroupId(newGroup.getId());
         newCategory.setTitle(categoryTitle);
         newCategories.add(newCategory);
       }

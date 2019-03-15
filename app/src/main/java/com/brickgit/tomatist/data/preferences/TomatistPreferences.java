@@ -35,12 +35,12 @@ public class TomatistPreferences {
     sharedPreferences.edit().putBoolean(IS_FIRST_LAUNCHED, isFirstLaunched).apply();
   }
 
-  public long lastUsedCategoryGroupId() {
-    return sharedPreferences.getLong(LAST_USED_CATEGORY_GROUP_ID, 1);
+  public String lastUsedCategoryGroupId() {
+    return sharedPreferences.getString(LAST_USED_CATEGORY_GROUP_ID, "");
   }
 
-  public void setLastUsedCategoryGroupId(long categoryGroupId) {
-    sharedPreferences.edit().putLong(LAST_USED_CATEGORY_GROUP_ID, categoryGroupId).apply();
+  public void setLastUsedCategoryGroupId(String categoryGroupId) {
+    sharedPreferences.edit().putString(LAST_USED_CATEGORY_GROUP_ID, categoryGroupId).apply();
   }
 
   public String lastUsedCategoryId() {

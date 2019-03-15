@@ -36,7 +36,7 @@ public abstract class ActionViewModel extends BaseViewModel {
               mDataRepository.getCategoryGroup(
                   (category != null && category.getGroupId() != null)
                       ? category.getGroupId()
-                      : -1));
+                      : ""));
 
   protected Calendar mStartCalendar = Calendar.getInstance();
   protected Calendar mEndCalendar = Calendar.getInstance();
