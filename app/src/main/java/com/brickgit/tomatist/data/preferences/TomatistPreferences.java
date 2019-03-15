@@ -43,11 +43,11 @@ public class TomatistPreferences {
     sharedPreferences.edit().putLong(LAST_USED_CATEGORY_GROUP_ID, categoryGroupId).apply();
   }
 
-  public long lastUsedCategoryId() {
-    return sharedPreferences.getLong(LAST_USED_CATEGORY_ID, 1);
+  public String lastUsedCategoryId() {
+    return sharedPreferences.getString(LAST_USED_CATEGORY_ID, "");
   }
 
-  public void setLastUsedCategoryId(long categoryId) {
-    sharedPreferences.edit().putLong(LAST_USED_CATEGORY_ID, categoryId).apply();
+  public void setLastUsedCategoryId(String categoryId) {
+    sharedPreferences.edit().putString(LAST_USED_CATEGORY_ID, categoryId).apply();
   }
 }

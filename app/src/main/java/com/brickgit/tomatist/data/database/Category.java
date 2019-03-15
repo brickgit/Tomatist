@@ -2,6 +2,7 @@ package com.brickgit.tomatist.data.database;
 
 import javax.annotation.Nullable;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -18,9 +19,10 @@ import androidx.room.PrimaryKey;
             childColumns = "group_id",
             onDelete = ForeignKey.SET_NULL))
 public class Category {
-  @PrimaryKey(autoGenerate = true)
+  @PrimaryKey
   @ColumnInfo(name = "id")
-  private Long id;
+  @NonNull
+  private String id;
 
   @ColumnInfo(name = "title")
   private String title;
@@ -29,11 +31,16 @@ public class Category {
   @Nullable
   private Long groupId;
 
-  public Long getId() {
+  public Category() {
+    id = KeyGenerator.gen("CTG");
+  }
+
+  @NonNull
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(@NonNull String id) {
     this.id = id;
   }
 
@@ -45,11 +52,12 @@ public class Category {
     this.title = title;
   }
 
+  @Nullable
   public Long getGroupId() {
     return groupId;
   }
 
-  public void setGroupId(Long groupId) {
+  public void setGroupId(@Nullable Long groupId) {
     this.groupId = groupId;
   }
 
@@ -57,6 +65,6 @@ public class Category {
   public boolean equals(Object obj) {
     if (obj == null) return false;
     if (!(obj instanceof Category)) return false;
-    return this.id == ((Category) obj).id;
+    return this.id.equals(((Category) obj).id);
   }
 }

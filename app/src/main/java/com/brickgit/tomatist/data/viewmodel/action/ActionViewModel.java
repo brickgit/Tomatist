@@ -24,9 +24,8 @@ public abstract class ActionViewModel extends BaseViewModel {
   public static final int INVALID_ACTION_DATE = -1;
 
   public static final String ACTION_CATEGORY_KEY = "ACTION_CATEGORY_KEY";
-  public static final long INVALID_CATEGORY_ID = -1;
 
-  protected MutableLiveData<Long> mSelectedCategoryId = new MutableLiveData<>();
+  protected MutableLiveData<String> mSelectedCategoryId = new MutableLiveData<>();
   protected LiveData<Category> mSelectedCategory =
       Transformations.switchMap(
           mSelectedCategoryId, (selectedId) -> mDataRepository.getCategory(selectedId));
@@ -54,9 +53,8 @@ public abstract class ActionViewModel extends BaseViewModel {
     return mSelectedCategoryGroup;
   }
 
-  public void selectCategory(Long selectedCategoryId) {
-    mSelectedCategoryId.setValue(
-        selectedCategoryId != null ? selectedCategoryId : INVALID_CATEGORY_ID);
+  public void selectCategory(String selectedCategoryId) {
+    mSelectedCategoryId.setValue(selectedCategoryId != null ? selectedCategoryId : "");
   }
 
   public Calendar getStartCalendar() {

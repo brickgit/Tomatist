@@ -48,7 +48,7 @@ public class Action {
 
   @ColumnInfo(name = "category_id")
   @Nullable
-  private Long categoryId;
+  private String categoryId;
 
   public Action() {
     id = KeyGenerator.gen("ACT");
@@ -115,11 +115,11 @@ public class Action {
   }
 
   @Nullable
-  public Long getCategoryId() {
+  public String getCategoryId() {
     return categoryId;
   }
 
-  public void setCategoryId(@Nullable Long categoryId) {
+  public void setCategoryId(@Nullable String categoryId) {
     this.categoryId = categoryId;
   }
 

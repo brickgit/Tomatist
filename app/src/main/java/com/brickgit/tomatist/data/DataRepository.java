@@ -63,7 +63,7 @@ public class DataRepository {
     return mActionDao.getUnfinishedActions();
   }
 
-  public LiveData<List<Action>> getUnfinishedActions(long categoryId) {
+  public LiveData<List<Action>> getUnfinishedActions(String categoryId) {
     return mActionDao.getUnfinishedActions(categoryId);
   }
 
@@ -83,15 +83,15 @@ public class DataRepository {
     mCategoryGroupDao.deleteCategoryGroup(categoryGroup);
   }
 
-  public long insertCategory(Category category) {
-    return mCategoryDao.insertCategory(category);
+  public void insertCategory(Category category) {
+    mCategoryDao.insertCategory(category);
   }
 
-  public long[] insertCategories(List<Category> categories) {
-    return mCategoryDao.insertCategories(categories);
+  public void insertCategories(List<Category> categories) {
+    mCategoryDao.insertCategories(categories);
   }
 
-  public LiveData<Category> getCategory(long categoryId) {
+  public LiveData<Category> getCategory(String categoryId) {
     return mCategoryDao.getCategory(categoryId);
   }
 

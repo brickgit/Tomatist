@@ -53,7 +53,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
   }
 
   public void bind(
-      Action action, Map<Long, CategoryGroup> categoryGroups, Map<Long, Category> categories) {
+      Action action, Map<Long, CategoryGroup> categoryGroups, Map<String, Category> categories) {
     mAction = action;
 
     if (action.isFinished() && action.getStartTime() != null) {

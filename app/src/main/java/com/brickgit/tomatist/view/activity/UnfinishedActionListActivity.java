@@ -40,7 +40,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
   private ActionListAdapter mActionListAdapter;
 
   private Map<Long, CategoryGroup> mCategoryGroups = new HashMap<>();
-  private Map<Long, Category> mCategories = new HashMap<>();
+  private Map<String, Category> mCategories = new HashMap<>();
   private List<Action> mUnfinishedActionList = new ArrayList<>();
 
   @Override
@@ -150,7 +150,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
   private void updateViews() {
     String tag = getString(R.string.all);
-    Long selectedCategoryId = mUnfinishedActionListViewModel.getSelectedCategoryId();
+    String selectedCategoryId = mUnfinishedActionListViewModel.getSelectedCategoryId();
     if (selectedCategoryId != null && mCategories.get(selectedCategoryId) != null) {
       Category category = mCategories.get(selectedCategoryId);
       tag = String.valueOf(category.getId());
@@ -172,14 +172,9 @@ public class UnfinishedActionListActivity extends BaseActivity {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
       if (resultCode == RESULT_OK) {
-        long selectedCategoryId =
-            data.getLongExtra(
-                CategorySelectorActivity.SELECTED_CATEGORY_ID,
-                CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID);
-        mUnfinishedActionListViewModel.selectCategory(
-            selectedCategoryId != CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID
-                ? selectedCategoryId
-                : null);
+        String selectedCategoryId =
+            data.getStringExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID);
+        mUnfinishedActionListViewModel.selectCategory(selectedCategoryId);
         updateViews();
       }
     }

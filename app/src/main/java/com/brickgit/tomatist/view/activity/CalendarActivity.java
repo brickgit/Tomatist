@@ -185,6 +185,8 @@ public class CalendarActivity extends BaseActivity {
   }
 
   private void initDefaultCategories() {
+    TomatistPreferences pref = TomatistPreferences.getInstance(this);
+
     Map<String, List<String>> categoryMap = new HashMap<>();
     String[] defaultCategories = getResources().getStringArray(R.array.default_categories);
     for (String defaultCategory : defaultCategories) {
@@ -207,6 +209,9 @@ public class CalendarActivity extends BaseActivity {
       List<String> categories = categoryMap.get(categoryGroupTitle);
       for (String categoryTitle : categories) {
         Category newCategory = new Category();
+        if (pref.lastUsedCategoryId().isEmpty()) {
+          pref.setLastUsedCategoryId(newCategory.getId());
+        }
         newCategory.setGroupId(newGroupId);
         newCategory.setTitle(categoryTitle);
         newCategories.add(newCategory);

@@ -31,8 +31,8 @@ public class CategorySelectorViewModel extends BaseViewModel {
     mDataRepository.deleteCategoryGroup(categoryGroup);
   }
 
-  public long insertCategory(Category category) {
-    return mDataRepository.insertCategory(category);
+  public void insertCategory(Category category) {
+    mDataRepository.insertCategory(category);
   }
 
   public void deleteCategory(Category category) {

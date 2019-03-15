@@ -12,7 +12,7 @@ import androidx.room.Query;
 public interface CategoryDao {
 
   @Query("SELECT * FROM categories WHERE id = :id")
-  LiveData<Category> getCategory(long id);
+  LiveData<Category> getCategory(String id);
 
   @Query("SELECT * FROM categories WHERE group_id = :groupId")
   LiveData<List<Category>> getCategories(long groupId);
@@ -21,10 +21,10 @@ public interface CategoryDao {
   LiveData<List<Category>> getCategories();
 
   @Insert
-  long insertCategory(Category category);
+  void insertCategory(Category category);
 
   @Insert
-  long[] insertCategories(List<Category> categories);
+  void insertCategories(List<Category> categories);
 
   @Delete
   void deleteCategory(Category category);

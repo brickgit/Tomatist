@@ -15,7 +15,7 @@ import androidx.lifecycle.Transformations;
 /** Created by Daniel Lin on 2019/3/10. */
 public class UnfinishedActionListViewModel extends BaseViewModel {
 
-  private MutableLiveData<Long> mSelectedCategoryId = new MutableLiveData<>();
+  private MutableLiveData<String> mSelectedCategoryId = new MutableLiveData<>();
 
   private LiveData<Map<Long, CategoryGroup>> mCategoryGroupMap =
       Transformations.map(
@@ -27,11 +27,11 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
             }
             return map;
           });
-  private LiveData<Map<Long, Category>> mCategoryMap =
+  private LiveData<Map<String, Category>> mCategoryMap =
       Transformations.map(
           mDataRepository.getCategories(),
           (categories) -> {
-            Map<Long, Category> map = new HashMap<>();
+            Map<String, Category> map = new HashMap<>();
             for (Category category : categories) {
               map.put(category.getId(), category);
             }
@@ -41,7 +41,7 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
       Transformations.switchMap(
           mSelectedCategoryId,
           (selectedId) ->
-              selectedId != null
+              !selectedId.isEmpty()
                   ? mDataRepository.getUnfinishedActions(selectedId)
                   : mDataRepository.getUnfinishedActions());
 
@@ -53,7 +53,7 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
     return mCategoryGroupMap;
   }
 
-  public LiveData<Map<Long, Category>> getCategoryMap() {
+  public LiveData<Map<String, Category>> getCategoryMap() {
     return mCategoryMap;
   }
 
@@ -69,11 +69,11 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
     mDataRepository.deleteAction(action);
   }
 
-  public void selectCategory(Long selectedCategoryId) {
-    mSelectedCategoryId.setValue(selectedCategoryId);
+  public void selectCategory(String selectedCategoryId) {
+    mSelectedCategoryId.setValue(selectedCategoryId != null ? selectedCategoryId : "");
   }
 
-  public Long getSelectedCategoryId() {
+  public String getSelectedCategoryId() {
     return mSelectedCategoryId.getValue();
   }
 }

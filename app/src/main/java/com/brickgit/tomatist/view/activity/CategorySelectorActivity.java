@@ -30,7 +30,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CategorySelectorActivity extends BaseActivity {
 
   public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
-  public static final long INVALID_SELECTED_CATEGORY_ID = -1;
 
   protected CategorySelectorViewModel mCategorySelectorViewModel;
 

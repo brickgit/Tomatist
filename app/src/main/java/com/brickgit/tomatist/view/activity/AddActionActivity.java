@@ -308,13 +308,9 @@ public class AddActionActivity extends BaseActivity {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
       if (resultCode == RESULT_OK) {
-        long selectedCategoryId =
-            data.getLongExtra(
-                CategorySelectorActivity.SELECTED_CATEGORY_ID,
-                CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID);
-        if (selectedCategoryId != CategorySelectorActivity.INVALID_SELECTED_CATEGORY_ID) {
-          mActionViewModel.selectCategory(selectedCategoryId);
-        }
+        String selectedCategoryId =
+            data.getStringExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID);
+        mActionViewModel.selectCategory(selectedCategoryId);
       }
     }
   }

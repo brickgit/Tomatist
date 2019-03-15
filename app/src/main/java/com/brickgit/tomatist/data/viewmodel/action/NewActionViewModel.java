@@ -37,13 +37,10 @@ public class NewActionViewModel extends ActionViewModel {
       mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
     }
 
-    Long categoryId = intent.getLongExtra(ACTION_CATEGORY_KEY, INVALID_CATEGORY_ID);
-    if (categoryId == INVALID_CATEGORY_ID) categoryId = null;
-
     Action action = new Action();
     action.setStartTime(mStartCalendar.getTime());
     action.setEndTime(mEndCalendar.getTime());
-    action.setCategoryId(categoryId);
+    action.setCategoryId(intent.getStringExtra(ACTION_CATEGORY_KEY));
 
     mAction.setValue(action);
   }

@@ -31,11 +31,11 @@ public class CalendarActivityViewModel extends BaseViewModel {
             }
             return map;
           });
-  private LiveData<Map<Long, Category>> mCategoryMap =
+  private LiveData<Map<String, Category>> mCategoryMap =
       Transformations.map(
           mDataRepository.getCategories(),
           (categories) -> {
-            Map<Long, Category> map = new HashMap<>();
+            Map<String, Category> map = new HashMap<>();
             for (Category category : categories) {
               map.put(category.getId(), category);
             }
@@ -55,15 +55,15 @@ public class CalendarActivityViewModel extends BaseViewModel {
     return mDataRepository.insertCategoryGroup(categoryGroup);
   }
 
-  public long[] insertCategories(List<Category> categories) {
-    return mDataRepository.insertCategories(categories);
+  public void insertCategories(List<Category> categories) {
+    mDataRepository.insertCategories(categories);
   }
 
   public LiveData<Map<Long, CategoryGroup>> getCategoryGroupMap() {
     return mCategoryGroupMap;
   }
 
-  public LiveData<Map<Long, Category>> getCategoryMap() {
+  public LiveData<Map<String, Category>> getCategoryMap() {
     return mCategoryMap;
   }
 
