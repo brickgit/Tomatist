@@ -40,9 +40,6 @@ public class Action {
   @ColumnInfo(name = "end_time")
   private Date endTime;
 
-  @ColumnInfo(name = "minutes")
-  private long minutes;
-
   @ColumnInfo(name = "note")
   private String note;
 
@@ -98,14 +95,6 @@ public class Action {
     this.endTime = endTime;
   }
 
-  public long getMinutes() {
-    return minutes;
-  }
-
-  public void setMinutes(long minutes) {
-    this.minutes = minutes;
-  }
-
   public String getNote() {
     return note;
   }
@@ -128,5 +117,10 @@ public class Action {
     if (obj == null) return false;
     if (!(obj instanceof Action)) return false;
     return this.id.equals(((Action) obj).id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
   }
 }

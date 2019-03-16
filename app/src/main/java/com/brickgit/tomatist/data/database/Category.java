@@ -67,4 +67,9 @@ public class Category {
     if (!(obj instanceof Category)) return false;
     return this.id.equals(((Category) obj).id);
   }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
 }

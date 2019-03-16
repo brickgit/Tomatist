@@ -42,4 +42,9 @@ public class CategoryGroup {
     if (!(obj instanceof CategoryGroup)) return false;
     return this.id.equals(((CategoryGroup) obj).id);
   }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
 }

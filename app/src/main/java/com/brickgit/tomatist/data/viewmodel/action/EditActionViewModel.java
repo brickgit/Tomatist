@@ -47,8 +47,6 @@ public class EditActionViewModel extends ActionViewModel {
     action.setFinished(isFinished);
     action.setStartTime(mStartCalendar.getTime());
     action.setEndTime(mEndCalendar.getTime());
-    action.setMinutes(
-        (mEndCalendar.getTimeInMillis() - mStartCalendar.getTimeInMillis()) / (60 * 1000));
     action.setCategoryId(category != null ? category.getId() : null);
     mDataRepository.updateAction(action);
   }

@@ -58,7 +58,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
     if (action.isFinished() && action.getStartTime() != null) {
       mStartDateTime.setText(dateFormat.format(action.getStartTime()));
-      if (action.getMinutes() != 0) {
+      if (!action.getStartTime().equals(action.getEndTime())) {
         mEndDateTime.setText(dateFormat.format(action.getEndTime()));
       } else {
         mEndDateTime.setText("");
