@@ -51,14 +51,6 @@ public class CalendarActivityViewModel extends BaseViewModel {
     super();
   }
 
-  public void insertCategoryGroup(CategoryGroup categoryGroup) {
-    mDataRepository.insertCategoryGroup(categoryGroup);
-  }
-
-  public void insertCategories(List<Category> categories) {
-    mDataRepository.insertCategories(categories);
-  }
-
   public LiveData<Map<String, CategoryGroup>> getCategoryGroupMap() {
     return mCategoryGroupMap;
   }

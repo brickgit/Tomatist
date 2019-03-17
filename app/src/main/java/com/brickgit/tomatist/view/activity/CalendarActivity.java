@@ -6,11 +6,9 @@ import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.brickgit.tomatist.Initializer;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
-import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.data.viewmodel.CalendarActivityViewModel;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
@@ -22,9 +20,7 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -129,7 +125,7 @@ public class CalendarActivity extends BaseActivity {
             });
     mCalendarActivityViewModel.selectDate(today.getYear(), today.getMonth(), today.getDay());
 
-    firstLaunchSetup();
+    Initializer.firstLaunchSetup(this);
   }
 
   @Override
@@ -174,51 +170,5 @@ public class CalendarActivity extends BaseActivity {
   private void gotoUnfinishedActionListActivity() {
     Intent intent = new Intent(this, UnfinishedActionListActivity.class);
     startActivity(intent);
-  }
-
-  private void firstLaunchSetup() {
-    TomatistPreferences pref = TomatistPreferences.getInstance(this);
-    if (pref.isFirstLaunched()) {
-      pref.setIsFirstLaunched(false);
-      initDefaultCategories();
-    }
-  }
-
-  private void initDefaultCategories() {
-    TomatistPreferences pref = TomatistPreferences.getInstance(this);
-
-    Map<String, List<String>> categoryMap = new HashMap<>();
-    String[] defaultCategories = getResources().getStringArray(R.array.default_categories);
-    for (String defaultCategory : defaultCategories) {
-      String substrings[] = defaultCategory.split(" - ");
-      if (substrings.length == 2) {
-        String categoryGroup = substrings[0];
-        String category = substrings[1];
-        if (!categoryMap.containsKey(categoryGroup)) {
-          categoryMap.put(categoryGroup, new ArrayList<>());
-        }
-        categoryMap.get(categoryGroup).add(category);
-      }
-    }
-    for (String categoryGroupTitle : categoryMap.keySet()) {
-      CategoryGroup newGroup = new CategoryGroup();
-      if (pref.lastUsedCategoryGroupId().isEmpty()) {
-        pref.setLastUsedCategoryGroupId(newGroup.getId());
-      }
-      newGroup.setTitle(categoryGroupTitle);
-      mCalendarActivityViewModel.insertCategoryGroup(newGroup);
-      List<Category> newCategories = new ArrayList<>();
-      List<String> categories = categoryMap.get(categoryGroupTitle);
-      for (String categoryTitle : categories) {
-        Category newCategory = new Category();
-        if (pref.lastUsedCategoryId().isEmpty()) {
-          pref.setLastUsedCategoryId(newCategory.getId());
-        }
-        newCategory.setGroupId(newGroup.getId());
-        newCategory.setTitle(categoryTitle);
-        newCategories.add(newCategory);
-      }
-      mCalendarActivityViewModel.insertCategories(newCategories);
-    }
   }
 }
