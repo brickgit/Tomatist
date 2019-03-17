@@ -1,14 +1,14 @@
 package com.brickgit.tomatist;
 
+import android.content.res.Resources;
+
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.data.viewmodel.InitializerViewModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -21,43 +21,36 @@ public class Initializer {
     if (!pref.isFirstLaunched()) {
       return;
     }
+    pref.setIsFirstLaunched(false);
 
     InitializerViewModel initializerViewModel =
         ViewModelProviders.of(activity).get(InitializerViewModel.class);
 
-    pref.setIsFirstLaunched(false);
-    Map<String, List<String>> categoryMap = new HashMap<>();
-    String[] defaultCategories = activity.getResources().getStringArray(R.array.default_categories);
-    for (String defaultCategory : defaultCategories) {
-      String substrings[] = defaultCategory.split(" - ");
-      if (substrings.length == 2) {
-        String categoryGroup = substrings[0];
-        String category = substrings[1];
-        if (!categoryMap.containsKey(categoryGroup)) {
-          categoryMap.put(categoryGroup, new ArrayList<>());
-        }
-        categoryMap.get(categoryGroup).add(category);
+    Resources res = activity.getResources();
+
+    CategoryGroup categoryGroup = new CategoryGroup();
+    categoryGroup.setId(res.getString(R.string.default_category_group_id_routine));
+    categoryGroup.setTitle(res.getString(R.string.default_category_group_title_routine));
+    initializerViewModel.insertCategoryGroup(categoryGroup);
+    if (pref.lastUsedCategoryGroupId().isEmpty()) {
+      pref.setLastUsedCategoryGroupId(categoryGroup.getId());
+    }
+
+    List<Category> categoryList = new ArrayList<>();
+    String[] categoryIds = res.getStringArray(R.array.default_category_ids);
+    String[] categoryTitles = res.getStringArray(R.array.default_category_titles);
+    for (int i = 0; i < categoryIds.length; i++) {
+      String categoryId = categoryIds[i];
+      String categoryTitle = categoryTitles[i];
+      Category category = new Category();
+      category.setId(categoryId);
+      category.setTitle(categoryTitle);
+      category.setGroupId(categoryGroup.getId());
+      categoryList.add(category);
+      if (pref.lastUsedCategoryId().isEmpty()) {
+        pref.setLastUsedCategoryId(category.getId());
       }
     }
-    for (String categoryGroupTitle : categoryMap.keySet()) {
-      CategoryGroup newGroup = new CategoryGroup();
-      if (pref.lastUsedCategoryGroupId().isEmpty()) {
-        pref.setLastUsedCategoryGroupId(newGroup.getId());
-      }
-      newGroup.setTitle(categoryGroupTitle);
-      initializerViewModel.insertCategoryGroup(newGroup);
-      List<Category> newCategories = new ArrayList<>();
-      List<String> categories = categoryMap.get(categoryGroupTitle);
-      for (String categoryTitle : categories) {
-        Category newCategory = new Category();
-        if (pref.lastUsedCategoryId().isEmpty()) {
-          pref.setLastUsedCategoryId(newCategory.getId());
-        }
-        newCategory.setGroupId(newGroup.getId());
-        newCategory.setTitle(categoryTitle);
-        newCategories.add(newCategory);
-      }
-      initializerViewModel.insertCategories(newCategories);
-    }
+    initializerViewModel.insertCategories(categoryList);
   }
 }

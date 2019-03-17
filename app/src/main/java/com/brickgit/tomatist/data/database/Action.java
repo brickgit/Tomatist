@@ -75,8 +75,8 @@ public class Action {
     return isFinished;
   }
 
-  public void setFinished(boolean finished) {
-    isFinished = finished;
+  public void setFinished(boolean isFinished) {
+    this.isFinished = isFinished;
   }
 
   public Date getStartTime() {

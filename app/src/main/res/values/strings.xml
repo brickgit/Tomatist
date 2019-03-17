@@ -41,11 +41,22 @@
     <item>300 minutes</item>
   </string-array>
 
-  <string-array name="default_categories">
-    <item>Routine - Breakfast</item>
-    <item>Routine - Lunch</item>
-    <item>Routine - Dinner</item>
-    <item>Routine - Shower</item>
-    <item>Routine - Sleeping</item>
+  <string name="default_category_group_id_routine" translatable="false">CGG_default_category_group_routine</string>
+  <string name="default_category_group_title_routine">Routine</string>
+
+  <string-array name="default_category_ids" translatable="false">
+    <item>CTG_default_category_breakfast</item>
+    <item>CTG_default_category_lunch</item>
+    <item>CTG_default_category_dinner</item>
+    <item>CTG_default_category_shower</item>
+    <item>CTG_default_category_sleeping</item>
   </string-array>
+  <string-array name="default_category_titles">
+    <item>Breakfast</item>
+    <item>Lunch</item>
+    <item>Dinner</item>
+    <item>Shower</item>
+    <item>Sleeping</item>
+  </string-array>
+
 </resources>
