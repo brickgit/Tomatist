@@ -62,6 +62,10 @@ public class CalendarActivity extends BaseActivity {
           switch (menuItem.getItemId()) {
             case R.id.nav_unfinished_actions:
               gotoUnfinishedActionListActivity();
+              break;
+            case R.id.nav_report:
+              ReportActivity.start(this);
+              break;
             default:
               break;
           }

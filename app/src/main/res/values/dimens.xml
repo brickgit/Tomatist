@@ -2,7 +2,7 @@
   <dimen name="fab_margin">16dp</dimen>
   <dimen name="item_icon_margin_end">8dp</dimen>
   <dimen name="item_padding_horizontal">16dp</dimen>
-  <dimen name="item_padding_vertical">16dp</dimen>
+  <dimen name="item_padding_vertical">8dp</dimen>
   <dimen name="item_title_text_size">18sp</dimen>
   <dimen name="action_content_margin">16dp</dimen>
 </resources>
