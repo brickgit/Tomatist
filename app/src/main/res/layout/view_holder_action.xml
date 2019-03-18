@@ -16,6 +16,7 @@
     <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
       android:paddingStart="@dimen/item_padding_horizontal"
       android:paddingTop="@dimen/item_padding_vertical"
       android:paddingEnd="@dimen/item_padding_horizontal"
@@ -25,7 +26,6 @@
         android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -45,9 +45,9 @@
       </LinearLayout>
 
       <LinearLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_toStartOf="@+id/footer"
@@ -61,7 +61,7 @@
           android:ellipsize="end"
           android:maxLines="1"
           android:textColor="@color/colorPrimary"
-          android:textSize="16sp" />
+          android:textSize="14sp" />
 
         <TextView
           android:id="@+id/action_note"
@@ -79,7 +79,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -99,6 +98,81 @@
           android:textSize="14sp" />
 
       </LinearLayout>
+
+      <net.cachapa.expandablelayout.ExpandableLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content"
+        android:layout_alignStart="@+id/header"
+        android:layout_alignEnd="@+id/footer"
+        android:layout_marginTop="8dp"
+        app:el_duration="300"
+        app:el_expanded="false"
+        app:el_parallax="0.5">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+          <Button
+            android:id="@+id/edit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/edit"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_left"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+          <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3333" />
+
+          <Button
+            android:id="@+id/copy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginEnd="1dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/copy"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_right"
+            app:layout_constraintStart_toEndOf="@+id/guideline_left"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+          <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6666" />
+
+          <Button
+            android:id="@+id/delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/delete"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_right"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+      </net.cachapa.expandablelayout.ExpandableLayout>
 
     </RelativeLayout>
 

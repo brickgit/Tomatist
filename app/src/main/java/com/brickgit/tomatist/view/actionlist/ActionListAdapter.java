@@ -20,7 +20,17 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   public interface OnActionClickListener {
-    void onActionClick(Action action);
+    void onItemExpand(View view);
+
+    void onEditClick(Action action);
+
+    void onCopyClick(Action action);
+
+    void onDeleteClick(Action action);
+  }
+
+  interface OnItemClickListener {
+    void onItemClick(ActionListViewHolder view);
   }
 
   private String mTag = "";
@@ -30,7 +40,27 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
   private Map<String, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<String, Category> mCategories = new HashMap<>();
 
+  private ActionListViewHolder mExpandedItemView;
+  private OnItemClickListener mOnItemClickListener =
+      (view) -> {
+        if (view != mExpandedItemView) {
+          if (mExpandedItemView != null) {
+            mExpandedItemView.toggle();
+          }
+          mExpandedItemView = view;
+        } else {
+          mExpandedItemView = null;
+        }
+      };
+
   public ActionListAdapter() {}
+
+  public void collapse() {
+    if (mExpandedItemView != null) {
+      mExpandedItemView.toggle();
+      mExpandedItemView = null;
+    }
+  }
 
   public void updateActions(String tag, List<Action> actions) {
     if (!mTag.equals(tag)) {
@@ -90,7 +120,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     View view =
         LayoutInflater.from(parent.getContext())
             .inflate(R.layout.view_holder_action, parent, false);
-    return new ActionListViewHolder(view, mOnActionClickListener);
+    return new ActionListViewHolder(view, mOnItemClickListener, mOnActionClickListener);
   }
 
   @Override

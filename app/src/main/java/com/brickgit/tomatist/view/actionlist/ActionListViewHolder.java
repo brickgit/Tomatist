@@ -8,6 +8,8 @@ import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
 
+import net.cachapa.expandablelayout.ExpandableLayout;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -27,10 +29,14 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
   private TextView mCategoryGroupView;
   private TextView mCategoryView;
 
+  private ExpandableLayout mButtons;
+
   private Action mAction;
 
   public ActionListViewHolder(
-      View view, final ActionListAdapter.OnActionClickListener onActionClickListener) {
+      View view,
+      final ActionListAdapter.OnItemClickListener onItemClickListener,
+      final ActionListAdapter.OnActionClickListener onActionClickListener) {
     super(view);
 
     mStartDateTime = view.findViewById(R.id.start_time);
@@ -42,14 +48,47 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
     mCategoryGroupView = view.findViewById(R.id.action_category_group);
     mCategoryView = view.findViewById(R.id.action_category);
 
+    mButtons = view.findViewById(R.id.buttons);
+    mButtons.setOnExpansionUpdateListener(
+        (expansionFraction, state) -> {
+          if (state == ExpandableLayout.State.EXPANDING) {
+            if (onActionClickListener != null) {
+              onActionClickListener.onItemExpand(itemView);
+            }
+          }
+        });
+
     itemView.setOnClickListener(
         (v) -> {
-          if (onActionClickListener == null) {
-            return;
+          toggle();
+          if (onItemClickListener != null) {
+            onItemClickListener.onItemClick(this);
           }
-
-          onActionClickListener.onActionClick(mAction);
         });
+
+    view.findViewById(R.id.edit)
+        .setOnClickListener(
+            (v) -> {
+              if (onActionClickListener != null) {
+                onActionClickListener.onEditClick(mAction);
+              }
+            });
+
+    view.findViewById(R.id.copy)
+        .setOnClickListener(
+            (v) -> {
+              if (onActionClickListener != null) {
+                onActionClickListener.onCopyClick(mAction);
+              }
+            });
+
+    view.findViewById(R.id.delete)
+        .setOnClickListener(
+            (v) -> {
+              if (onActionClickListener != null) {
+                onActionClickListener.onDeleteClick(mAction);
+              }
+            });
   }
 
   public void bind(
@@ -80,5 +119,9 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
       mCategoryView.setText("");
       mCategoryGroupView.setText("");
     }
+  }
+
+  public void toggle() {
+    mButtons.toggle(true);
   }
 }

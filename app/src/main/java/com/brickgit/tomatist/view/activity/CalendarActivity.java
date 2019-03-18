@@ -22,6 +22,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -100,6 +101,20 @@ public class CalendarActivity extends BaseActivity {
 
     mLayoutManager = new LinearLayoutManager(this);
     mActionList.setLayoutManager(mLayoutManager);
+    mActionList.addOnScrollListener(
+        new RecyclerView.OnScrollListener() {
+          private int oldState = RecyclerView.SCROLL_STATE_IDLE;
+
+          @Override
+          public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            if (oldState == RecyclerView.SCROLL_STATE_IDLE
+                && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+              ((ActionListAdapter) recyclerView.getAdapter()).collapse();
+            }
+            oldState = newState;
+            super.onScrollStateChanged(recyclerView, newState);
+          }
+        });
 
     ItemTouchHelper.Callback callback =
         new ActionListTouchHelperCallback((position) -> removeAction(position));
@@ -108,7 +123,27 @@ public class CalendarActivity extends BaseActivity {
 
     mActionListAdapter = new ActionListAdapter();
     mActionList.setAdapter(mActionListAdapter);
-    mActionListAdapter.setOnActionClickListener((action) -> gotoAddActionActivity(action.getId()));
+    mActionListAdapter.setOnActionClickListener(
+        new ActionListAdapter.OnActionClickListener() {
+          @Override
+          public void onItemExpand(View view) {
+            int position = mActionList.getChildAdapterPosition(view);
+            if (position != RecyclerView.NO_POSITION) {
+              mActionList.smoothScrollToPosition(position);
+            }
+          }
+
+          @Override
+          public void onEditClick(Action action) {
+            gotoAddActionActivity(action.getId());
+          }
+
+          @Override
+          public void onCopyClick(Action action) {}
+
+          @Override
+          public void onDeleteClick(Action action) {}
+        });
 
     mCalendarActivityViewModel = ViewModelProviders.of(this).get(CalendarActivityViewModel.class);
     mCalendarActivityViewModel

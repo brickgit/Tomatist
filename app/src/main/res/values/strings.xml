@@ -27,6 +27,10 @@
 
   <string name="uncategorized">Uncategorized</string>
 
+  <string name="edit">Edit</string>
+  <string name="copy">Copy</string>
+  <string name="delete">Delete</string>
+
   <string-array name="minutes_string">
     <item>0 minute</item>
     <item>30 minutes</item>
