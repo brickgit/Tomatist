@@ -26,6 +26,8 @@
   <string name="copy">Copy</string>
   <string name="delete">Delete</string>
 
+  <string name="report">Report</string>
+
   <string-array name="minutes_string">
     <item>0 minute</item>
     <item>30 minutes</item>
