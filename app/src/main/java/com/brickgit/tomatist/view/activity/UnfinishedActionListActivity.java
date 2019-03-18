@@ -90,7 +90,8 @@ public class UnfinishedActionListActivity extends BaseActivity {
         });
 
     ItemTouchHelper.Callback callback =
-        new ActionListTouchHelperCallback((position) -> removeAction(position));
+        new ActionListTouchHelperCallback(
+            (position) -> removeAction(mUnfinishedActionList.get(position)));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(mActionList);
 
@@ -115,7 +116,9 @@ public class UnfinishedActionListActivity extends BaseActivity {
           public void onCopyClick(Action action) {}
 
           @Override
-          public void onDeleteClick(Action action) {}
+          public void onDeleteClick(Action action) {
+            removeAction(action);
+          }
         });
 
     mUnfinishedActionListViewModel =
@@ -169,8 +172,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
     startActivity(intent);
   }
 
-  private void removeAction(int position) {
-    Action action = mUnfinishedActionList.get(position);
+  private void removeAction(Action action) {
     if (action != null) {
       mUnfinishedActionListViewModel.deleteAction(action);
       showActionDeletedConfirmation(action);

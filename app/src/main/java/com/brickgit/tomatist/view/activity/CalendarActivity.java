@@ -64,9 +64,6 @@ public class CalendarActivity extends BaseActivity {
             case R.id.nav_unfinished_actions:
               gotoUnfinishedActionListActivity();
               break;
-            case R.id.nav_report:
-              ReportActivity.start(this);
-              break;
             default:
               break;
           }
@@ -117,7 +114,7 @@ public class CalendarActivity extends BaseActivity {
         });
 
     ItemTouchHelper.Callback callback =
-        new ActionListTouchHelperCallback((position) -> removeAction(position));
+        new ActionListTouchHelperCallback((position) -> removeAction(mActions.get(position)));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(mActionList);
 
@@ -142,7 +139,9 @@ public class CalendarActivity extends BaseActivity {
           public void onCopyClick(Action action) {}
 
           @Override
-          public void onDeleteClick(Action action) {}
+          public void onDeleteClick(Action action) {
+            removeAction(action);
+          }
         });
 
     mCalendarActivityViewModel = ViewModelProviders.of(this).get(CalendarActivityViewModel.class);
@@ -177,8 +176,7 @@ public class CalendarActivity extends BaseActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private void removeAction(int position) {
-    Action action = mActions.get(position);
+  private void removeAction(Action action) {
     if (action != null) {
       mCalendarActivityViewModel.deleteAction(action);
       showActionDeletedConfirmation(action);
