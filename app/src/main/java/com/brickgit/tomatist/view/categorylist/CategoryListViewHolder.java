@@ -26,7 +26,7 @@ public class CategoryListViewHolder extends RecyclerView.ViewHolder {
             return;
           }
 
-          onCategoryClickListener.OnCategoryClick(mCategory);
+          onCategoryClickListener.onCategoryClick(mCategory);
         });
   }
 

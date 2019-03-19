@@ -16,8 +16,9 @@ public class Tag {
   @ColumnInfo(name = "title")
   private String title;
 
-  public Tag() {
+  public Tag(String title) {
     id = KeyGenerator.gen("TAG");
+    this.title = title;
   }
 
   @NonNull
@@ -35,5 +36,17 @@ public class Tag {
 
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) return false;
+    if (!(obj instanceof Tag)) return false;
+    return this.id.equals(((Tag) obj).id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
   }
 }

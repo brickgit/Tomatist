@@ -5,4 +5,6 @@
   <dimen name="item_padding_vertical">8dp</dimen>
   <dimen name="item_title_text_size">18sp</dimen>
   <dimen name="action_content_margin">16dp</dimen>
+
+  <dimen name="tag_recycler_view_max_height">100dp</dimen>
 </resources>

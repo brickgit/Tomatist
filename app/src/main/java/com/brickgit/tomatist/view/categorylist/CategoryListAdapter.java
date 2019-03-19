@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CategoryListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   public interface OnCategoryClickListener {
-    void OnCategoryClick(Category category);
+    void onCategoryClick(Category category);
   }
 
   private String mCategoryGroupId;
