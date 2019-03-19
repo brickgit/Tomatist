@@ -1,7 +1,12 @@
 package com.brickgit.tomatist.data.database;
 
+import com.google.common.base.Joiner;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -9,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -47,11 +53,17 @@ public class Action {
   @Nullable
   private String categoryId;
 
+  @ColumnInfo(name = "tags")
+  private String tags;
+
+  @Ignore private List<String> tagList;
+
   public Action() {
     id = KeyGenerator.gen("ACT");
     Calendar today = Calendar.getInstance();
     startTime = today.getTime();
     endTime = today.getTime();
+    tagList = new ArrayList<>();
   }
 
   @NonNull
@@ -110,6 +122,27 @@ public class Action {
 
   public void setCategoryId(@Nullable String categoryId) {
     this.categoryId = categoryId;
+  }
+
+  String getTags() {
+    return tags;
+  }
+
+  void setTags(String tags) {
+    this.tags = tags;
+
+    tagList.clear();
+    Collections.addAll(tagList, tags.split(","));
+  }
+
+  @NonNull
+  public List<String> getTagList() {
+    return tagList;
+  }
+
+  public void setTagList(List<String> tagList) {
+    this.tagList = tagList;
+    tags = Joiner.on(",").join(tagList);
   }
 
   @Override

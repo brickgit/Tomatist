@@ -8,6 +8,8 @@ import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.CategoryGroupDao;
 import com.brickgit.tomatist.data.database.Database;
 import com.brickgit.tomatist.data.database.DatabaseLoader;
+import com.brickgit.tomatist.data.database.Tag;
+import com.brickgit.tomatist.data.database.TagDao;
 
 import java.util.List;
 
@@ -18,10 +20,10 @@ public class DataRepository {
 
   private static volatile DataRepository INSTANCE;
 
-  private Database mDatabase;
   private ActionDao mActionDao;
   private CategoryGroupDao mCategoryGroupDao;
   private CategoryDao mCategoryDao;
+  private TagDao mTagDao;
 
   public static DataRepository getInstance() {
     if (INSTANCE == null) {
@@ -33,10 +35,11 @@ public class DataRepository {
   }
 
   private DataRepository() {
-    mDatabase = DatabaseLoader.getAppDatabase();
-    mActionDao = mDatabase.actionDao();
-    mCategoryGroupDao = mDatabase.categoryGroupDao();
-    mCategoryDao = mDatabase.categoryDao();
+    Database database = DatabaseLoader.getAppDatabase();
+    mActionDao = database.actionDao();
+    mCategoryGroupDao = database.categoryGroupDao();
+    mCategoryDao = database.categoryDao();
+    mTagDao = database.tagDao();
   }
 
   public void insertAction(Action action) {
@@ -105,5 +108,25 @@ public class DataRepository {
 
   public void deleteCategory(Category category) {
     mCategoryDao.deleteCategory(category);
+  }
+
+  public LiveData<Tag> getTag(String id) {
+    return mTagDao.getTag(id);
+  }
+
+  public LiveData<List<Tag>> getTags() {
+    return mTagDao.getTags();
+  }
+
+  public void insertTag(Tag tag) {
+    mTagDao.insertTag(tag);
+  }
+
+  public void insertTags(List<Tag> tags) {
+    mTagDao.insertTags(tags);
+  }
+
+  public void deleteTag(Tag tag) {
+    mTagDao.deleteTag(tag);
   }
 }
