@@ -117,6 +117,7 @@
 
           <Button
             android:id="@+id/edit"
+            style="@style/ActionViewHolderButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="1dp"
@@ -137,6 +138,7 @@
 
           <Button
             android:id="@+id/copy"
+            style="@style/ActionViewHolderButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
@@ -159,6 +161,7 @@
 
           <Button
             android:id="@+id/delete"
+            style="@style/ActionViewHolderButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="1dp"

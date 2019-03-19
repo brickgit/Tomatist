@@ -17,4 +17,9 @@
 
   <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+  <style name="ActionViewHolderButtonStyle" parent="android:Widget.Button.Small">
+    <item name="android:minHeight">35dp</item>
+    <item name="android:minWidth">0dp</item>
+  </style>
+
 </resources>
