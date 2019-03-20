@@ -3,6 +3,8 @@ package com.brickgit.tomatist.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.brickgit.tomatist.R;
@@ -24,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 /** Created by Daniel Lin on 2019/3/18. */
 public class TagSelectorActivity extends BaseActivity {
 
+  public static final String SELECTED_TAG_LIST = "SELECTED_TAG_LIST";
+
   protected TagSelectorViewModel mTagSelectorViewModel;
 
   private EditText mTagEditText;
@@ -32,9 +36,9 @@ public class TagSelectorActivity extends BaseActivity {
   private RecyclerView mTagListView;
   private TagListAdapter mTagListAdapter;
 
-  public static void start(Activity activity) {
+  public static void startForResult(Activity activity, int requestCoe) {
     Intent intent = new Intent(activity, TagSelectorActivity.class);
-    activity.startActivity(intent);
+    activity.startActivityForResult(intent, requestCoe);
   }
 
   @Override
@@ -84,8 +88,33 @@ public class TagSelectorActivity extends BaseActivity {
 
   @Override
   public boolean onSupportNavigateUp() {
+    setResult(RESULT_CANCELED);
     onBackPressed();
     return true;
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_tag_selector, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.action_add:
+        selectTags();
+        return true;
+    }
+
+    return super.onOptionsItemSelected(item);
+  }
+
+  private void selectTags() {
+    Intent intent = new Intent();
+    intent.putExtra(SELECTED_TAG_LIST, mTagSelectorViewModel.getSelectedTagLstString());
+    setResult(RESULT_OK, intent);
+    finish();
   }
 
   private void showAddTagDialog() {

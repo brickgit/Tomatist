@@ -1,8 +1,11 @@
 package com.brickgit.tomatist.data.viewmodel;
 
 import com.brickgit.tomatist.data.database.Tag;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -43,5 +46,14 @@ public class TagSelectorViewModel extends BaseViewModel {
 
   public void insertTag(Tag tag) {
     mDataRepository.insertTag(tag);
+  }
+
+  public String getSelectedTagLstString() {
+    List<Tag> tagList = mSelectedTagList.getValue();
+    if (tagList != null && !tagList.isEmpty()) {
+      Collection<String> tagNameList = Collections2.transform(tagList, (tag) -> tag.getId());
+      return Joiner.on(",").join(tagNameList);
+    }
+    return "";
   }
 }
