@@ -5,6 +5,8 @@ import android.content.Intent;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 
+import java.util.List;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -36,7 +38,7 @@ public class EditActionViewModel extends ActionViewModel {
     mSelectedActionId.setValue(selectedActionId != null ? selectedActionId : "");
   }
 
-  public void saveAction(String title, String note, boolean isFinished) {
+  public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
     Action action = mSelectedAction.getValue();
     if (action == null) return;
 
@@ -48,6 +50,7 @@ public class EditActionViewModel extends ActionViewModel {
     action.setStartTime(mStartCalendar.getTime());
     action.setEndTime(mEndCalendar.getTime());
     action.setCategoryId(category != null ? category.getId() : null);
+    action.setTagList(tagList);
     mDataRepository.updateAction(action);
   }
 }

@@ -18,6 +18,9 @@ public interface TagDao {
   @Query("SELECT * FROM tags")
   LiveData<List<Tag>> getTags();
 
+  @Query("SELECT * FROM tags WHERE id IN(:ids)")
+  LiveData<List<Tag>> getTags(List<String> ids);
+
   @Insert
   void insertTag(Tag tag);
 

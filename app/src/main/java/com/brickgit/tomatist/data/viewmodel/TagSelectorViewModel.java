@@ -2,40 +2,36 @@ package com.brickgit.tomatist.data.viewmodel;
 
 import com.brickgit.tomatist.data.database.Tag;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
+import com.google.common.base.Splitter;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 /** Created by Daniel Lin on 2019/3/18. */
 public class TagSelectorViewModel extends BaseViewModel {
 
-  private MutableLiveData<List<Tag>> mSelectedTagList;
   private LiveData<List<Tag>> mTagList;
 
-  public LiveData<List<Tag>> getSelectedTagList() {
-    if (mSelectedTagList == null) {
-      mSelectedTagList = new MutableLiveData<>();
-      mSelectedTagList.setValue(new ArrayList<>());
-    }
-    return mSelectedTagList;
-  }
-
-  public void updateSelectedTags(Tag tag) {
-    List<Tag> tags = mSelectedTagList.getValue();
-    if (tags != null) {
-      if (tags.contains(tag)) {
-        tags.remove(tag);
-      } else {
-        tags.add(tag);
-      }
-      mSelectedTagList.setValue(tags);
-    }
-  }
+  private MutableLiveData<List<String>> mSelectedTagIdList = new MutableLiveData<>();
+  private LiveData<Map<String, Tag>> mSelectedTagMap =
+      Transformations.switchMap(
+          mSelectedTagIdList,
+          (selectedTagIdList) ->
+              Transformations.map(
+                  mDataRepository.getTags(selectedTagIdList),
+                  (selectedTagList) -> {
+                    Map<String, Tag> map = new HashMap<>();
+                    for (Tag tag : selectedTagList) {
+                      map.put(tag.getId(), tag);
+                    }
+                    return map;
+                  }));
 
   public LiveData<List<Tag>> getTagList() {
     if (mTagList == null) {
@@ -48,12 +44,42 @@ public class TagSelectorViewModel extends BaseViewModel {
     mDataRepository.insertTag(tag);
   }
 
-  public String getSelectedTagLstString() {
-    List<Tag> tagList = mSelectedTagList.getValue();
-    if (tagList != null && !tagList.isEmpty()) {
-      Collection<String> tagNameList = Collections2.transform(tagList, (tag) -> tag.getId());
-      return Joiner.on(",").join(tagNameList);
+  public LiveData<List<String>> getSelectedTagIdList() {
+    if (mSelectedTagIdList.getValue() == null) {
+      mSelectedTagIdList.setValue(new ArrayList<>());
+    }
+    return mSelectedTagIdList;
+  }
+
+  public LiveData<Map<String, Tag>> getSelectedTagMap() {
+    return mSelectedTagMap;
+  }
+
+  public void updateSelectedTags(Tag tag) {
+    if (mSelectedTagIdList.getValue() != null) {
+      List<String> tagIdList = mSelectedTagIdList.getValue();
+      if (tagIdList.contains(tag.getId())) {
+        tagIdList.remove(tag.getId());
+      } else {
+        tagIdList.add(tag.getId());
+      }
+      mSelectedTagIdList.setValue(tagIdList);
+    }
+  }
+
+  public String getSelectedTagIdLstString() {
+    if (mSelectedTagIdList.getValue() != null) {
+      List<String> tagIdList = mSelectedTagIdList.getValue();
+      if (!tagIdList.isEmpty()) {
+        return Joiner.on(",").join(tagIdList);
+      }
     }
     return "";
+  }
+
+  public void setSelectedTagIdListString(String selectedTagIdListString) {
+    List<String> tagIdList =
+        new ArrayList<>(Splitter.on(",").trimResults().splitToList(selectedTagIdListString));
+    mSelectedTagIdList.setValue(tagIdList);
   }
 }

@@ -1,10 +1,10 @@
 package com.brickgit.tomatist.data.database;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -132,7 +132,9 @@ public class Action {
     this.tags = tags;
 
     tagList.clear();
-    Collections.addAll(tagList, tags.split(","));
+    if (tags != null && !tags.isEmpty()) {
+      tagList.addAll(Splitter.on(",").trimResults().splitToList(tags));
+    }
   }
 
   @NonNull
@@ -142,7 +144,11 @@ public class Action {
 
   public void setTagList(List<String> tagList) {
     this.tagList = tagList;
-    tags = Joiner.on(",").join(tagList);
+    if (tagList.isEmpty()) {
+      tags = "";
+    } else {
+      tags = Joiner.on(",").join(tagList);
+    }
   }
 
   @Override

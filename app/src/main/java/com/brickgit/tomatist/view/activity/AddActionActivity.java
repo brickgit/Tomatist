@@ -14,14 +14,25 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.data.viewmodel.action.ActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.action.EditActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.action.NewActionViewModel;
+import com.brickgit.tomatist.view.tagselector.SelectedTagListAdapter;
+import com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.common.base.Splitter;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -36,7 +47,10 @@ public class AddActionActivity extends BaseActivity {
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
 
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
+  private static final int REQUEST_CODE_SELECT_TAG = 1;
 
+  private SelectedTagRecyclerView mSelectedTagListView;
+  private SelectedTagListAdapter mSelectedTagListAdapter;
   private TextInputEditText mActionTitleView;
   private CheckBox mIsFinished;
   private View mDatetimeLayout;
@@ -50,6 +64,8 @@ public class AddActionActivity extends BaseActivity {
 
   private ActionViewModel mActionViewModel;
   private Action mAction;
+  private Map<String, Tag> mTagMap = new HashMap<>();
+  private List<String> mSelectedTagIdList = new ArrayList<>();
   private CategoryGroup mCategoryGroup;
   private Category mCategory;
 
@@ -66,6 +82,22 @@ public class AddActionActivity extends BaseActivity {
     getSupportActionBar().setTitle(isEditingAction ? R.string.edit_action : R.string.add_acton);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+    findViewById(R.id.tag_list_layout)
+        .setOnClickListener(
+            (v) ->
+                TagSelectorActivity.startForResult(
+                    this, REQUEST_CODE_SELECT_TAG, mSelectedTagIdList));
+    mSelectedTagListView = findViewById(R.id.tag_list_view);
+    FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+    layoutManager.setFlexDirection(FlexDirection.ROW);
+    layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+    mSelectedTagListView.setLayoutManager(layoutManager);
+    mSelectedTagListAdapter = new SelectedTagListAdapter();
+    mSelectedTagListView.setAdapter(mSelectedTagListAdapter);
+    mSelectedTagListAdapter.setOnTagClickListener(
+        (tag) ->
+            TagSelectorActivity.startForResult(this, REQUEST_CODE_SELECT_TAG, mSelectedTagIdList));
 
     mActionTitleView = findViewById(R.id.new_action_name);
     mActionNoteView = findViewById(R.id.new_action_note);
@@ -106,7 +138,19 @@ public class AddActionActivity extends BaseActivity {
               mActionTitleView.setText(mAction.getTitle());
               mActionNoteView.setText(mAction.getNote());
               mIsFinished.setChecked(mAction.isFinished());
+              mSelectedTagIdList.clear();
+              mSelectedTagIdList.addAll(mAction.getTagList());
+              mSelectedTagListAdapter.updateTagIds(mSelectedTagIdList);
               updateViews();
+            });
+    mActionViewModel
+        .getTagMap()
+        .observe(
+            this,
+            (tags) -> {
+              mTagMap.clear();
+              mTagMap.putAll(tags);
+              mSelectedTagListAdapter.updateTagMap(mTagMap);
             });
     mActionViewModel
         .getSelectedCategory()
@@ -153,7 +197,10 @@ public class AddActionActivity extends BaseActivity {
     }
 
     mActionViewModel.saveAction(
-        actionTitle, mActionNoteView.getText().toString().trim(), mIsFinished.isChecked());
+        actionTitle,
+        mActionNoteView.getText().toString().trim(),
+        mIsFinished.isChecked(),
+        mSelectedTagIdList);
 
     finish();
   }
@@ -306,11 +353,23 @@ public class AddActionActivity extends BaseActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
-      if (resultCode == RESULT_OK) {
-        String selectedCategoryId =
-            data.getStringExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID);
-        mActionViewModel.selectCategory(selectedCategoryId);
+    if (resultCode == RESULT_OK) {
+      switch (requestCode) {
+        case REQUEST_CODE_SELECT_CATEGORY:
+          String selectedCategoryId =
+              data.getStringExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID);
+          mActionViewModel.selectCategory(selectedCategoryId);
+          break;
+        case REQUEST_CODE_SELECT_TAG:
+          mSelectedTagIdList.clear();
+          String selectedTagNameList = data.getStringExtra(TagSelectorActivity.SELECTED_TAG_LIST);
+          if (!selectedTagNameList.isEmpty()) {
+            List<String> tagIdList =
+                Splitter.on(",").trimResults().splitToList(selectedTagNameList);
+            mSelectedTagIdList.addAll(tagIdList);
+          }
+          mSelectedTagListAdapter.updateTagIds(mSelectedTagIdList);
+          break;
       }
     }
   }

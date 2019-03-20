@@ -16,6 +16,9 @@ import com.brickgit.tomatist.view.tagselector.TagListAdapter;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.google.common.base.Joiner;
+
+import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -36,8 +39,10 @@ public class TagSelectorActivity extends BaseActivity {
   private RecyclerView mTagListView;
   private TagListAdapter mTagListAdapter;
 
-  public static void startForResult(Activity activity, int requestCoe) {
+  public static void startForResult(
+      Activity activity, int requestCoe, List<String> selectedTagIdList) {
     Intent intent = new Intent(activity, TagSelectorActivity.class);
+    intent.putExtra(SELECTED_TAG_LIST, Joiner.on(",").join(selectedTagIdList));
     activity.startActivityForResult(intent, requestCoe);
   }
 
@@ -74,16 +79,28 @@ public class TagSelectorActivity extends BaseActivity {
 
     mTagSelectorViewModel = ViewModelProviders.of(this).get(TagSelectorViewModel.class);
     mTagSelectorViewModel
-        .getSelectedTagList()
+        .getTagList()
+        .observe(this, (tagList) -> mTagListAdapter.updateTagList(tagList));
+    mTagSelectorViewModel
+        .getSelectedTagIdList()
         .observe(
             this,
-            (tagList) -> {
-              mSelectedTagListAdapter.updateTags(tagList);
-              mTagListAdapter.updateSelectedTags(tagList);
+            (tagIdList) -> {
+              mSelectedTagListAdapter.updateTagIds(tagIdList);
             });
     mTagSelectorViewModel
-        .getTagList()
-        .observe(this, (tagList) -> mTagListAdapter.updateTags(tagList));
+        .getSelectedTagMap()
+        .observe(
+            this,
+            (tagMap) -> {
+              mSelectedTagListAdapter.updateTagMap(tagMap);
+              mTagListAdapter.updateSelectedTagMap(tagMap);
+            });
+
+    String selectedTagIdListString = getIntent().getStringExtra(SELECTED_TAG_LIST);
+    if (selectedTagIdListString != null && !selectedTagIdListString.isEmpty()) {
+      mTagSelectorViewModel.setSelectedTagIdListString(selectedTagIdListString);
+    }
   }
 
   @Override
@@ -112,7 +129,7 @@ public class TagSelectorActivity extends BaseActivity {
 
   private void selectTags() {
     Intent intent = new Intent();
-    intent.putExtra(SELECTED_TAG_LIST, mTagSelectorViewModel.getSelectedTagLstString());
+    intent.putExtra(SELECTED_TAG_LIST, mTagSelectorViewModel.getSelectedTagIdLstString());
     setResult(RESULT_OK, intent);
     finish();
   }

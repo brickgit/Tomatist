@@ -8,7 +8,9 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Tag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,18 +20,18 @@ public class TagListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
   private OnTagClickListener mOnTagClickListener;
 
-  private List<Tag> mTags = new ArrayList<>();
-  private List<Tag> mSelectedTags = new ArrayList<>();
+  private List<Tag> mTagList = new ArrayList<>();
+  private Map<String, Tag> mSelectedTagMap = new HashMap<>();
 
-  public void updateTags(List<Tag> tags) {
-    mTags.clear();
-    mTags.addAll(tags);
+  public void updateTagList(List<Tag> tagList) {
+    mTagList.clear();
+    mTagList.addAll(tagList);
     notifyDataSetChanged();
   }
 
-  public void updateSelectedTags(List<Tag> tags) {
-    mSelectedTags.clear();
-    mSelectedTags.addAll(tags);
+  public void updateSelectedTagMap(Map<String, Tag> selectedTagMap) {
+    mSelectedTagMap.clear();
+    mSelectedTagMap.putAll(selectedTagMap);
     notifyDataSetChanged();
   }
 
@@ -47,13 +49,13 @@ public class TagListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-    Tag tag = mTags.get(position);
+    Tag tag = mTagList.get(position);
     TagListViewHolder viewHolder = (TagListViewHolder) holder;
-    viewHolder.bind(tag, mSelectedTags.contains(tag));
+    viewHolder.bind(tag, mSelectedTagMap.containsKey(tag.getId()));
   }
 
   @Override
   public int getItemCount() {
-    return mTags.size();
+    return mTagList.size();
   }
 }

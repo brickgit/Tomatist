@@ -28,6 +28,10 @@ public class SelectedTagListViewHolder extends RecyclerView.ViewHolder {
 
   public void bind(Tag tag) {
     mTag = tag;
-    mTagTitleView.setText(tag.getTitle());
+    if (tag != null) {
+      mTagTitleView.setText(tag.getTitle());
+    } else {
+      mTagTitleView.setText("");
+    }
   }
 }

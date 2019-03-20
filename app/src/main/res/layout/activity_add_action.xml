@@ -15,6 +15,33 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <LinearLayout
+      android:id="@+id/tag_list_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="5dp"
+      android:background="@drawable/tag_list_background"
+      android:orientation="vertical">
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="3dp"
+        android:text="@string/tag" />
+
+      <com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView
+        android:id="@+id/tag_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+
+
     <com.google.android.material.textfield.TextInputLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
@@ -25,10 +52,7 @@
         android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
         android:hint="@string/name"
-        android:inputType="text">
-
-        <requestFocus />
-      </com.google.android.material.textfield.TextInputEditText>
+        android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

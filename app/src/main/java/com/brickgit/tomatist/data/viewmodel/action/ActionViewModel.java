@@ -5,9 +5,13 @@ import android.content.Intent;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.BaseViewModel;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -24,6 +28,17 @@ public abstract class ActionViewModel extends BaseViewModel {
   public static final int INVALID_ACTION_DATE = -1;
 
   public static final String ACTION_CATEGORY_KEY = "ACTION_CATEGORY_KEY";
+
+  private LiveData<Map<String, Tag>> mTagMap =
+      Transformations.map(
+          mDataRepository.getTags(),
+          (tags) -> {
+            Map<String, Tag> map = new HashMap<>();
+            for (Tag tag : tags) {
+              map.put(tag.getId(), tag);
+            }
+            return map;
+          });
 
   protected MutableLiveData<String> mSelectedCategoryId = new MutableLiveData<>();
   protected LiveData<Category> mSelectedCategory =
@@ -43,6 +58,10 @@ public abstract class ActionViewModel extends BaseViewModel {
 
   ActionViewModel() {
     super();
+  }
+
+  public LiveData<Map<String, Tag>> getTagMap() {
+    return mTagMap;
   }
 
   public LiveData<Category> getSelectedCategory() {
@@ -77,5 +96,6 @@ public abstract class ActionViewModel extends BaseViewModel {
 
   public abstract void init(Intent intent);
 
-  public abstract void saveAction(String title, String note, boolean isFinished);
+  public abstract void saveAction(
+      String title, String note, boolean isFinished, List<String> tagList);
 }

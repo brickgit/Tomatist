@@ -118,6 +118,10 @@ public class DataRepository {
     return mTagDao.getTags();
   }
 
+  public LiveData<List<Tag>> getTags(List<String> tagListString) {
+    return mTagDao.getTags(tagListString);
+  }
+
   public void insertTag(Tag tag) {
     mTagDao.insertTag(tag);
   }
