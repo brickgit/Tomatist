@@ -71,7 +71,7 @@ public class CalendarActivity extends BaseActivity {
           return true;
         });
 
-    findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null));
+    findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null, false));
 
     mCalendarView = findViewById(R.id.calendar_view);
     mCalendarView.addDecorator(
@@ -132,11 +132,13 @@ public class CalendarActivity extends BaseActivity {
 
           @Override
           public void onEditClick(Action action) {
-            gotoAddActionActivity(action.getId());
+            gotoAddActionActivity(action.getId(), false);
           }
 
           @Override
-          public void onCopyClick(Action action) {}
+          public void onCopyClick(Action action) {
+            gotoAddActionActivity(action.getId(), true);
+          }
 
           @Override
           public void onDeleteClick(Action action) {
@@ -192,10 +194,11 @@ public class CalendarActivity extends BaseActivity {
         .show();
   }
 
-  private void gotoAddActionActivity(String actionId) {
+  private void gotoAddActionActivity(String actionId, boolean isCopyingAction) {
     Intent intent = new Intent(this, AddActionActivity.class);
     if (actionId != null) {
       intent.putExtra(AddActionActivity.SELECTED_ACTION_ID_KEY, actionId);
+      intent.putExtra(AddActionActivity.IS_COPYING_ACTION, isCopyingAction);
     } else {
       intent.putExtra(
           AddActionActivity.SELECTED_YEAR_KEY, mCalendarActivityViewModel.getSelectedYear());

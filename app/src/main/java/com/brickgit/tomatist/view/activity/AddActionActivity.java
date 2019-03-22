@@ -17,6 +17,7 @@ import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.data.viewmodel.action.ActionViewModel;
+import com.brickgit.tomatist.data.viewmodel.action.CopyActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.action.EditActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.action.NewActionViewModel;
 import com.brickgit.tomatist.view.tagselector.SelectedTagListAdapter;
@@ -41,6 +42,7 @@ import androidx.lifecycle.ViewModelProviders;
 public class AddActionActivity extends BaseActivity {
 
   public static final String SELECTED_ACTION_ID_KEY = "SELECTED_ACTION_ID_KEY";
+  public static final String IS_COPYING_ACTION = "IS_COPYING_ACTION";
 
   public static final String SELECTED_YEAR_KEY = "SELECTED_YEAR_KEY";
   public static final String SELECTED_MONTH_KEY = "SELECTED_MONTH_KEY";
@@ -76,6 +78,7 @@ public class AddActionActivity extends BaseActivity {
 
     String selectedActionId = getIntent().getStringExtra(SELECTED_ACTION_ID_KEY);
     boolean isEditingAction = selectedActionId != null;
+    boolean isCopyingAction = getIntent().getBooleanExtra(IS_COPYING_ACTION, false);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -125,9 +128,11 @@ public class AddActionActivity extends BaseActivity {
     findViewById(R.id.duration_layout).setOnClickListener((v) -> showMinuteList());
 
     mActionViewModel =
-        isEditingAction
-            ? ViewModelProviders.of(this).get(EditActionViewModel.class)
-            : ViewModelProviders.of(this).get(NewActionViewModel.class);
+        isCopyingAction
+            ? ViewModelProviders.of(this).get(CopyActionViewModel.class)
+            : isEditingAction
+                ? ViewModelProviders.of(this).get(EditActionViewModel.class)
+                : ViewModelProviders.of(this).get(NewActionViewModel.class);
     mActionViewModel
         .getAction()
         .observe(

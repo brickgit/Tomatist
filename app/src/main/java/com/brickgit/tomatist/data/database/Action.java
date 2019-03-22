@@ -143,7 +143,8 @@ public class Action {
   }
 
   public void setTagList(List<String> tagList) {
-    this.tagList = tagList;
+    this.tagList.clear();
+    this.tagList.addAll(tagList);
     if (tagList.isEmpty()) {
       tags = "";
     } else {

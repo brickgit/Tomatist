@@ -20,10 +20,12 @@ public class NewActionViewModel extends ActionViewModel {
     super();
   }
 
+  @Override
   public LiveData<Action> getAction() {
     return mAction;
   }
 
+  @Override
   public void init(Intent intent) {
     int year = intent.getIntExtra(ACTION_YEAR_KEY, INVALID_ACTION_DATE);
     int month = intent.getIntExtra(ACTION_MONTH_KEY, INVALID_ACTION_DATE);
@@ -46,6 +48,7 @@ public class NewActionViewModel extends ActionViewModel {
     mAction.setValue(action);
   }
 
+  @Override
   public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
     Action action = mAction.getValue();
     if (action == null) return;

@@ -57,7 +57,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-    findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null));
+    findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null, false));
 
     mCategoryButton = findViewById(R.id.category_button);
     mCategoryButton.setOnClickListener(
@@ -109,11 +109,13 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
           @Override
           public void onEditClick(Action action) {
-            gotoAddActionActivity(action.getId());
+            gotoAddActionActivity(action.getId(), false);
           }
 
           @Override
-          public void onCopyClick(Action action) {}
+          public void onCopyClick(Action action) {
+            gotoAddActionActivity(action.getId(), true);
+          }
 
           @Override
           public void onDeleteClick(Action action) {
@@ -159,10 +161,11 @@ public class UnfinishedActionListActivity extends BaseActivity {
     return true;
   }
 
-  private void gotoAddActionActivity(String actionId) {
+  private void gotoAddActionActivity(String actionId, boolean isCopyingActin) {
     Intent intent = new Intent(this, AddActionActivity.class);
     if (actionId != null) {
       intent.putExtra(AddActionActivity.SELECTED_ACTION_ID_KEY, actionId);
+      intent.putExtra(AddActionActivity.IS_COPYING_ACTION, isCopyingActin);
     } else {
       CalendarDay today = CalendarDay.today();
       intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, today.getYear());

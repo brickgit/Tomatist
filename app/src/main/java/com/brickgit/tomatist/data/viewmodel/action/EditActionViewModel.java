@@ -29,15 +29,18 @@ public class EditActionViewModel extends ActionViewModel {
     super();
   }
 
+  @Override
   public LiveData<Action> getAction() {
     return mSelectedAction;
   }
 
+  @Override
   public void init(Intent intent) {
     String selectedActionId = intent.getStringExtra(ACTION_ID_KEY);
     mSelectedActionId.setValue(selectedActionId != null ? selectedActionId : "");
   }
 
+  @Override
   public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
     Action action = mSelectedAction.getValue();
     if (action == null) return;
