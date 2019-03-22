@@ -23,6 +23,9 @@ public class TagListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   private List<Tag> mTagList = new ArrayList<>();
   private Map<String, Tag> mSelectedTagMap = new HashMap<>();
 
+  private String mFilterString = "";
+  private List<Tag> mFilteredTagList = new ArrayList<>();
+
   public void updateTagList(List<Tag> tagList) {
     mTagList.clear();
     mTagList.addAll(tagList);
@@ -32,6 +35,19 @@ public class TagListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   public void updateSelectedTagMap(Map<String, Tag> selectedTagMap) {
     mSelectedTagMap.clear();
     mSelectedTagMap.putAll(selectedTagMap);
+    notifyDataSetChanged();
+  }
+
+  public void updateFilterString(String filterString) {
+    mFilterString = filterString;
+    mFilteredTagList.clear();
+    if (!filterString.isEmpty()) {
+      for (Tag tag : mTagList) {
+        if (tag.getTitle().contains(filterString)) {
+          mFilteredTagList.add(tag);
+        }
+      }
+    }
     notifyDataSetChanged();
   }
 
@@ -49,13 +65,13 @@ public class TagListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-    Tag tag = mTagList.get(position);
+    Tag tag = mFilterString.isEmpty() ? mTagList.get(position) : mFilteredTagList.get(position);
     TagListViewHolder viewHolder = (TagListViewHolder) holder;
     viewHolder.bind(tag, mSelectedTagMap.containsKey(tag.getId()));
   }
 
   @Override
   public int getItemCount() {
-    return mTagList.size();
+    return mFilterString.isEmpty() ? mTagList.size() : mFilteredTagList.size();
   }
 }

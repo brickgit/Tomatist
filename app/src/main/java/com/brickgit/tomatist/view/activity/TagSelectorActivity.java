@@ -3,6 +3,8 @@ package com.brickgit.tomatist.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -60,6 +62,19 @@ public class TagSelectorActivity extends BaseActivity {
     findViewById(R.id.add_tag).setOnClickListener((view) -> showAddTagDialog());
 
     mTagEditText = findViewById(R.id.tag_edit_text);
+    mTagEditText.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+          @Override
+          public void afterTextChanged(Editable s) {
+            mTagListAdapter.updateFilterString(s.toString().trim());
+          }
+        });
     mSelectedTagListView = findViewById(R.id.selected_tag_list);
     mTagListView = findViewById(R.id.tag_list);
 
@@ -83,11 +98,7 @@ public class TagSelectorActivity extends BaseActivity {
         .observe(this, (tagList) -> mTagListAdapter.updateTagList(tagList));
     mTagSelectorViewModel
         .getSelectedTagIdList()
-        .observe(
-            this,
-            (tagIdList) -> {
-              mSelectedTagListAdapter.updateTagIds(tagIdList);
-            });
+        .observe(this, (tagIdList) -> mSelectedTagListAdapter.updateTagIds(tagIdList));
     mTagSelectorViewModel
         .getSelectedTagMap()
         .observe(
