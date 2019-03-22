@@ -3,6 +3,7 @@ package com.brickgit.tomatist.data.viewmodel;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Tag;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,16 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
             }
             return map;
           });
+  private LiveData<Map<String, Tag>> mTagMap =
+      Transformations.map(
+          mDataRepository.getTags(),
+          (tags) -> {
+            Map<String, Tag> map = new HashMap<>();
+            for (Tag tag : tags) {
+              map.put(tag.getId(), tag);
+            }
+            return map;
+          });
   private LiveData<List<Action>> mSelectedUnfinishedActionList =
       Transformations.switchMap(
           mSelectedCategoryId,
@@ -55,6 +66,10 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
 
   public LiveData<Map<String, Category>> getCategoryMap() {
     return mCategoryMap;
+  }
+
+  public LiveData<Map<String, Tag>> getTagMap() {
+    return mTagMap;
   }
 
   public LiveData<List<Action>> getUnfinishedActions() {

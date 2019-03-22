@@ -152,6 +152,9 @@ public class UnfinishedActionListActivity extends BaseActivity {
               mCategories.putAll(categories);
               mActionListAdapter.updateCategories(mCategories);
             });
+    mUnfinishedActionListViewModel
+        .getTagMap()
+        .observe(this, (tags) -> mActionListAdapter.updateTags(tags));
     mUnfinishedActionListViewModel.selectCategory(null);
   }
 
