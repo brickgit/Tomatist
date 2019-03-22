@@ -7,10 +7,13 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Tag;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -28,6 +31,9 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   private TextView mCategoryGroupView;
   private TextView mCategoryView;
+
+  private List<TextView> mTagViews = new ArrayList<>();
+  private TextView mOtherTagsView;
 
   private ExpandableLayout mButtons;
 
@@ -47,6 +53,12 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
     mCategoryGroupView = view.findViewById(R.id.action_category_group);
     mCategoryView = view.findViewById(R.id.action_category);
+
+    mTagViews.add(view.findViewById(R.id.tag_1));
+    mTagViews.add(view.findViewById(R.id.tag_2));
+    mTagViews.add(view.findViewById(R.id.tag_3));
+    mTagViews.add(view.findViewById(R.id.tag_4));
+    mOtherTagsView = view.findViewById(R.id.other_tags);
 
     mButtons = view.findViewById(R.id.buttons);
     mButtons.setOnExpansionUpdateListener(
@@ -92,8 +104,27 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
   }
 
   public void bind(
-      Action action, Map<String, CategoryGroup> categoryGroups, Map<String, Category> categories) {
+      Action action,
+      Map<String, CategoryGroup> categoryGroups,
+      Map<String, Category> categories,
+      Map<String, Tag> tags) {
     mAction = action;
+
+    for (int i = 0; i < mTagViews.size(); i++) {
+      TextView tagView = mTagViews.get(i);
+      String tagId = i < action.getTagList().size() ? action.getTagList().get(i) : null;
+      if (tagId != null) {
+        Tag tag = tags.get(tagId);
+        if (tag != null) {
+          tagView.setVisibility(View.VISIBLE);
+          tagView.setText(tag.getTitle());
+          continue;
+        }
+      }
+      tagView.setVisibility(View.GONE);
+    }
+    mOtherTagsView.setVisibility(
+        action.getTagList().size() > mTagViews.size() ? View.VISIBLE : View.GONE);
 
     if (action.isFinished() && action.getStartTime() != null) {
       mStartDateTime.setText(dateFormat.format(action.getStartTime()));

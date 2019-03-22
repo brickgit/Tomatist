@@ -8,6 +8,7 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Category;
 import com.brickgit.tomatist.data.database.CategoryGroup;
+import com.brickgit.tomatist.data.database.Tag;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,6 +40,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
   private Map<String, CategoryGroup> mCategoryGroups = new HashMap<>();
   private Map<String, Category> mCategories = new HashMap<>();
+  private Map<String, Tag> mTags = new HashMap<>();
 
   private ActionListViewHolder mExpandedItemView;
   private OnItemClickListener mOnItemClickListener =
@@ -110,6 +112,12 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     notifyDataSetChanged();
   }
 
+  public void updateTags(Map<String, Tag> tags) {
+    mTags.clear();
+    mTags.putAll(tags);
+    notifyDataSetChanged();
+  }
+
   public void setOnActionClickListener(OnActionClickListener onActionClickListener) {
     mOnActionClickListener = onActionClickListener;
   }
@@ -126,7 +134,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     ActionListViewHolder viewHolder = (ActionListViewHolder) holder;
-    viewHolder.bind(mActions.get(position), mCategoryGroups, mCategories);
+    viewHolder.bind(mActions.get(position), mCategoryGroups, mCategories, mTags);
   }
 
   @Override

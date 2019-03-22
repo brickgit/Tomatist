@@ -152,6 +152,9 @@ public class CalendarActivity extends BaseActivity {
         .getCategoryMap()
         .observe(this, (categories) -> mActionListAdapter.updateCategories(categories));
     mCalendarActivityViewModel
+        .getTagMap()
+        .observe(this, (tags) -> mActionListAdapter.updateTags(tags));
+    mCalendarActivityViewModel
         .getFinishedActionList()
         .observe(
             this,
