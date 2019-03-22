@@ -23,6 +23,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   private static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+  private View mHeaderView;
   private TextView mStartDateTime;
   private TextView mEndDateTime;
 
@@ -45,6 +46,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
       final ActionListAdapter.OnActionClickListener onActionClickListener) {
     super(view);
 
+    mHeaderView = view.findViewById(R.id.header);
     mStartDateTime = view.findViewById(R.id.start_time);
     mEndDateTime = view.findViewById(R.id.end_time);
 
@@ -127,6 +129,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
         action.getTagList().size() > mTagViews.size() ? View.VISIBLE : View.GONE);
 
     if (action.isFinished() && action.getStartTime() != null) {
+      mHeaderView.setVisibility(View.VISIBLE);
       mStartDateTime.setText(dateFormat.format(action.getStartTime()));
       if (!action.getStartTime().equals(action.getEndTime())) {
         mEndDateTime.setText(dateFormat.format(action.getEndTime()));
@@ -134,6 +137,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
         mEndDateTime.setText("");
       }
     } else {
+      mHeaderView.setVisibility(View.GONE);
       mStartDateTime.setText("");
       mEndDateTime.setText("");
     }
