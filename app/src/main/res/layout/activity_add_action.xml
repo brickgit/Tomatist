@@ -55,7 +55,8 @@
           android:layout_marginStart="8dp"
           android:layout_marginTop="8dp"
           android:layout_marginBottom="3dp"
-          android:text="@string/tag" />
+          android:text="@string/tag"
+          android:textSize="16sp" />
 
         <com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView
           android:id="@+id/tag_list_view"
@@ -68,6 +69,20 @@
       </LinearLayout>
 
     </RelativeLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/new_action_note"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:hint="@string/note"
+        android:inputType="textMultiLine" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
@@ -82,6 +97,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/is_finished"
         android:textColor="@android:color/darker_gray"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -107,6 +123,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginBottom="8dp"
           android:text="@string/start_time"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
@@ -119,6 +136,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginEnd="8dp"
           android:layout_marginBottom="8dp"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/start_datetime_time"
           app:layout_constraintHorizontal_bias="0.9"
@@ -133,6 +151,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginEnd="8dp"
           android:layout_marginBottom="8dp"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
@@ -150,6 +169,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginBottom="8dp"
           android:text="@string/end_time"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
@@ -162,6 +182,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginEnd="8dp"
           android:layout_marginBottom="8dp"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/end_datetime_time"
           app:layout_constraintHorizontal_bias="0.9"
@@ -176,6 +197,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginEnd="8dp"
           android:layout_marginBottom="8dp"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
@@ -194,6 +216,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginBottom="8dp"
           android:text="@string/duration"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
@@ -206,6 +229,7 @@
           android:layout_marginTop="8dp"
           android:layout_marginEnd="8dp"
           android:layout_marginBottom="8dp"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toStartOf="@+id/duration_unit"
           app:layout_constraintHorizontal_bias="0.9"
@@ -221,6 +245,7 @@
           android:layout_marginEnd="8dp"
           android:layout_marginBottom="8dp"
           android:text="@string/duration_unit"
+          android:textSize="16sp"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toTopOf="parent" />
@@ -228,20 +253,6 @@
       </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-
-      <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/new_action_note"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        android:hint="@string/note"
-        android:inputType="textMultiLine" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
   </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
