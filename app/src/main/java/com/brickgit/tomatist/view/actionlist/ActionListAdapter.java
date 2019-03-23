@@ -6,8 +6,6 @@ import android.view.ViewGroup;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.Tag;
 
 import java.util.HashMap;
@@ -38,8 +36,6 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
   private List<Action> mActions = new LinkedList<>();
   private OnActionClickListener mOnActionClickListener;
 
-  private Map<String, CategoryGroup> mCategoryGroups = new HashMap<>();
-  private Map<String, Category> mCategories = new HashMap<>();
   private Map<String, Tag> mTags = new HashMap<>();
 
   private ActionListViewHolder mExpandedItemView;
@@ -100,18 +96,6 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
   }
 
-  public void updateCategoryGroups(Map<String, CategoryGroup> categoryGroups) {
-    mCategoryGroups.clear();
-    mCategoryGroups.putAll(categoryGroups);
-    notifyDataSetChanged();
-  }
-
-  public void updateCategories(Map<String, Category> categories) {
-    mCategories.clear();
-    mCategories.putAll(categories);
-    notifyDataSetChanged();
-  }
-
   public void updateTags(Map<String, Tag> tags) {
     mTags.clear();
     mTags.putAll(tags);
@@ -134,7 +118,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     ActionListViewHolder viewHolder = (ActionListViewHolder) holder;
-    viewHolder.bind(mActions.get(position), mCategoryGroups, mCategories, mTags);
+    viewHolder.bind(mActions.get(position), mTags);
   }
 
   @Override

@@ -3,12 +3,9 @@ package com.brickgit.tomatist.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.viewmodel.UnfinishedActionListViewModel;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
@@ -16,9 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -35,13 +30,10 @@ public class UnfinishedActionListActivity extends BaseActivity {
   private UnfinishedActionListViewModel mUnfinishedActionListViewModel;
 
   private View mRootView;
-  private Button mCategoryButton;
   private RecyclerView mActionList;
   private LinearLayoutManager mLayoutManager;
   private ActionListAdapter mActionListAdapter;
 
-  private Map<String, CategoryGroup> mCategoryGroups = new HashMap<>();
-  private Map<String, Category> mCategories = new HashMap<>();
   private List<Action> mUnfinishedActionList = new ArrayList<>();
 
   @Override
@@ -58,16 +50,6 @@ public class UnfinishedActionListActivity extends BaseActivity {
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null, false));
-
-    mCategoryButton = findViewById(R.id.category_button);
-    mCategoryButton.setOnClickListener(
-        (view) -> CategorySelectorActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
-    findViewById(R.id.clear)
-        .setOnClickListener(
-            (view) -> {
-              mUnfinishedActionListViewModel.selectCategory(null);
-              updateViews();
-            });
 
     mActionList = findViewById(R.id.unfinished_action_list);
     mActionList.setHasFixedSize(true);
@@ -135,27 +117,8 @@ public class UnfinishedActionListActivity extends BaseActivity {
               updateViews();
             });
     mUnfinishedActionListViewModel
-        .getCategoryGroupMap()
-        .observe(
-            this,
-            (categoryGroups) -> {
-              mCategoryGroups.clear();
-              mCategoryGroups.putAll(categoryGroups);
-              mActionListAdapter.updateCategoryGroups(mCategoryGroups);
-            });
-    mUnfinishedActionListViewModel
-        .getCategoryMap()
-        .observe(
-            this,
-            (categories) -> {
-              mCategories.clear();
-              mCategories.putAll(categories);
-              mActionListAdapter.updateCategories(mCategories);
-            });
-    mUnfinishedActionListViewModel
         .getTagMap()
         .observe(this, (tags) -> mActionListAdapter.updateTags(tags));
-    mUnfinishedActionListViewModel.selectCategory(null);
   }
 
   @Override
@@ -193,33 +156,6 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
   private void updateViews() {
     String tag = getString(R.string.all);
-    String selectedCategoryId = mUnfinishedActionListViewModel.getSelectedCategoryId();
-    if (selectedCategoryId != null && mCategories.get(selectedCategoryId) != null) {
-      Category category = mCategories.get(selectedCategoryId);
-      tag = String.valueOf(category.getId());
-      StringBuilder sb = new StringBuilder();
-      sb.append(category.getTitle());
-      CategoryGroup categoryGroup = mCategoryGroups.get(category.getGroupId());
-      if (categoryGroup != null) {
-        sb.insert(0, categoryGroup.getTitle() + " - ");
-      }
-      mCategoryButton.setText(sb.toString());
-    } else {
-      mCategoryButton.setText(getString(R.string.all));
-    }
     mActionListAdapter.updateActions(tag, mUnfinishedActionList);
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == REQUEST_CODE_SELECT_CATEGORY) {
-      if (resultCode == RESULT_OK) {
-        String selectedCategoryId =
-            data.getStringExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID);
-        mUnfinishedActionListViewModel.selectCategory(selectedCategoryId);
-        updateViews();
-      }
-    }
   }
 }

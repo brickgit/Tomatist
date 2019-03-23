@@ -12,10 +12,8 @@
   <string name="duration">Duration</string>
   <string name="duration_unit">minute(s)</string>
   <string name="unfinished_actions">Unfinished Actions</string>
-  <string name="category">Category</string>
   <string name="note">Note</string>
   <string name="all">All</string>
-  <string name="category_group">Category Group</string>
   <string name="tag">Tag</string>
   <string name="error_tags_are_required">Tags are required</string>
 
@@ -23,12 +21,6 @@
   <string name="undo">Undo</string>
 
   <string name="add_tag">Add Tag</string>
-  <string name="add_category_group">Add Category Group</string>
-  <string name="add_category">Add Category</string>
-  <string name="category_group_deleted">Category group deleted!</string>
-  <string name="category_deleted">Category deleted!</string>
-
-  <string name="uncategorized">Uncategorized</string>
 
   <string name="edit">Edit</string>
   <string name="copy">Copy</string>
@@ -46,24 +38,6 @@
     <item>240 minutes</item>
     <item>270 minutes</item>
     <item>300 minutes</item>
-  </string-array>
-
-  <string name="default_category_group_id_routine" translatable="false">CGG_default_category_group_routine</string>
-  <string name="default_category_group_title_routine">Routine</string>
-
-  <string-array name="default_category_ids" translatable="false">
-    <item>CTG_default_category_breakfast</item>
-    <item>CTG_default_category_lunch</item>
-    <item>CTG_default_category_dinner</item>
-    <item>CTG_default_category_shower</item>
-    <item>CTG_default_category_sleeping</item>
-  </string-array>
-  <string-array name="default_category_titles">
-    <item>Breakfast</item>
-    <item>Lunch</item>
-    <item>Dinner</item>
-    <item>Shower</item>
-    <item>Sleeping</item>
   </string-array>
 
 </resources>

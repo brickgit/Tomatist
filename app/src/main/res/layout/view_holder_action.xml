@@ -172,31 +172,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-          android:id="@+id/footer"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:gravity="center"
-          android:orientation="vertical"
-          android:visibility="gone">
-
-          <TextView
-            android:id="@+id/action_category_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="textEnd"
-            android:textSize="14sp" />
-
-          <TextView
-            android:id="@+id/action_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:textAlignment="viewEnd"
-            android:textSize="14sp" />
-
-        </LinearLayout>
-
       </LinearLayout>
 
       <net.cachapa.expandablelayout.ExpandableLayout

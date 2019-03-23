@@ -36,11 +36,8 @@ public abstract class ActionDao {
     return getFinishedActionsForDate(cFrom.getTime(), cTo.getTime());
   }
 
-  @Query("SELECT * FROM `actions` WHERE is_finished = 0 ORDER BY category_id")
+  @Query("SELECT * FROM `actions` WHERE is_finished = 0")
   public abstract LiveData<List<Action>> getUnfinishedActions();
-
-  @Query("SELECT * FROM `actions` WHERE is_finished = 0 AND category_id = :categoryId")
-  public abstract LiveData<List<Action>> getUnfinishedActions(String categoryId);
 
   @Query("SELECT * FROM `actions` WHERE id = :id")
   public abstract LiveData<Action> getAction(String id);

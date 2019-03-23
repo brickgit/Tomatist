@@ -12,23 +12,12 @@
   <string name="duration">期間</string>
   <string name="duration_unit">分鐘</string>
   <string name="unfinished_actions">未完成行動</string>
-  <string name="category">類別</string>
   <string name="note">註記</string>
   <string name="all">全部</string>
-  <string name="category_group">類別群組</string>
   <string name="tag">標籤</string>
 
   <string name="action_deleted">行動已刪除！</string>
   <string name="undo">恢復</string>
-
-  <string name="add_category_group">新增類別群組</string>
-  <string name="add_category">新增類別</string>
-  <string name="category_group_deleted">類別群組已刪除！</string>
-  <string name="category_deleted">類別已刪除！</string>
-
-  <string name="uncategorized">未分類</string>
-
-  <string name="default_category_group_title_routine">日常</string>
 
   <string-array name="minutes_string">
     <item>0 分鐘</item>
@@ -42,14 +31,6 @@
     <item>240 分鐘</item>
     <item>270 分鐘</item>
     <item>300 分鐘</item>
-  </string-array>
-
-  <string-array name="default_category_titles">
-    <item>早餐</item>
-    <item>午餐</item>
-    <item>晚餐</item>
-    <item>盥洗</item>
-    <item>睡覺</item>
   </string-array>
 
 </resources>

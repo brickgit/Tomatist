@@ -3,7 +3,6 @@ package com.brickgit.tomatist.data.viewmodel.action;
 import android.content.Intent;
 
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
 
 import java.util.List;
 
@@ -28,7 +27,6 @@ public class CopyActionViewModel extends ActionViewModel {
               action.setFinished(copiedAction.isFinished());
               action.setStartTime(copiedAction.getStartTime());
               action.setEndTime(copiedAction.getEndTime());
-              action.setCategoryId(copiedAction.getCategoryId());
               action.setNote(copiedAction.getNote());
               mStartCalendar.setTime(action.getStartTime());
               mEndCalendar.setTime(action.getEndTime());
@@ -55,15 +53,11 @@ public class CopyActionViewModel extends ActionViewModel {
   public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
     Action action = mCopyingAction.getValue();
     if (action == null) return;
-
-    Category category = mSelectedCategory.getValue();
-
     action.setTitle(title);
     action.setNote(note);
     action.setFinished(isFinished);
     action.setStartTime(mStartCalendar.getTime());
     action.setEndTime(mEndCalendar.getTime());
-    action.setCategoryId(category != null ? category.getId() : null);
     action.setTagList(tagList);
     mDataRepository.insertAction(action);
   }

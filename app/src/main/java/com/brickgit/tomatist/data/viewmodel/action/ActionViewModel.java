@@ -3,8 +3,6 @@ package com.brickgit.tomatist.data.viewmodel.action;
 import android.content.Intent;
 
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.BaseViewModel;
 
@@ -14,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 /** Created by Daniel Lin on 2019/3/10. */
@@ -27,8 +24,6 @@ public abstract class ActionViewModel extends BaseViewModel {
   public static final String ACTION_DAY_KEY = "ACTION_DAY_KEY";
   public static final int INVALID_ACTION_DATE = -1;
 
-  public static final String ACTION_CATEGORY_KEY = "ACTION_CATEGORY_KEY";
-
   private LiveData<Map<String, Tag>> mTagMap =
       Transformations.map(
           mDataRepository.getTags(),
@@ -40,19 +35,6 @@ public abstract class ActionViewModel extends BaseViewModel {
             return map;
           });
 
-  protected MutableLiveData<String> mSelectedCategoryId = new MutableLiveData<>();
-  protected LiveData<Category> mSelectedCategory =
-      Transformations.switchMap(
-          mSelectedCategoryId, (selectedId) -> mDataRepository.getCategory(selectedId));
-  protected LiveData<CategoryGroup> mSelectedCategoryGroup =
-      Transformations.switchMap(
-          mSelectedCategory,
-          (category) ->
-              mDataRepository.getCategoryGroup(
-                  (category != null && category.getGroupId() != null)
-                      ? category.getGroupId()
-                      : ""));
-
   protected Calendar mStartCalendar = Calendar.getInstance();
   protected Calendar mEndCalendar = Calendar.getInstance();
 
@@ -62,18 +44,6 @@ public abstract class ActionViewModel extends BaseViewModel {
 
   public LiveData<Map<String, Tag>> getTagMap() {
     return mTagMap;
-  }
-
-  public LiveData<Category> getSelectedCategory() {
-    return mSelectedCategory;
-  }
-
-  public LiveData<CategoryGroup> getSelectedCategoryGroup() {
-    return mSelectedCategoryGroup;
-  }
-
-  public void selectCategory(String selectedCategoryId) {
-    mSelectedCategoryId.setValue(selectedCategoryId != null ? selectedCategoryId : "");
   }
 
   public Calendar getStartCalendar() {

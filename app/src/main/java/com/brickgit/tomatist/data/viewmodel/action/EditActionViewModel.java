@@ -3,7 +3,6 @@ package com.brickgit.tomatist.data.viewmodel.action;
 import android.content.Intent;
 
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
 
 import java.util.List;
 
@@ -44,15 +43,11 @@ public class EditActionViewModel extends ActionViewModel {
   public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
     Action action = mSelectedAction.getValue();
     if (action == null) return;
-
-    Category category = mSelectedCategory.getValue();
-
     action.setTitle(title);
     action.setNote(note);
     action.setFinished(isFinished);
     action.setStartTime(mStartCalendar.getTime());
     action.setEndTime(mEndCalendar.getTime());
-    action.setCategoryId(category != null ? category.getId() : null);
     action.setTagList(tagList);
     mDataRepository.updateAction(action);
   }

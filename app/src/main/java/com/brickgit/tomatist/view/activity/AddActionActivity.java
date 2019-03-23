@@ -13,10 +13,7 @@ import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.Tag;
-import com.brickgit.tomatist.data.preferences.TomatistPreferences;
 import com.brickgit.tomatist.data.viewmodel.action.ActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.action.CopyActionViewModel;
 import com.brickgit.tomatist.data.viewmodel.action.EditActionViewModel;
@@ -49,8 +46,7 @@ public class AddActionActivity extends BaseActivity {
   public static final String SELECTED_MONTH_KEY = "SELECTED_MONTH_KEY";
   public static final String SELECTED_DAY_KEY = "SELECTED_DAY_KEY";
 
-  private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
-  private static final int REQUEST_CODE_SELECT_TAG = 1;
+  private static final int REQUEST_CODE_SELECT_TAG = 0;
 
   private View mEmptyTagWarningView;
   private SelectedTagRecyclerView mSelectedTagListView;
@@ -63,15 +59,12 @@ public class AddActionActivity extends BaseActivity {
   private TextView mEndDate;
   private TextView mEndTime;
   private TextView mDurationMinutes;
-  private TextView mCategoryView;
   private TextInputEditText mActionNoteView;
 
   private ActionViewModel mActionViewModel;
   private Action mAction;
   private Map<String, Tag> mTagMap = new HashMap<>();
   private List<String> mSelectedTagIdList = new ArrayList<>();
-  private CategoryGroup mCategoryGroup;
-  private Category mCategory;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +106,6 @@ public class AddActionActivity extends BaseActivity {
           mAction.setFinished(isChecked);
           mDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
-    mCategoryView = findViewById(R.id.category);
-    findViewById(R.id.category_layout)
-        .setOnClickListener(
-            (v) -> CategorySelectorActivity.startForResult(this, REQUEST_CODE_SELECT_CATEGORY));
 
     mDatetimeLayout = findViewById(R.id.datetime_layout);
     mStartDate = findViewById(R.id.start_datetime_date);
@@ -142,7 +131,6 @@ public class AddActionActivity extends BaseActivity {
             this,
             (action) -> {
               mAction = action;
-              mActionViewModel.selectCategory(mAction.getCategoryId());
               mActionTitleView.setText(mAction.getTitle());
               mActionNoteView.setText(mAction.getNote());
               mIsFinished.setChecked(mAction.isFinished());
@@ -160,25 +148,6 @@ public class AddActionActivity extends BaseActivity {
               mTagMap.putAll(tags);
               mSelectedTagListAdapter.updateTagMap(mTagMap);
             });
-    mActionViewModel
-        .getSelectedCategory()
-        .observe(
-            this,
-            (category) -> {
-              mCategory = category;
-              if (mAction != null) {
-                mAction.setCategoryId(mCategory != null ? mCategory.getId() : null);
-              }
-              updateViews();
-            });
-    mActionViewModel
-        .getSelectedCategoryGroup()
-        .observe(
-            this,
-            (categoryGroup) -> {
-              mCategoryGroup = categoryGroup;
-              updateViews();
-            });
 
     Intent intent = getIntent();
     intent.putExtra(ActionViewModel.ACTION_ID_KEY, intent.getStringExtra(SELECTED_ACTION_ID_KEY));
@@ -191,9 +160,6 @@ public class AddActionActivity extends BaseActivity {
     intent.putExtra(
         ActionViewModel.ACTION_DAY_KEY,
         intent.getIntExtra(SELECTED_DAY_KEY, ActionViewModel.INVALID_ACTION_DATE));
-    intent.putExtra(
-        ActionViewModel.ACTION_CATEGORY_KEY,
-        TomatistPreferences.getInstance(this).lastUsedCategoryId());
     mActionViewModel.init(intent);
   }
 
@@ -355,16 +321,6 @@ public class AddActionActivity extends BaseActivity {
 
     long minute = (endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (60 * 1000);
     mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", minute));
-
-    StringBuilder sb = new StringBuilder();
-    if (mCategory != null) {
-      sb.append(mCategory.getTitle());
-      if (mCategoryGroup != null) {
-        sb.insert(0, mCategoryGroup.getTitle() + " - ");
-      }
-    }
-    String strCategory = sb.toString().trim();
-    mCategoryView.setText(strCategory.isEmpty() ? getString(R.string.uncategorized) : strCategory);
   }
 
   @Override
@@ -372,11 +328,6 @@ public class AddActionActivity extends BaseActivity {
     super.onActivityResult(requestCode, resultCode, data);
     if (resultCode == RESULT_OK) {
       switch (requestCode) {
-        case REQUEST_CODE_SELECT_CATEGORY:
-          String selectedCategoryId =
-              data.getStringExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID);
-          mActionViewModel.selectCategory(selectedCategoryId);
-          break;
         case REQUEST_CODE_SELECT_TAG:
           mSelectedTagIdList.clear();
           String selectedTagNameList = data.getStringExtra(TagSelectorActivity.SELECTED_TAG_LIST);

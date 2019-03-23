@@ -148,12 +148,6 @@ public class CalendarActivity extends BaseActivity {
 
     mCalendarActivityViewModel = ViewModelProviders.of(this).get(CalendarActivityViewModel.class);
     mCalendarActivityViewModel
-        .getCategoryGroupMap()
-        .observe(this, (categoryGroups) -> mActionListAdapter.updateCategoryGroups(categoryGroups));
-    mCalendarActivityViewModel
-        .getCategoryMap()
-        .observe(this, (categories) -> mActionListAdapter.updateCategories(categories));
-    mCalendarActivityViewModel
         .getTagMap()
         .observe(this, (tags) -> mActionListAdapter.updateTags(tags));
     mCalendarActivityViewModel

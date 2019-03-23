@@ -34,20 +34,4 @@ public class TomatistPreferences {
   public void setIsFirstLaunched(boolean isFirstLaunched) {
     sharedPreferences.edit().putBoolean(IS_FIRST_LAUNCHED, isFirstLaunched).apply();
   }
-
-  public String lastUsedCategoryGroupId() {
-    return sharedPreferences.getString(LAST_USED_CATEGORY_GROUP_ID, "");
-  }
-
-  public void setLastUsedCategoryGroupId(String categoryGroupId) {
-    sharedPreferences.edit().putString(LAST_USED_CATEGORY_GROUP_ID, categoryGroupId).apply();
-  }
-
-  public String lastUsedCategoryId() {
-    return sharedPreferences.getString(LAST_USED_CATEGORY_ID, "");
-  }
-
-  public void setLastUsedCategoryId(String categoryId) {
-    sharedPreferences.edit().putString(LAST_USED_CATEGORY_ID, categoryId).apply();
-  }
 }

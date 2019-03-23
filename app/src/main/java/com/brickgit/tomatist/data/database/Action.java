@@ -8,26 +8,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(
-    tableName = "actions",
-    indices = {@Index("category_id")},
-    foreignKeys = {
-      @ForeignKey(
-          entity = Category.class,
-          parentColumns = "id",
-          childColumns = "category_id",
-          onDelete = ForeignKey.SET_NULL)
-    })
+@Entity(tableName = "actions")
 public class Action {
   @PrimaryKey
   @ColumnInfo(name = "id")
@@ -48,10 +35,6 @@ public class Action {
 
   @ColumnInfo(name = "note")
   private String note;
-
-  @ColumnInfo(name = "category_id")
-  @Nullable
-  private String categoryId;
 
   @ColumnInfo(name = "tags")
   private String tags;
@@ -113,15 +96,6 @@ public class Action {
 
   public void setNote(String note) {
     this.note = note;
-  }
-
-  @Nullable
-  public String getCategoryId() {
-    return categoryId;
-  }
-
-  public void setCategoryId(@Nullable String categoryId) {
-    this.categoryId = categoryId;
   }
 
   String getTags() {

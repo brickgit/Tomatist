@@ -5,8 +5,6 @@ import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.Tag;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -30,9 +28,6 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
   private TextView mTitleView;
   private TextView mNoteView;
 
-  private TextView mCategoryGroupView;
-  private TextView mCategoryView;
-
   private List<TextView> mTagViews = new ArrayList<>();
   private TextView mOtherTagsView;
 
@@ -52,9 +47,6 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
     mTitleView = view.findViewById(R.id.action_title);
     mNoteView = view.findViewById(R.id.action_note);
-
-    mCategoryGroupView = view.findViewById(R.id.action_category_group);
-    mCategoryView = view.findViewById(R.id.action_category);
 
     mTagViews.add(view.findViewById(R.id.tag_1));
     mTagViews.add(view.findViewById(R.id.tag_2));
@@ -105,11 +97,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
             });
   }
 
-  public void bind(
-      Action action,
-      Map<String, CategoryGroup> categoryGroups,
-      Map<String, Category> categories,
-      Map<String, Tag> tags) {
+  public void bind(Action action, Map<String, Tag> tags) {
     mAction = action;
 
     for (int i = 0; i < mTagViews.size(); i++) {
@@ -144,16 +132,6 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
     mTitleView.setText(action.getTitle());
     mNoteView.setText(action.getNote());
-
-    Category category = categories.get(action.getCategoryId());
-    if (category != null) {
-      mCategoryView.setText(category.getTitle());
-      CategoryGroup group = categoryGroups.get(category.getGroupId());
-      mCategoryGroupView.setText(group != null ? group.getTitle() : "");
-    } else {
-      mCategoryView.setText("");
-      mCategoryGroupView.setText("");
-    }
   }
 
   public void toggle() {

@@ -1,8 +1,6 @@
 package com.brickgit.tomatist.data.viewmodel;
 
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.database.Category;
-import com.brickgit.tomatist.data.database.CategoryGroup;
 import com.brickgit.tomatist.data.database.Tag;
 
 import java.util.HashMap;
@@ -22,26 +20,6 @@ public class CalendarActivityViewModel extends BaseViewModel {
   private int mSelectedMonth;
   private int mSelectedDay;
 
-  private LiveData<Map<String, CategoryGroup>> mCategoryGroupMap =
-      Transformations.map(
-          mDataRepository.getCategoryGroups(),
-          (groups) -> {
-            Map<String, CategoryGroup> map = new HashMap<>();
-            for (CategoryGroup group : groups) {
-              map.put(group.getId(), group);
-            }
-            return map;
-          });
-  private LiveData<Map<String, Category>> mCategoryMap =
-      Transformations.map(
-          mDataRepository.getCategories(),
-          (categories) -> {
-            Map<String, Category> map = new HashMap<>();
-            for (Category category : categories) {
-              map.put(category.getId(), category);
-            }
-            return map;
-          });
   private LiveData<Map<String, Tag>> mTagMap =
       Transformations.map(
           mDataRepository.getTags(),
@@ -60,14 +38,6 @@ public class CalendarActivityViewModel extends BaseViewModel {
 
   public CalendarActivityViewModel() {
     super();
-  }
-
-  public LiveData<Map<String, CategoryGroup>> getCategoryGroupMap() {
-    return mCategoryGroupMap;
-  }
-
-  public LiveData<Map<String, Category>> getCategoryMap() {
-    return mCategoryMap;
   }
 
   public LiveData<Map<String, Tag>> getTagMap() {
