@@ -22,7 +22,6 @@ public class CopyActionViewModel extends ActionViewModel {
             Action action = getAction().getValue();
             if (action == null) {
               action = new Action();
-              action.setTitle(copiedAction.getTitle());
               action.setTagList(copiedAction.getTagList());
               action.setFinished(copiedAction.isFinished());
               action.setStartTime(copiedAction.getStartTime());
@@ -50,10 +49,9 @@ public class CopyActionViewModel extends ActionViewModel {
   }
 
   @Override
-  public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
+  public void saveAction(String note, boolean isFinished, List<String> tagList) {
     Action action = mCopyingAction.getValue();
     if (action == null) return;
-    action.setTitle(title);
     action.setNote(note);
     action.setFinished(isFinished);
     action.setStartTime(mStartCalendar.getTime());

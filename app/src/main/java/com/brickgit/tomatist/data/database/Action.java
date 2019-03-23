@@ -21,9 +21,6 @@ public class Action {
   @NonNull
   private String id;
 
-  @ColumnInfo(name = "title")
-  private String title;
-
   @ColumnInfo(name = "is_finished")
   private boolean isFinished;
 
@@ -56,14 +53,6 @@ public class Action {
 
   public void setId(@NonNull String id) {
     this.id = id;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
   }
 
   public boolean isFinished() {

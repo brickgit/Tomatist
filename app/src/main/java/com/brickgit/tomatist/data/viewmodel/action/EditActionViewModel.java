@@ -40,10 +40,9 @@ public class EditActionViewModel extends ActionViewModel {
   }
 
   @Override
-  public void saveAction(String title, String note, boolean isFinished, List<String> tagList) {
+  public void saveAction(String note, boolean isFinished, List<String> tagList) {
     Action action = mSelectedAction.getValue();
     if (action == null) return;
-    action.setTitle(title);
     action.setNote(note);
     action.setFinished(isFinished);
     action.setStartTime(mStartCalendar.getTime());

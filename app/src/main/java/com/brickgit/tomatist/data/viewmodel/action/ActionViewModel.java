@@ -66,6 +66,5 @@ public abstract class ActionViewModel extends BaseViewModel {
 
   public abstract void init(Intent intent);
 
-  public abstract void saveAction(
-      String title, String note, boolean isFinished, List<String> tagList);
+  public abstract void saveAction(String note, boolean isFinished, List<String> tagList);
 }

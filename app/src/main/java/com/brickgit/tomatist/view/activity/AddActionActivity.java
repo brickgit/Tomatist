@@ -51,7 +51,6 @@ public class AddActionActivity extends BaseActivity {
   private View mEmptyTagWarningView;
   private SelectedTagRecyclerView mSelectedTagListView;
   private SelectedTagListAdapter mSelectedTagListAdapter;
-  private TextInputEditText mActionTitleView;
   private CheckBox mIsFinished;
   private View mDatetimeLayout;
   private TextView mStartDate;
@@ -98,7 +97,6 @@ public class AddActionActivity extends BaseActivity {
         (tag) ->
             TagSelectorActivity.startForResult(this, REQUEST_CODE_SELECT_TAG, mSelectedTagIdList));
 
-    mActionTitleView = findViewById(R.id.new_action_name);
     mActionNoteView = findViewById(R.id.new_action_note);
     mIsFinished = findViewById(R.id.is_finished);
     mIsFinished.setOnCheckedChangeListener(
@@ -131,7 +129,6 @@ public class AddActionActivity extends BaseActivity {
             this,
             (action) -> {
               mAction = action;
-              mActionTitleView.setText(mAction.getTitle());
               mActionNoteView.setText(mAction.getNote());
               mIsFinished.setChecked(mAction.isFinished());
               mSelectedTagIdList.clear();
@@ -172,18 +169,8 @@ public class AddActionActivity extends BaseActivity {
       animator.start();
       return;
     }
-
-    String actionTitle = mActionTitleView.getText().toString().trim();
-    if (actionTitle.isEmpty()) {
-      mActionTitleView.setError(getString(R.string.error_name_is_required));
-      return;
-    }
-
     mActionViewModel.saveAction(
-        actionTitle,
-        mActionNoteView.getText().toString().trim(),
-        mIsFinished.isChecked(),
-        mSelectedTagIdList);
+        mActionNoteView.getText().toString().trim(), mIsFinished.isChecked(), mSelectedTagIdList);
 
     finish();
   }

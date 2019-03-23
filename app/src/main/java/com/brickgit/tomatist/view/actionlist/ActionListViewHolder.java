@@ -25,7 +25,6 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
   private TextView mStartDateTime;
   private TextView mEndDateTime;
 
-  private TextView mTitleView;
   private TextView mNoteView;
 
   private List<TextView> mTagViews = new ArrayList<>();
@@ -45,7 +44,6 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
     mStartDateTime = view.findViewById(R.id.start_time);
     mEndDateTime = view.findViewById(R.id.end_time);
 
-    mTitleView = view.findViewById(R.id.action_title);
     mNoteView = view.findViewById(R.id.action_note);
 
     mTagViews.add(view.findViewById(R.id.tag_1));
@@ -130,7 +128,6 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
       mEndDateTime.setText("");
     }
 
-    mTitleView.setText(action.getTitle());
     mNoteView.setText(action.getNote());
   }
 
