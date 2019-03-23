@@ -15,32 +15,59 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <LinearLayout
-      android:id="@+id/tag_list_layout"
+    <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="5dp"
-      android:background="@drawable/tag_list_background"
-      android:orientation="vertical">
+      android:layout_height="wrap_content">
 
-      <TextView
+      <RelativeLayout
+        android:id="@+id/empty_tag_warning_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/tag_list_layout"
+        android:layout_alignTop="@id/tag_list_layout"
+        android:layout_alignEnd="@id/tag_list_layout"
+        android:layout_alignBottom="@id/tag_list_layout"
+        android:alpha="0"
+        android:background="@drawable/light_tag_background"
+        android:orientation="horizontal">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerInParent="true"
+          android:text="@string/error_tags_are_required"
+          android:textColor="@android:color/white"
+          android:textSize="18sp" />
+
+      </RelativeLayout>
+
+      <LinearLayout
+        android:id="@+id/tag_list_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="3dp"
-        android:text="@string/tag" />
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/tag_list_background"
+        android:orientation="vertical">
 
-      <com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView
-        android:id="@+id/tag_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="8dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginBottom="3dp"
+          android:text="@string/tag" />
 
-    </LinearLayout>
+        <com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView
+          android:id="@+id/tag_list_view"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="8dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginBottom="8dp" />
 
+      </LinearLayout>
+
+    </RelativeLayout>
 
     <com.google.android.material.textfield.TextInputLayout
       android:layout_width="match_parent"

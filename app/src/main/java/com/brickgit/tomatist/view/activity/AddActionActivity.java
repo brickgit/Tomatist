@@ -1,5 +1,6 @@
 package com.brickgit.tomatist.view.activity;
 
+import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -51,6 +52,7 @@ public class AddActionActivity extends BaseActivity {
   private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
   private static final int REQUEST_CODE_SELECT_TAG = 1;
 
+  private View mEmptyTagWarningView;
   private SelectedTagRecyclerView mSelectedTagListView;
   private SelectedTagListAdapter mSelectedTagListAdapter;
   private TextInputEditText mActionTitleView;
@@ -86,6 +88,7 @@ public class AddActionActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+    mEmptyTagWarningView = findViewById(R.id.empty_tag_warning_view);
     findViewById(R.id.tag_list_layout)
         .setOnClickListener(
             (v) ->
@@ -195,6 +198,15 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void saveAction() {
+    if (mSelectedTagIdList.isEmpty()) {
+      ValueAnimator animator = ValueAnimator.ofFloat(1.0f, 0.0f);
+      animator.setDuration(1000);
+      animator.addUpdateListener(
+          (animation) -> mEmptyTagWarningView.setAlpha((float) animation.getAnimatedValue()));
+      animator.start();
+      return;
+    }
+
     String actionTitle = mActionTitleView.getText().toString().trim();
     if (actionTitle.isEmpty()) {
       mActionTitleView.setError(getString(R.string.error_name_is_required));

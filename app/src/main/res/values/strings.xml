@@ -17,6 +17,7 @@
   <string name="all">All</string>
   <string name="category_group">Category Group</string>
   <string name="tag">Tag</string>
+  <string name="error_tags_are_required">Tags are required</string>
 
   <string name="action_deleted">Action deleted!</string>
   <string name="undo">Undo</string>
