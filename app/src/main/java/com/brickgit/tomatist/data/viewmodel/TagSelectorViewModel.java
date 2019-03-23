@@ -44,6 +44,10 @@ public class TagSelectorViewModel extends BaseViewModel {
     mDataRepository.insertTag(tag);
   }
 
+  public void deleteTag(Tag tag) {
+    mDataRepository.deleteTag(tag);
+  }
+
   public LiveData<List<String>> getSelectedTagIdList() {
     if (mSelectedTagIdList.getValue() == null) {
       mSelectedTagIdList.setValue(new ArrayList<>());

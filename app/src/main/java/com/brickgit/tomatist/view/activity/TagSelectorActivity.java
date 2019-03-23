@@ -7,24 +7,29 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.TagSelectorViewModel;
+import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.tagselector.SelectedTagListAdapter;
 import com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView;
 import com.brickgit.tomatist.view.tagselector.TagListAdapter;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.common.base.Joiner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,7 +39,9 @@ public class TagSelectorActivity extends BaseActivity {
   public static final String SELECTED_TAG_LIST = "SELECTED_TAG_LIST";
 
   protected TagSelectorViewModel mTagSelectorViewModel;
+  private List<Tag> mTagList = new ArrayList<>();
 
+  private View mRootView;
   private EditText mTagEditText;
   private SelectedTagRecyclerView mSelectedTagListView;
   private SelectedTagListAdapter mSelectedTagListAdapter;
@@ -52,6 +59,8 @@ public class TagSelectorActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_tag_selector);
+
+    mRootView = findViewById(R.id.root_view);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -91,11 +100,21 @@ public class TagSelectorActivity extends BaseActivity {
     mTagListAdapter = new TagListAdapter();
     mTagListAdapter.setOnTagClickListener((tag) -> mTagSelectorViewModel.updateSelectedTags(tag));
     mTagListView.setAdapter(mTagListAdapter);
+    ItemTouchHelper.Callback callback =
+        new ListTouchHelperCallback((position) -> removeTag(mTagList.get(position)));
+    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+    touchHelper.attachToRecyclerView(mTagListView);
 
     mTagSelectorViewModel = ViewModelProviders.of(this).get(TagSelectorViewModel.class);
     mTagSelectorViewModel
         .getTagList()
-        .observe(this, (tagList) -> mTagListAdapter.updateTagList(tagList));
+        .observe(
+            this,
+            (tagList) -> {
+              mTagList.clear();
+              mTagList.addAll(tagList);
+              mTagListAdapter.updateTagList(mTagList);
+            });
     mTagSelectorViewModel
         .getSelectedTagIdList()
         .observe(this, (tagIdList) -> mSelectedTagListAdapter.updateTagIds(tagIdList));
@@ -136,6 +155,19 @@ public class TagSelectorActivity extends BaseActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  private void removeTag(Tag tag) {
+    if (tag != null) {
+      mTagSelectorViewModel.deleteTag(tag);
+      showTagDeletedConfirmation(tag);
+    }
+  }
+
+  private void showTagDeletedConfirmation(Tag tag) {
+    Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
+        .setAction(R.string.undo, (view) -> mTagSelectorViewModel.insertTag(tag))
+        .show();
   }
 
   private void selectTags() {

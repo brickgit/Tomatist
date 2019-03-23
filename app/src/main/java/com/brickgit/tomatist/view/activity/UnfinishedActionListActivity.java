@@ -7,8 +7,8 @@ import android.view.View;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.viewmodel.UnfinishedActionListViewModel;
+import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
-import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
 import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
@@ -72,7 +72,7 @@ public class UnfinishedActionListActivity extends BaseActivity {
         });
 
     ItemTouchHelper.Callback callback =
-        new ActionListTouchHelperCallback(
+        new ListTouchHelperCallback(
             (position) -> removeAction(mUnfinishedActionList.get(position)));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(mActionList);

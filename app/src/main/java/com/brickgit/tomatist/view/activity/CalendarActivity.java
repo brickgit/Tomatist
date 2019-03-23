@@ -10,8 +10,8 @@ import com.brickgit.tomatist.Initializer;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.viewmodel.CalendarActivityViewModel;
+import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
-import com.brickgit.tomatist.view.actionlist.ActionListTouchHelperCallback;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -114,7 +114,7 @@ public class CalendarActivity extends BaseActivity {
         });
 
     ItemTouchHelper.Callback callback =
-        new ActionListTouchHelperCallback((position) -> removeAction(mActions.get(position)));
+        new ListTouchHelperCallback((position) -> removeAction(mActions.get(position)));
     ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
     touchHelper.attachToRecyclerView(mActionList);
 
