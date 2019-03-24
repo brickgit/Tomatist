@@ -64,7 +64,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
     itemView.setOnClickListener(
         (v) -> {
-          toggle();
+          toggle(true);
           if (onItemClickListener != null) {
             onItemClickListener.onItemClick(this);
           }
@@ -131,7 +131,19 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
     mNoteView.setText(action.getNote());
   }
 
-  public void toggle() {
-    mButtons.toggle(true);
+  public Action getAction() {
+    return mAction;
+  }
+
+  public void toggle(boolean animate) {
+    mButtons.toggle(animate);
+  }
+
+  public void collapse(boolean animate) {
+    mButtons.collapse(animate);
+  }
+
+  public void expand(boolean animate) {
+    mButtons.expand(animate);
   }
 }

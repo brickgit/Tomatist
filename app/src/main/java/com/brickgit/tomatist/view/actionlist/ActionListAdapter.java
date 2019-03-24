@@ -43,7 +43,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
       (view) -> {
         if (view != mExpandedItemView) {
           if (mExpandedItemView != null) {
-            mExpandedItemView.toggle();
+            mExpandedItemView.collapse(true);
           }
           mExpandedItemView = view;
         } else {
@@ -55,7 +55,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
   public void collapse() {
     if (mExpandedItemView != null) {
-      mExpandedItemView.toggle();
+      mExpandedItemView.collapse(true);
       mExpandedItemView = null;
     }
   }
@@ -76,7 +76,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
           if (!actions.contains(action)) {
             mActions.remove(index);
             notifyItemRemoved(index);
-            return;
+            break;
           }
         }
       } else if (actions.size() > mActions.size()) {
@@ -85,7 +85,7 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
           if (!mActions.contains(action)) {
             mActions.add(index, action);
             notifyItemInserted(index);
-            return;
+            break;
           }
         }
       } else {
@@ -93,6 +93,10 @@ public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mActions.addAll(actions);
         notifyDataSetChanged();
       }
+    }
+    if (mExpandedItemView != null) {
+      mExpandedItemView.collapse(false);
+      mExpandedItemView = null;
     }
   }
 
