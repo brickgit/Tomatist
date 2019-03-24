@@ -2,7 +2,6 @@ package com.brickgit.tomatist.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -14,12 +13,11 @@ import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.DayViewDecorator;
-import com.prolificinteractive.materialcalendarview.DayViewFacade;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.shrikanthravi.collapsiblecalendarview.data.Day;
+import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -37,7 +35,7 @@ public class CalendarActivity extends BaseActivity {
 
   private View mRootView;
   private DrawerLayout mDrawerLayout;
-  private MaterialCalendarView mCalendarView;
+  private CollapsibleCalendar mCalendarView;
   private RecyclerView mActionList;
   private LinearLayoutManager mLayoutManager;
   private ActionListAdapter mActionListAdapter;
@@ -74,24 +72,26 @@ public class CalendarActivity extends BaseActivity {
     findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null, false));
 
     mCalendarView = findViewById(R.id.calendar_view);
-    mCalendarView.addDecorator(
-        new DayViewDecorator() {
+    mCalendarView.setCalendarListener(
+        new CollapsibleCalendar.CalendarListener() {
           @Override
-          public boolean shouldDecorate(CalendarDay day) {
-            return day.equals(CalendarDay.today());
+          public void onDaySelect() {
+            Day day = mCalendarView.getSelectedDay();
+            mCalendarActivityViewModel.selectDate(day.getYear(), day.getMonth() + 1, day.getDay());
           }
 
           @Override
-          public void decorate(DayViewFacade view) {
-            view.addSpan(
-                new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark)));
-          }
+          public void onItemClick(View view) {}
+
+          @Override
+          public void onDataUpdate() {}
+
+          @Override
+          public void onMonthChange() {}
+
+          @Override
+          public void onWeekChange(int i) {}
         });
-    CalendarDay today = CalendarDay.today();
-    mCalendarView.setDateSelected(today, true);
-    mCalendarView.setOnDateChangedListener(
-        (view, day, b) ->
-            mCalendarActivityViewModel.selectDate(day.getYear(), day.getMonth(), day.getDay()));
 
     mActionList = findViewById(R.id.action_list);
     mActionList.setHasFixedSize(true);
@@ -160,7 +160,11 @@ public class CalendarActivity extends BaseActivity {
               mActionListAdapter.updateActions(
                   mCalendarActivityViewModel.getSelectedDate(), mActions);
             });
-    mCalendarActivityViewModel.selectDate(today.getYear(), today.getMonth(), today.getDay());
+    Calendar today = Calendar.getInstance();
+    Day day =
+        new Day(
+            today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+    mCalendarView.select(day);
 
     Initializer.firstLaunchSetup(this);
   }

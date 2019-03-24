@@ -22,12 +22,19 @@
       android:orientation="vertical"
       app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-      <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+      <com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar
         android:id="@+id/calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="259dp"
-        app:mcv_selectionColor="@color/colorPrimary"
-        app:mcv_tileHeight="37dp" />
+        android:layout_height="wrap_content"
+        app:buttonLeft_drawableTintColor="@color/colorPrimary"
+        app:buttonRight_drawableTintColor="@color/colorPrimary"
+        app:expandIconColor="@color/colorPrimary"
+        app:primaryColor="@android:color/white"
+        app:selectedItem_background="@drawable/selected_date_background"
+        app:selectedItem_textColor="@android:color/white"
+        app:textColor="@android:color/darker_gray"
+        app:todayItem_background="@drawable/circle_white_stroke_background"
+        app:todayItem_textColor="@color/colorPrimary" />
 
       <View
         android:layout_width="match_parent"

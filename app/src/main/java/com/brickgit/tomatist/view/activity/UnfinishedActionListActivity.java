@@ -10,9 +10,9 @@ import com.brickgit.tomatist.data.viewmodel.UnfinishedActionListViewModel;
 import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.google.android.material.snackbar.Snackbar;
-import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -24,8 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 /** Created by Daniel Lin on 2019/2/26. */
 public class UnfinishedActionListActivity extends BaseActivity {
-
-  private static final int REQUEST_CODE_SELECT_CATEGORY = 0;
 
   private UnfinishedActionListViewModel mUnfinishedActionListViewModel;
 
@@ -127,16 +125,16 @@ public class UnfinishedActionListActivity extends BaseActivity {
     return true;
   }
 
-  private void gotoAddActionActivity(String actionId, boolean isCopyingActin) {
+  private void gotoAddActionActivity(String actionId, boolean isCopyingAction) {
     Intent intent = new Intent(this, AddActionActivity.class);
     if (actionId != null) {
       intent.putExtra(AddActionActivity.SELECTED_ACTION_ID_KEY, actionId);
-      intent.putExtra(AddActionActivity.IS_COPYING_ACTION, isCopyingActin);
+      intent.putExtra(AddActionActivity.IS_COPYING_ACTION, isCopyingAction);
     } else {
-      CalendarDay today = CalendarDay.today();
-      intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, today.getYear());
-      intent.putExtra(AddActionActivity.SELECTED_MONTH_KEY, today.getMonth() - 1);
-      intent.putExtra(AddActionActivity.SELECTED_DAY_KEY, today.getDay());
+      Calendar today = Calendar.getInstance();
+      intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, today.get(Calendar.YEAR));
+      intent.putExtra(AddActionActivity.SELECTED_MONTH_KEY, today.get(Calendar.MONTH));
+      intent.putExtra(AddActionActivity.SELECTED_DAY_KEY, today.get(Calendar.DAY_OF_MONTH));
     }
     startActivity(intent);
   }
