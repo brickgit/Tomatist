@@ -29,6 +29,14 @@ public class TagListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
   public void updateTagList(List<Tag> tagList) {
     mTagList.clear();
     mTagList.addAll(tagList);
+    if (!mFilterString.isEmpty()) {
+      mFilteredTagList.clear();
+      for (Tag tag : mTagList) {
+        if (tag.getTitle().contains(mFilterString)) {
+          mFilteredTagList.add(tag);
+        }
+      }
+    }
     notifyDataSetChanged();
   }
 
