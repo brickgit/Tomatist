@@ -29,20 +29,12 @@
         app:buttonLeft_drawableTintColor="@color/colorPrimary"
         app:buttonRight_drawableTintColor="@color/colorPrimary"
         app:expandIconColor="@color/colorPrimary"
-        app:primaryColor="@android:color/white"
+        app:primaryColor="@color/calendar_activity_background"
         app:selectedItem_background="@drawable/selected_date_background"
         app:selectedItem_textColor="@android:color/white"
-        app:textColor="@android:color/darker_gray"
+        app:textColor="@android:color/black"
         app:todayItem_background="@drawable/circle_white_stroke_background"
         app:todayItem_textColor="@color/colorPrimary" />
-
-      <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/item_padding_horizontal"
-        android:layout_marginTop="@dimen/item_padding_vertical"
-        android:layout_marginEnd="@dimen/item_padding_horizontal"
-        android:background="@color/colorPrimary" />
 
       <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/action_list"
