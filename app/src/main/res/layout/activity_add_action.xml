@@ -80,7 +80,7 @@
         android:layout_height="match_parent"
         android:focusableInTouchMode="true"
         android:hint="@string/note"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine|textCapWords|textAutoCorrect" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
