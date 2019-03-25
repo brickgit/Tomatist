@@ -179,6 +179,7 @@ public class TagSelectorActivity extends BaseActivity {
 
   private void showAddTagDialog() {
     final EditText newTagTitleView = new EditText(this);
+    newTagTitleView.setSingleLine();
 
     AlertDialog.Builder dialog = new AlertDialog.Builder(this);
     dialog.setTitle(getString(R.string.add_tag));
