@@ -9,7 +9,6 @@ import com.brickgit.tomatist.Initializer;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.viewmodel.CalendarActivityViewModel;
-import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -25,7 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -112,11 +110,6 @@ public class CalendarActivity extends BaseActivity {
             super.onScrollStateChanged(recyclerView, newState);
           }
         });
-
-    ItemTouchHelper.Callback callback =
-        new ListTouchHelperCallback((position) -> removeAction(mActions.get(position)));
-    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-    touchHelper.attachToRecyclerView(mActionList);
 
     mActionListAdapter = new ActionListAdapter();
     mActionList.setAdapter(mActionListAdapter);

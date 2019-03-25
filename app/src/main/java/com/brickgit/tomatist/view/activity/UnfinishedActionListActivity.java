@@ -7,7 +7,6 @@ import android.view.View;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.viewmodel.UnfinishedActionListViewModel;
-import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -18,7 +17,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,12 +66,6 @@ public class UnfinishedActionListActivity extends BaseActivity {
             super.onScrollStateChanged(recyclerView, newState);
           }
         });
-
-    ItemTouchHelper.Callback callback =
-        new ListTouchHelperCallback(
-            (position) -> removeAction(mUnfinishedActionList.get(position)));
-    ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-    touchHelper.attachToRecyclerView(mActionList);
 
     mActionListAdapter = new ActionListAdapter();
     mActionList.setAdapter(mActionListAdapter);
