@@ -76,7 +76,11 @@ public class AddActionActivity extends BaseActivity {
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar().setTitle(isEditingAction ? R.string.edit_action : R.string.add_acton);
+    getSupportActionBar()
+        .setTitle(
+            isCopyingAction
+                ? R.string.copy_action
+                : isEditingAction ? R.string.edit_action : R.string.add_acton);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 

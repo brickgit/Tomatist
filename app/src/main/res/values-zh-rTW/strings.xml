@@ -2,10 +2,10 @@
 <resources>
   <string name="action_settings">設定</string>
   <string name="action_add">新增</string>
-  <string name="name">名稱</string>
   <string name="error_name_is_required">名稱不可為空</string>
   <string name="add_acton">新增行動</string>
   <string name="edit_action">編輯行動</string>
+  <string name="copy_action">複製行動</string>
   <string name="is_finished">已完成</string>
   <string name="start_time">開始時間</string>
   <string name="end_time">結束時間</string>
