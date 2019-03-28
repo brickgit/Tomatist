@@ -43,7 +43,12 @@ public class ReportActivity extends BaseActivity {
     mViewPager = findViewById(R.id.view_pager);
 
     MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
-    adapter.addFragment(new ReportFragment(), getString(R.string.title_day));
+    ReportFragment dailyReportFragment = new ReportFragment();
+    dailyReportFragment.setMode(ReportFragment.MODE_DAILY);
+    adapter.addFragment(dailyReportFragment, getString(R.string.title_daily));
+    ReportFragment monthlyReportFragment = new ReportFragment();
+    monthlyReportFragment.setMode(ReportFragment.MODE_MONTHLY);
+    adapter.addFragment(monthlyReportFragment, getString(R.string.title_monthly));
     mViewPager.setAdapter(adapter);
     mTabLayout.setupWithViewPager(mViewPager);
   }

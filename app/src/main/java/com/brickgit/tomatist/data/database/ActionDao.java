@@ -16,22 +16,64 @@ import androidx.room.Update;
 public abstract class ActionDao {
 
   @Transaction
+  public LiveData<List<Action>> getFinishedActionsForYear(int year) {
+    Calendar cFrom = Calendar.getInstance();
+    cFrom.set(Calendar.YEAR, year);
+    cFrom.set(Calendar.MONTH, cFrom.getActualMinimum(Calendar.MONTH));
+    cFrom.set(Calendar.DAY_OF_MONTH, cFrom.getActualMinimum(Calendar.DAY_OF_MONTH));
+    cFrom.set(Calendar.HOUR_OF_DAY, cFrom.getActualMinimum(Calendar.HOUR_OF_DAY));
+    cFrom.set(Calendar.MINUTE, cFrom.getActualMinimum(Calendar.MINUTE));
+    cFrom.set(Calendar.SECOND, cFrom.getActualMinimum(Calendar.SECOND));
+
+    Calendar cTo = Calendar.getInstance();
+    cTo.set(Calendar.YEAR, year);
+    cTo.set(Calendar.MONTH, cTo.getActualMaximum(Calendar.MONTH));
+    cTo.set(Calendar.DAY_OF_MONTH, cTo.getActualMaximum(Calendar.DAY_OF_MONTH));
+    cTo.set(Calendar.HOUR_OF_DAY, cTo.getActualMaximum(Calendar.HOUR_OF_DAY));
+    cTo.set(Calendar.MINUTE, cTo.getActualMaximum(Calendar.MINUTE));
+    cTo.set(Calendar.SECOND, cTo.getActualMaximum(Calendar.SECOND));
+
+    return getFinishedActionsForDate(cFrom.getTime(), cTo.getTime());
+  }
+
+  @Transaction
+  public LiveData<List<Action>> getFinishedActionsForMonth(int year, int month) {
+    Calendar cFrom = Calendar.getInstance();
+    cFrom.set(Calendar.YEAR, year);
+    cFrom.set(Calendar.MONTH, month);
+    cFrom.set(Calendar.DAY_OF_MONTH, cFrom.getActualMinimum(Calendar.DAY_OF_MONTH));
+    cFrom.set(Calendar.HOUR_OF_DAY, cFrom.getActualMinimum(Calendar.HOUR_OF_DAY));
+    cFrom.set(Calendar.MINUTE, cFrom.getActualMinimum(Calendar.MINUTE));
+    cFrom.set(Calendar.SECOND, cFrom.getActualMinimum(Calendar.SECOND));
+
+    Calendar cTo = Calendar.getInstance();
+    cTo.set(Calendar.YEAR, year);
+    cTo.set(Calendar.MONTH, month);
+    cTo.set(Calendar.DAY_OF_MONTH, cTo.getActualMaximum(Calendar.DAY_OF_MONTH));
+    cTo.set(Calendar.HOUR_OF_DAY, cTo.getActualMaximum(Calendar.HOUR_OF_DAY));
+    cTo.set(Calendar.MINUTE, cTo.getActualMaximum(Calendar.MINUTE));
+    cTo.set(Calendar.SECOND, cTo.getActualMaximum(Calendar.SECOND));
+
+    return getFinishedActionsForDate(cFrom.getTime(), cTo.getTime());
+  }
+
+  @Transaction
   public LiveData<List<Action>> getFinishedActionsForDate(int year, int month, int day) {
     Calendar cFrom = Calendar.getInstance();
     cFrom.set(Calendar.YEAR, year);
     cFrom.set(Calendar.MONTH, month);
     cFrom.set(Calendar.DAY_OF_MONTH, day);
-    cFrom.set(Calendar.HOUR_OF_DAY, 0);
-    cFrom.set(Calendar.MINUTE, 0);
-    cFrom.set(Calendar.SECOND, 0);
+    cFrom.set(Calendar.HOUR_OF_DAY, cFrom.getActualMinimum(Calendar.HOUR_OF_DAY));
+    cFrom.set(Calendar.MINUTE, cFrom.getActualMinimum(Calendar.MINUTE));
+    cFrom.set(Calendar.SECOND, cFrom.getActualMinimum(Calendar.SECOND));
 
     Calendar cTo = Calendar.getInstance();
     cTo.set(Calendar.YEAR, year);
     cTo.set(Calendar.MONTH, month);
     cTo.set(Calendar.DAY_OF_MONTH, day);
-    cTo.set(Calendar.HOUR_OF_DAY, 23);
-    cTo.set(Calendar.MINUTE, 59);
-    cTo.set(Calendar.SECOND, 59);
+    cTo.set(Calendar.HOUR_OF_DAY, cTo.getActualMaximum(Calendar.HOUR_OF_DAY));
+    cTo.set(Calendar.MINUTE, cTo.getActualMaximum(Calendar.MINUTE));
+    cTo.set(Calendar.SECOND, cTo.getActualMaximum(Calendar.SECOND));
 
     return getFinishedActionsForDate(cFrom.getTime(), cTo.getTime());
   }

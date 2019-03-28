@@ -13,7 +13,9 @@ import android.widget.TextView;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.GroupedActionsItem;
-import com.brickgit.tomatist.data.viewmodel.ReportViewModel;
+import com.brickgit.tomatist.data.viewmodel.report.DailyReportViewModel;
+import com.brickgit.tomatist.data.viewmodel.report.MonthlyReportViewModel;
+import com.brickgit.tomatist.data.viewmodel.report.ReportViewModel;
 import com.brickgit.tomatist.view.activity.TagSelectorActivity;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -36,8 +38,13 @@ import androidx.lifecycle.ViewModelProviders;
 /** Created by Daniel Lin on 2019/3/25. */
 public class ReportFragment extends Fragment {
 
+  public static final int MODE_DAILY = 0;
+  public static final int MODE_MONTHLY = 1;
+  public static final int MODE_YEARLY = 2;
+
   private static final int REQUEST_CODE_SELECT_TAG = 0;
 
+  private int mMode = MODE_DAILY;
   private ReportViewModel mReportViewModel;
   private Map<String, Tag> mTagMap = new HashMap<>();
   private List<GroupedActionsItem> mActionList = new ArrayList<>();
@@ -46,6 +53,10 @@ public class ReportFragment extends Fragment {
   private HorizontalBarChart mChart;
   private TextView mDate;
 
+  public void setMode(int mode) {
+    mMode = mode;
+  }
+
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +64,14 @@ public class ReportFragment extends Fragment {
 
     mChart = view.findViewById(R.id.chart);
     mDate = view.findViewById(R.id.date);
+    mDate.setOnClickListener(
+        (v) -> {
+          Calendar today = Calendar.getInstance();
+          mReportViewModel.selectDate(
+              today.get(Calendar.YEAR),
+              today.get(Calendar.MONTH),
+              today.get(Calendar.DAY_OF_MONTH));
+        });
     view.findViewById(R.id.backward).setOnClickListener((v) -> mReportViewModel.backward());
     view.findViewById(R.id.forward).setOnClickListener((v) -> mReportViewModel.forward());
     view.findViewById(R.id.calendar).setOnClickListener((v) -> showDatePicker());
@@ -62,7 +81,10 @@ public class ReportFragment extends Fragment {
                 TagSelectorActivity.startForResult(
                     this, Activity.RESULT_CANCELED, mSelectedTagIdList));
 
-    mReportViewModel = ViewModelProviders.of(this).get(ReportViewModel.class);
+    mReportViewModel =
+        mMode == MODE_DAILY
+            ? ViewModelProviders.of(this).get(DailyReportViewModel.class)
+            : ViewModelProviders.of(this).get(MonthlyReportViewModel.class);
     mReportViewModel
         .getTagMap()
         .observe(

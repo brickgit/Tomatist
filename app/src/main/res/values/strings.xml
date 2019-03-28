@@ -29,7 +29,8 @@
 
   <string name="report">Report</string>
   <string name="minutes">Minutes</string>
-  <string name="title_day">Day</string>
+  <string name="title_daily">Daily</string>
+  <string name="title_monthly">Monthly</string>
 
   <string-array name="minutes_string">
     <item>0 minute</item>
