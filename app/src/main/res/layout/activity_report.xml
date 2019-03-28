@@ -9,4 +9,20 @@
 
   <include layout="@layout/app_bar" />
 
+  <androidx.viewpager.widget.ViewPager
+    android:id="@+id/view_pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <com.google.android.material.tabs.TabLayout
+      android:id="@+id/tab_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:tabGravity="fill"
+      app:tabMode="fixed"
+      app:tabRippleColor="@android:color/transparent" />
+
+  </androidx.viewpager.widget.ViewPager>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

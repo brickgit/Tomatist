@@ -60,6 +60,9 @@ public class CalendarActivity extends BaseActivity {
             case R.id.nav_unfinished_actions:
               gotoUnfinishedActionListActivity();
               break;
+            case R.id.nav_report:
+              ReportActivity.start(this);
+              break;
             default:
               break;
           }
@@ -75,7 +78,7 @@ public class CalendarActivity extends BaseActivity {
           @Override
           public void onDaySelect() {
             Day day = mCalendarView.getSelectedDay();
-            mCalendarActivityViewModel.selectDate(day.getYear(), day.getMonth() + 1, day.getDay());
+            mCalendarActivityViewModel.selectDate(day.getYear(), day.getMonth(), day.getDay());
           }
 
           @Override
@@ -194,7 +197,7 @@ public class CalendarActivity extends BaseActivity {
       intent.putExtra(
           AddActionActivity.SELECTED_YEAR_KEY, mCalendarActivityViewModel.getSelectedYear());
       intent.putExtra(
-          AddActionActivity.SELECTED_MONTH_KEY, mCalendarActivityViewModel.getSelectedMonth() - 1);
+          AddActionActivity.SELECTED_MONTH_KEY, mCalendarActivityViewModel.getSelectedMonth());
       intent.putExtra(
           AddActionActivity.SELECTED_DAY_KEY, mCalendarActivityViewModel.getSelectedDay());
     }

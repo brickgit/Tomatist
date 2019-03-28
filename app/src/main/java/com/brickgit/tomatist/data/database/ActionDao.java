@@ -19,7 +19,7 @@ public abstract class ActionDao {
   public LiveData<List<Action>> getFinishedActionsForDate(int year, int month, int day) {
     Calendar cFrom = Calendar.getInstance();
     cFrom.set(Calendar.YEAR, year);
-    cFrom.set(Calendar.MONTH, month - 1);
+    cFrom.set(Calendar.MONTH, month);
     cFrom.set(Calendar.DAY_OF_MONTH, day);
     cFrom.set(Calendar.HOUR_OF_DAY, 0);
     cFrom.set(Calendar.MINUTE, 0);
@@ -27,7 +27,7 @@ public abstract class ActionDao {
 
     Calendar cTo = Calendar.getInstance();
     cTo.set(Calendar.YEAR, year);
-    cTo.set(Calendar.MONTH, month - 1);
+    cTo.set(Calendar.MONTH, month);
     cTo.set(Calendar.DAY_OF_MONTH, day);
     cTo.set(Calendar.HOUR_OF_DAY, 23);
     cTo.set(Calendar.MINUTE, 59);

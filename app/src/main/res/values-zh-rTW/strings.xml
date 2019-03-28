@@ -20,6 +20,7 @@
   <string name="undo">恢復</string>
 
   <string name="report">圖表</string>
+  <string name="minutes">分鐘</string>
 
   <string-array name="minutes_string">
     <item>0 分鐘</item>

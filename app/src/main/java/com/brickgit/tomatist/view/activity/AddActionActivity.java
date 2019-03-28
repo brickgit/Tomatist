@@ -288,7 +288,7 @@ public class AddActionActivity extends BaseActivity {
             Locale.getDefault(),
             "%04d-%02d-%02d",
             startCalendar.get(Calendar.YEAR),
-            startCalendar.get(Calendar.MONTH) + 1,
+            startCalendar.get(Calendar.MONTH),
             startCalendar.get(Calendar.DAY_OF_MONTH)));
     mStartTime.setText(
         String.format(
@@ -301,7 +301,7 @@ public class AddActionActivity extends BaseActivity {
             Locale.getDefault(),
             "%04d-%02d-%02d",
             endCalendar.get(Calendar.YEAR),
-            endCalendar.get(Calendar.MONTH) + 1,
+            endCalendar.get(Calendar.MONTH),
             endCalendar.get(Calendar.DAY_OF_MONTH)));
     mEndTime.setText(
         String.format(

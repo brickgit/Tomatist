@@ -28,6 +28,7 @@ import java.util.List;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,6 +54,13 @@ public class TagSelectorActivity extends BaseActivity {
     Intent intent = new Intent(activity, TagSelectorActivity.class);
     intent.putExtra(SELECTED_TAG_LIST, Joiner.on(",").join(selectedTagIdList));
     activity.startActivityForResult(intent, requestCoe);
+  }
+
+  public static void startForResult(
+      Fragment fragment, int requestCoe, List<String> selectedTagIdList) {
+    Intent intent = new Intent(fragment.getActivity(), TagSelectorActivity.class);
+    intent.putExtra(SELECTED_TAG_LIST, Joiner.on(",").join(selectedTagIdList));
+    fragment.startActivityForResult(intent, requestCoe);
   }
 
   @Override
