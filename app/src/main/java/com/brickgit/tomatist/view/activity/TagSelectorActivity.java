@@ -44,7 +44,7 @@ public class TagSelectorActivity extends BaseActivity {
 
   private View mRootView;
   private EditText mTagEditText;
-  private SelectedTagRecyclerView mSelectedTagListView;
+  private RecyclerView mSelectedTagListView;
   private SelectedTagListAdapter mSelectedTagListAdapter;
   private RecyclerView mTagListView;
   private TagListAdapter mTagListAdapter;
