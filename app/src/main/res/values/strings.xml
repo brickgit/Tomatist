@@ -31,6 +31,7 @@
   <string name="minutes">Minutes</string>
   <string name="title_daily">Daily</string>
   <string name="title_monthly">Monthly</string>
+  <string name="title_yearly">Yearly</string>
 
   <string-array name="minutes_string">
     <item>0 minute</item>

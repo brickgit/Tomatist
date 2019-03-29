@@ -49,6 +49,9 @@ public class ReportActivity extends BaseActivity {
     ReportFragment monthlyReportFragment = new ReportFragment();
     monthlyReportFragment.setMode(ReportFragment.MODE_MONTHLY);
     adapter.addFragment(monthlyReportFragment, getString(R.string.title_monthly));
+    ReportFragment yearlyReportFragment = new ReportFragment();
+    yearlyReportFragment.setMode(ReportFragment.MODE_YEARLY);
+    adapter.addFragment(yearlyReportFragment, getString(R.string.title_yearly));
     mViewPager.setAdapter(adapter);
     mTabLayout.setupWithViewPager(mViewPager);
   }
