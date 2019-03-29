@@ -16,6 +16,7 @@ import com.brickgit.tomatist.data.viewmodel.GroupedActionsItem;
 import com.brickgit.tomatist.data.viewmodel.report.DailyReportViewModel;
 import com.brickgit.tomatist.data.viewmodel.report.MonthlyReportViewModel;
 import com.brickgit.tomatist.data.viewmodel.report.ReportViewModel;
+import com.brickgit.tomatist.data.viewmodel.report.YearlyReportViewModel;
 import com.brickgit.tomatist.view.activity.TagSelectorActivity;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -84,7 +85,9 @@ public class ReportFragment extends Fragment {
     mReportViewModel =
         mMode == MODE_DAILY
             ? ViewModelProviders.of(this).get(DailyReportViewModel.class)
-            : ViewModelProviders.of(this).get(MonthlyReportViewModel.class);
+            : mMode == MODE_MONTHLY
+                ? ViewModelProviders.of(this).get(MonthlyReportViewModel.class)
+                : ViewModelProviders.of(this).get(YearlyReportViewModel.class);
     mReportViewModel
         .getTagMap()
         .observe(
