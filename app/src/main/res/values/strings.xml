@@ -28,7 +28,7 @@
   <string name="delete">Delete</string>
 
   <string name="report">Report</string>
-  <string name="minutes">Minutes</string>
+  <string name="minutes_times">Minutes (Times)</string>
   <string name="title_daily">Daily</string>
   <string name="title_monthly">Monthly</string>
   <string name="title_yearly">Yearly</string>
