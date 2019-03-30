@@ -10,6 +10,7 @@ public class GroupedActionsItem {
 
   private String mTagId;
   private long mTotalMinutes;
+  private long mTotalTimes;
   private List<Action> mActionList = new ArrayList<>();
 
   public GroupedActionsItem(String tagId) {
@@ -24,6 +25,10 @@ public class GroupedActionsItem {
     return mTotalMinutes;
   }
 
+  public long getTotalTimes() {
+    return mTotalTimes;
+  }
+
   public List<Action> getActionList() {
     return mActionList;
   }
@@ -32,5 +37,6 @@ public class GroupedActionsItem {
     mActionList.add(action);
     mTotalMinutes +=
         (action.getEndTime().getTime() - action.getStartTime().getTime()) / (60 * 1000);
+    mTotalTimes++;
   }
 }

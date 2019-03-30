@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import androidx.fragment.app.Fragment;
@@ -118,7 +119,8 @@ public class ReportFragment extends Fragment {
     mDate.setText(mReportViewModel.getSelectedDate());
 
     int size = mActionList.size();
-    long axisMax = (long) ((size == 0 ? 0 : mActionList.get(size - 1).getTotalMinutes()) * 1.15);
+    long axisMax = (long) ((size == 0 ? 0 : mActionList.get(size - 1).getTotalMinutes()) * 1.3f);
+    ReportValueFormatter formatter = new ReportValueFormatter(mTagMap, mActionList);
 
     XAxis xAxis = mChart.getXAxis();
     xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -126,7 +128,7 @@ public class ReportFragment extends Fragment {
     xAxis.setDrawAxisLine(false);
     xAxis.setDrawGridLines(false);
     xAxis.setTextSize(12);
-    xAxis.setValueFormatter(new ReportValueFormatter(mTagMap, mActionList));
+    xAxis.setValueFormatter(formatter);
     mChart.getAxisRight().setEnabled(false);
     mChart.getAxisLeft().setEnabled(false);
     mChart.getAxisLeft().setAxisMaximum(axisMax);
@@ -141,13 +143,14 @@ public class ReportFragment extends Fragment {
       GroupedActionsItem item = mActionList.get(i);
       entries.add(new BarEntry(i, item.getTotalMinutes()));
     }
-    BarDataSet set = new BarDataSet(entries, getString(R.string.minutes));
+    BarDataSet set = new BarDataSet(entries, getString(R.string.minutes_times));
     set.setColor(getResources().getColor(R.color.colorPrimary));
     set.setBarShadowColor(Color.LTGRAY);
     BarData data = new BarData(set);
     data.setBarWidth(0.5f * size / 10f);
     data.setDrawValues(true);
     data.setValueTextSize(12);
+    data.setValueFormatter(formatter);
     mChart.setData(data);
     mChart.invalidate();
     mChart.animateY(500);
@@ -192,12 +195,20 @@ public class ReportFragment extends Fragment {
       mActionList = actionList;
     }
 
-    @Override
-    public String getAxisLabel(float value, AxisBase axis) {
-      if (value < 0 || value >= mActionList.size()) {
+    public String getBarLabel(BarEntry barEntry) {
+      float x = barEntry.getX();
+      if (!isValid(x)) {
         return "";
       }
-      if ((value * 10f) % 10 > 0) {
+      GroupedActionsItem item = mActionList.get((int) x);
+      long minutes = item.getTotalMinutes();
+      long times = item.getTotalTimes();
+      return String.format(Locale.getDefault(), "%d (%d)", minutes, times);
+    }
+
+    @Override
+    public String getAxisLabel(float value, AxisBase axis) {
+      if (!isValid(value)) {
         return "";
       }
       String tagId = mActionList.get((int) value).getTagId();
@@ -205,6 +216,16 @@ public class ReportFragment extends Fragment {
         return "";
       }
       return mTagMap.get(tagId).getTitle();
+    }
+
+    private boolean isValid(float value) {
+      if (value < 0 || value >= mActionList.size()) {
+        return false;
+      }
+      if ((value * 10f) % 10 > 0) {
+        return false;
+      }
+      return true;
     }
   }
 }
