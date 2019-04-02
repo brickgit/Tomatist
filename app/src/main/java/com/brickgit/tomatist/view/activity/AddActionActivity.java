@@ -26,8 +26,10 @@ import com.google.android.flexbox.JustifyContent;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.common.base.Splitter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +66,11 @@ public class AddActionActivity extends BaseActivity {
   private Action mAction;
   private Map<String, Tag> mTagMap = new HashMap<>();
   private List<String> mSelectedTagIdList = new ArrayList<>();
+
+  private final SimpleDateFormat mDateFormatter =
+      new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+  private final SimpleDateFormat mTimeFormatter =
+      new SimpleDateFormat("HH:mm", Locale.getDefault());
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -281,36 +288,14 @@ public class AddActionActivity extends BaseActivity {
       mDatetimeLayout.setVisibility(View.GONE);
     }
 
-    Calendar startCalendar = mActionViewModel.getStartCalendar();
-    Calendar endCalendar = mActionViewModel.getEndCalendar();
-    mStartDate.setText(
-        String.format(
-            Locale.getDefault(),
-            "%04d-%02d-%02d",
-            startCalendar.get(Calendar.YEAR),
-            startCalendar.get(Calendar.MONTH),
-            startCalendar.get(Calendar.DAY_OF_MONTH)));
-    mStartTime.setText(
-        String.format(
-            Locale.getDefault(),
-            "%02d:%02d",
-            startCalendar.get(Calendar.HOUR_OF_DAY),
-            startCalendar.get(Calendar.MINUTE)));
-    mEndDate.setText(
-        String.format(
-            Locale.getDefault(),
-            "%04d-%02d-%02d",
-            endCalendar.get(Calendar.YEAR),
-            endCalendar.get(Calendar.MONTH),
-            endCalendar.get(Calendar.DAY_OF_MONTH)));
-    mEndTime.setText(
-        String.format(
-            Locale.getDefault(),
-            "%02d:%02d",
-            endCalendar.get(Calendar.HOUR_OF_DAY),
-            endCalendar.get(Calendar.MINUTE)));
+    Date startDate = mActionViewModel.getStartCalendar().getTime();
+    Date endDate = mActionViewModel.getEndCalendar().getTime();
+    mStartDate.setText(mDateFormatter.format(startDate));
+    mStartTime.setText(mTimeFormatter.format(startDate));
+    mEndDate.setText(mDateFormatter.format(endDate));
+    mEndTime.setText(mTimeFormatter.format(endDate));
 
-    long minute = (endCalendar.getTimeInMillis() - startCalendar.getTimeInMillis()) / (60 * 1000);
+    long minute = (endDate.getTime() - startDate.getTime()) / (60 * 1000);
     mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", minute));
   }
 
