@@ -16,12 +16,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
 
 /** Created by Daniel Lin on 2019/3/17. */
 public class ReportActivity extends BaseActivity {
 
-  private TabLayout mTabLayout;
-  private ViewPager mViewPager;
+  @BindView(R.id.tab_layout)
+  TabLayout mTabLayout;
+
+  @BindView(R.id.view_pager)
+  ViewPager mViewPager;
 
   public static void start(Activity activity) {
     Intent intent = new Intent(activity, ReportActivity.class);
@@ -29,18 +33,19 @@ public class ReportActivity extends BaseActivity {
   }
 
   @Override
+  protected int getLayoutId() {
+    return R.layout.activity_report;
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_report);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setTitle(R.string.report);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-    mTabLayout = findViewById(R.id.tab_layout);
-    mViewPager = findViewById(R.id.view_pager);
 
     MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
     ReportFragment dailyReportFragment = new ReportFragment();

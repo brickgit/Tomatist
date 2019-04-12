@@ -15,7 +15,6 @@ import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.TagSelectorViewModel;
 import com.brickgit.tomatist.view.ListTouchHelperCallback;
 import com.brickgit.tomatist.view.tagselector.SelectedTagListAdapter;
-import com.brickgit.tomatist.view.tagselector.SelectedTagRecyclerView;
 import com.brickgit.tomatist.view.tagselector.TagListAdapter;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -33,6 +32,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
 
 /** Created by Daniel Lin on 2019/3/18. */
 public class TagSelectorActivity extends BaseActivity {
@@ -42,11 +42,19 @@ public class TagSelectorActivity extends BaseActivity {
   protected TagSelectorViewModel mTagSelectorViewModel;
   private List<Tag> mTagList = new ArrayList<>();
 
-  private View mRootView;
-  private EditText mTagEditText;
-  private RecyclerView mSelectedTagListView;
+  @BindView(R.id.root_view)
+  View mRootView;
+
+  @BindView(R.id.tag_edit_text)
+  EditText mTagEditText;
+
+  @BindView(R.id.selected_tag_list)
+  RecyclerView mSelectedTagListView;
+
+  @BindView(R.id.tag_list)
+  RecyclerView mTagListView;
+
   private SelectedTagListAdapter mSelectedTagListAdapter;
-  private RecyclerView mTagListView;
   private TagListAdapter mTagListAdapter;
 
   public static void startForResult(
@@ -64,11 +72,13 @@ public class TagSelectorActivity extends BaseActivity {
   }
 
   @Override
+  protected int getLayoutId() {
+    return R.layout.activity_tag_selector;
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_tag_selector);
-
-    mRootView = findViewById(R.id.root_view);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -78,7 +88,6 @@ public class TagSelectorActivity extends BaseActivity {
 
     findViewById(R.id.add_tag).setOnClickListener((view) -> showAddTagDialog());
 
-    mTagEditText = findViewById(R.id.tag_edit_text);
     mTagEditText.addTextChangedListener(
         new TextWatcher() {
           @Override
@@ -92,8 +101,6 @@ public class TagSelectorActivity extends BaseActivity {
             mTagListAdapter.updateFilterString(s.toString().trim());
           }
         });
-    mSelectedTagListView = findViewById(R.id.selected_tag_list);
-    mTagListView = findViewById(R.id.tag_list);
 
     FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
     layoutManager.setFlexDirection(FlexDirection.ROW);

@@ -38,6 +38,7 @@ import java.util.Map;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
 
 public class AddActionActivity extends BaseActivity {
 
@@ -50,17 +51,34 @@ public class AddActionActivity extends BaseActivity {
 
   private static final int REQUEST_CODE_SELECT_TAG = 0;
 
-  private View mEmptyTagWarningView;
-  private SelectedTagRecyclerView mSelectedTagListView;
+  @BindView(R.id.empty_tag_warning_view)
+  View mEmptyTagWarningView;
+
+  @BindView(R.id.is_finished)
+  CheckBox mIsFinished;
+
+  @BindView(R.id.datetime_layout)
+  View mDatetimeLayout;
+
+  @BindView(R.id.start_datetime_date)
+  TextView mStartDate;
+
+  @BindView(R.id.start_datetime_time)
+  TextView mStartTime;
+
+  @BindView(R.id.end_datetime_date)
+  TextView mEndDate;
+
+  @BindView(R.id.end_datetime_time)
+  TextView mEndTime;
+
+  @BindView(R.id.duration_minutes)
+  TextView mDurationMinutes;
+
+  @BindView(R.id.new_action_note)
+  TextInputEditText mActionNoteView;
+
   private SelectedTagListAdapter mSelectedTagListAdapter;
-  private CheckBox mIsFinished;
-  private View mDatetimeLayout;
-  private TextView mStartDate;
-  private TextView mStartTime;
-  private TextView mEndDate;
-  private TextView mEndTime;
-  private TextView mDurationMinutes;
-  private TextInputEditText mActionNoteView;
 
   private ActionViewModel mActionViewModel;
   private Action mAction;
@@ -73,9 +91,13 @@ public class AddActionActivity extends BaseActivity {
       new SimpleDateFormat("HH:mm", Locale.getDefault());
 
   @Override
+  protected int getLayoutId() {
+    return R.layout.activity_add_action;
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_add_action);
 
     String selectedActionId = getIntent().getStringExtra(SELECTED_ACTION_ID_KEY);
     boolean isEditingAction = selectedActionId != null;
@@ -91,41 +113,32 @@ public class AddActionActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-    mEmptyTagWarningView = findViewById(R.id.empty_tag_warning_view);
     findViewById(R.id.tag_list_layout)
         .setOnClickListener(
             (v) ->
                 TagSelectorActivity.startForResult(
                     this, REQUEST_CODE_SELECT_TAG, mSelectedTagIdList));
-    mSelectedTagListView = findViewById(R.id.tag_list_view);
+    SelectedTagRecyclerView selectedTagListView = findViewById(R.id.tag_list_view);
     FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
     layoutManager.setFlexDirection(FlexDirection.ROW);
     layoutManager.setJustifyContent(JustifyContent.FLEX_START);
-    mSelectedTagListView.setLayoutManager(layoutManager);
+    selectedTagListView.setLayoutManager(layoutManager);
     mSelectedTagListAdapter = new SelectedTagListAdapter();
-    mSelectedTagListView.setAdapter(mSelectedTagListAdapter);
+    selectedTagListView.setAdapter(mSelectedTagListAdapter);
     mSelectedTagListAdapter.setOnTagClickListener(
         (tag) ->
             TagSelectorActivity.startForResult(this, REQUEST_CODE_SELECT_TAG, mSelectedTagIdList));
 
-    mActionNoteView = findViewById(R.id.new_action_note);
-    mIsFinished = findViewById(R.id.is_finished);
     mIsFinished.setOnCheckedChangeListener(
         (view, isChecked) -> {
           mAction.setFinished(isChecked);
           mDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
 
-    mDatetimeLayout = findViewById(R.id.datetime_layout);
-    mStartDate = findViewById(R.id.start_datetime_date);
     mStartDate.setOnClickListener((v) -> showDatePicker(true));
-    mStartTime = findViewById(R.id.start_datetime_time);
     mStartTime.setOnClickListener((v) -> showTimePicker(true));
-    mEndDate = findViewById(R.id.end_datetime_date);
     mEndDate.setOnClickListener((v) -> showDatePicker(false));
-    mEndTime = findViewById(R.id.end_datetime_time);
     mEndTime.setOnClickListener((v) -> showTimePicker(false));
-    mDurationMinutes = findViewById(R.id.duration_minutes);
     findViewById(R.id.duration_layout).setOnClickListener((v) -> showMinuteList());
 
     mActionViewModel =

@@ -26,33 +26,43 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
 
 public class CalendarActivity extends BaseActivity {
 
   private CalendarActivityViewModel mCalendarActivityViewModel;
 
-  private View mRootView;
-  private DrawerLayout mDrawerLayout;
-  private CollapsibleCalendar mCalendarView;
-  private RecyclerView mActionList;
+  @BindView(R.id.root_view)
+  View mRootView;
+
+  @BindView(R.id.drawer_layout)
+  DrawerLayout mDrawerLayout;
+
+  @BindView(R.id.calendar_view)
+  CollapsibleCalendar mCalendarView;
+
+  @BindView(R.id.action_list)
+  RecyclerView mActionList;
+
   private LinearLayoutManager mLayoutManager;
   private ActionListAdapter mActionListAdapter;
 
   private List<Action> mActions = new ArrayList<>();
 
   @Override
+  protected int getLayoutId() {
+    return R.layout.activity_calendar;
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_calendar);
-
-    mRootView = findViewById(R.id.root_view);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
-    mDrawerLayout = findViewById(R.id.drawer_layout);
     NavigationView navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(
         (menuItem) -> {
@@ -72,7 +82,6 @@ public class CalendarActivity extends BaseActivity {
 
     findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null, false));
 
-    mCalendarView = findViewById(R.id.calendar_view);
     mCalendarView.setCalendarListener(
         new CollapsibleCalendar.CalendarListener() {
           @Override
@@ -94,7 +103,6 @@ public class CalendarActivity extends BaseActivity {
           public void onWeekChange(int i) {}
         });
 
-    mActionList = findViewById(R.id.action_list);
     mActionList.setHasFixedSize(true);
 
     mLayoutManager = new LinearLayoutManager(this);

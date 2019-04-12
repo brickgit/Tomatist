@@ -19,25 +19,32 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
 
 /** Created by Daniel Lin on 2019/2/26. */
 public class UnfinishedActionListActivity extends BaseActivity {
 
   private UnfinishedActionListViewModel mUnfinishedActionListViewModel;
 
-  private View mRootView;
-  private RecyclerView mActionList;
+  @BindView(R.id.root_view)
+  View mRootView;
+
+  @BindView(R.id.unfinished_action_list)
+  RecyclerView mActionList;
+
   private LinearLayoutManager mLayoutManager;
   private ActionListAdapter mActionListAdapter;
 
   private List<Action> mUnfinishedActionList = new ArrayList<>();
 
   @Override
+  protected int getLayoutId() {
+    return R.layout.activity_unfinished_action_list;
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_unfinished_action_list);
-
-    mRootView = findViewById(R.id.root_view);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -47,7 +54,6 @@ public class UnfinishedActionListActivity extends BaseActivity {
 
     findViewById(R.id.add_action).setOnClickListener((view) -> gotoAddActionActivity(null, false));
 
-    mActionList = findViewById(R.id.unfinished_action_list);
     mActionList.setHasFixedSize(true);
 
     mLayoutManager = new LinearLayoutManager(this);

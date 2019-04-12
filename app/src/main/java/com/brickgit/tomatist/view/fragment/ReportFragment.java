@@ -36,6 +36,8 @@ import java.util.Map;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /** Created by Daniel Lin on 2019/3/25. */
 public class ReportFragment extends Fragment {
@@ -52,8 +54,11 @@ public class ReportFragment extends Fragment {
   private List<GroupedActionsItem> mActionList = new ArrayList<>();
   private List<String> mSelectedTagIdList = new ArrayList<>();
 
-  private HorizontalBarChart mChart;
-  private TextView mDate;
+  @BindView(R.id.chart)
+  HorizontalBarChart mChart;
+
+  @BindView(R.id.date)
+  TextView mDate;
 
   public void setMode(int mode) {
     mMode = mode;
@@ -64,8 +69,8 @@ public class ReportFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_report, container, false);
 
-    mChart = view.findViewById(R.id.chart);
-    mDate = view.findViewById(R.id.date);
+    ButterKnife.bind(this, view);
+
     mDate.setOnClickListener(
         (v) -> {
           Calendar today = Calendar.getInstance();

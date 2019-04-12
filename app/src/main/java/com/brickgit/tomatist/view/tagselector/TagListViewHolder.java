@@ -8,18 +8,23 @@ import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Tag;
 
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /** Created by Daniel Lin on 2019/3/18. */
 public class TagListViewHolder extends RecyclerView.ViewHolder {
 
-  private CheckBox mTagCheckBox;
-  private TextView mTagTitleView;
+  @BindView(R.id.tag_check_box)
+  CheckBox mTagCheckBox;
+
+  @BindView(R.id.tag_title)
+  TextView mTagTitleView;
+
   private Tag mTag;
 
   public TagListViewHolder(View view, OnTagClickListener onTagClickListener) {
     super(view);
-    mTagCheckBox = view.findViewById(R.id.tag_check_box);
-    mTagTitleView = view.findViewById(R.id.tag_title);
+    ButterKnife.bind(this, view);
     itemView.setOnClickListener(
         (v) -> {
           if (onTagClickListener == null) {
