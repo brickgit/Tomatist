@@ -22,6 +22,8 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   private static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+  private static RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
+
   private CheckBox mIsFinishedView;
 
   private View mHeaderView;
@@ -52,6 +54,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
     mNoteView = view.findViewById(R.id.action_note);
 
     mTagListView = view.findViewById(R.id.tag_list);
+    mTagListView.setRecycledViewPool(viewPool);
     mTagListView.setLayoutManager(
         new LinearLayoutManager(mTagListView.getContext(), LinearLayoutManager.HORIZONTAL, false));
     mTagListAdapter = new SelectedTagListAdapter();
