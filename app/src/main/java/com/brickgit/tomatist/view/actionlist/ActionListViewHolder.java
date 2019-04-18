@@ -6,15 +6,15 @@ import android.widget.TextView;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Tag;
+import com.brickgit.tomatist.view.tagselector.SelectedTagListAdapter;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ActionListViewHolder extends RecyclerView.ViewHolder {
@@ -27,8 +27,8 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   private TextView mNoteView;
 
-  private List<TextView> mTagViews = new ArrayList<>();
-  private TextView mOtherTagsView;
+  private RecyclerView mTagListView;
+  private SelectedTagListAdapter mTagListAdapter;
 
   private ExpandableLayout mButtons;
 
@@ -46,11 +46,11 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
     mNoteView = view.findViewById(R.id.action_note);
 
-    mTagViews.add(view.findViewById(R.id.tag_1));
-    mTagViews.add(view.findViewById(R.id.tag_2));
-    mTagViews.add(view.findViewById(R.id.tag_3));
-    mTagViews.add(view.findViewById(R.id.tag_4));
-    mOtherTagsView = view.findViewById(R.id.other_tags);
+    mTagListView = view.findViewById(R.id.tag_list);
+    mTagListView.setLayoutManager(
+        new LinearLayoutManager(mTagListView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+    mTagListAdapter = new SelectedTagListAdapter();
+    mTagListView.setAdapter(mTagListAdapter);
 
     mButtons = view.findViewById(R.id.buttons);
     mButtons.setOnExpansionUpdateListener(
@@ -98,21 +98,8 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
   public void bind(Action action, Map<String, Tag> tags) {
     mAction = action;
 
-    for (int i = 0; i < mTagViews.size(); i++) {
-      TextView tagView = mTagViews.get(i);
-      String tagId = i < action.getTagList().size() ? action.getTagList().get(i) : null;
-      if (tagId != null) {
-        Tag tag = tags.get(tagId);
-        if (tag != null) {
-          tagView.setVisibility(View.VISIBLE);
-          tagView.setText(tag.getTitle());
-          continue;
-        }
-      }
-      tagView.setVisibility(View.GONE);
-    }
-    mOtherTagsView.setVisibility(
-        action.getTagList().size() > mTagViews.size() ? View.VISIBLE : View.GONE);
+    mTagListAdapter.updateTagIds(action.getTagList());
+    mTagListAdapter.updateTagMap(tags);
 
     if (action.isFinished() && action.getStartTime() != null) {
       mHeaderView.setVisibility(View.VISIBLE);
