@@ -1,6 +1,7 @@
 package com.brickgit.tomatist.view.actionlist;
 
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.brickgit.tomatist.R;
@@ -21,6 +22,8 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   private static SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
+  private CheckBox mIsFinishedView;
+
   private View mHeaderView;
   private TextView mStartDateTime;
   private TextView mEndDateTime;
@@ -39,6 +42,8 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
       final ActionListAdapter.OnItemClickListener onItemClickListener,
       final ActionListAdapter.OnActionClickListener onActionClickListener) {
     super(view);
+
+    mIsFinishedView = view.findViewById(R.id.is_finished_view);
 
     mHeaderView = view.findViewById(R.id.header);
     mStartDateTime = view.findViewById(R.id.start_time);
@@ -97,6 +102,8 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
   public void bind(Action action, Map<String, Tag> tags) {
     mAction = action;
+
+    mIsFinishedView.setChecked(action.isFinished());
 
     mTagListAdapter.updateTagIds(action.getTagList());
     mTagListAdapter.updateTagMap(tags);
