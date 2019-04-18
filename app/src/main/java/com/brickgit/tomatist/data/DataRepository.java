@@ -62,6 +62,10 @@ public class DataRepository {
     return mActionDao.getFinishedActionsForDate(year, month, day);
   }
 
+  public LiveData<List<Action>> getActions(int year, int month, int day) {
+    return mActionDao.getActionsForDate(year, month, day);
+  }
+
   public LiveData<List<Action>> getUnfinishedActions() {
     return mActionDao.getUnfinishedActions();
   }

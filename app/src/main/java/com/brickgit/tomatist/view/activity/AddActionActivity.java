@@ -57,8 +57,8 @@ public class AddActionActivity extends BaseActivity {
   @BindView(R.id.is_finished)
   CheckBox mIsFinished;
 
-  @BindView(R.id.datetime_layout)
-  View mDatetimeLayout;
+  @BindView(R.id.end_datetime_layout)
+  View mEndDatetimeLayout;
 
   @BindView(R.id.start_datetime_date)
   TextView mStartDate;
@@ -132,7 +132,7 @@ public class AddActionActivity extends BaseActivity {
     mIsFinished.setOnCheckedChangeListener(
         (view, isChecked) -> {
           mAction.setFinished(isChecked);
-          mDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+          mEndDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
 
     mStartDate.setOnClickListener((v) -> showDatePicker(true));
@@ -296,9 +296,9 @@ public class AddActionActivity extends BaseActivity {
   private void updateViews() {
 
     if (mIsFinished.isChecked()) {
-      mDatetimeLayout.setVisibility(View.VISIBLE);
+      mEndDatetimeLayout.setVisibility(View.VISIBLE);
     } else {
-      mDatetimeLayout.setVisibility(View.GONE);
+      mEndDatetimeLayout.setVisibility(View.GONE);
     }
 
     Date startDate = mActionViewModel.getStartCalendar().getTime();

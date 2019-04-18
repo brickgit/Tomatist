@@ -30,11 +30,11 @@ public class CalendarActivityViewModel extends BaseViewModel {
             }
             return map;
           });
-  private LiveData<List<Action>> mFinishedActionList =
+  private LiveData<List<Action>> mActionList =
       Transformations.switchMap(
           mSelectedDate,
           (selectedDate) ->
-              mDataRepository.getFinishedActions(mSelectedYear, mSelectedMonth, mSelectedDay));
+              mDataRepository.getActions(mSelectedYear, mSelectedMonth, mSelectedDay));
 
   public CalendarActivityViewModel() {
     super();
@@ -52,8 +52,8 @@ public class CalendarActivityViewModel extends BaseViewModel {
     mDataRepository.deleteAction(action);
   }
 
-  public LiveData<List<Action>> getFinishedActionList() {
-    return mFinishedActionList;
+  public LiveData<List<Action>> getActionList() {
+    return mActionList;
   }
 
   public void selectDate(int year, int month, int day) {
