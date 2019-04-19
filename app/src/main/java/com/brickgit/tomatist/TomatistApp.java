@@ -10,5 +10,7 @@ public class TomatistApp extends Application {
   public void onCreate() {
     super.onCreate();
     DatabaseLoader.init(this);
+
+    Initializer.firstLaunchSetup(this);
   }
 }

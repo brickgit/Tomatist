@@ -9,51 +9,11 @@
   android:fitsSystemWindows="true"
   tools:context=".view.activity.CalendarActivity">
 
-  <androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:id="@+id/root_view"
+  <fragment
+    android:id="@+id/calendar_fragment"
+    class="com.brickgit.tomatist.view.fragment.CalendarFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <include layout="@layout/app_bar" />
-
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="vertical"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-      <com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar
-        android:id="@+id/calendar_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:buttonLeft_drawableTintColor="@color/colorPrimary"
-        app:buttonRight_drawableTintColor="@color/colorPrimary"
-        app:expandIconColor="@color/colorPrimary"
-        app:primaryColor="@color/calendar_activity_background"
-        app:selectedItem_background="@drawable/selected_date_background"
-        app:selectedItem_textColor="@android:color/white"
-        app:textColor="@android:color/black"
-        app:todayItem_background="@drawable/circle_white_stroke_background"
-        app:todayItem_textColor="@color/colorPrimary" />
-
-      <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/action_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:scrollbars="vertical" />
-
-    </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-      android:id="@+id/add_action"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="end|bottom"
-      android:layout_margin="@dimen/fab_margin"
-      android:src="@drawable/ic_add_task" />
-  </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    android:layout_height="match_parent" />
 
   <com.google.android.material.navigation.NavigationView
     android:id="@+id/nav_view"
