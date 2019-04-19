@@ -44,6 +44,10 @@ public class CalendarActivityViewModel extends BaseViewModel {
     return mTagMap;
   }
 
+  public void updateAction(Action action) {
+    mDataRepository.updateAction(action);
+  }
+
   public void insertAction(Action action) {
     mDataRepository.insertAction(action);
   }

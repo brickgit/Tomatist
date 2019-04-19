@@ -32,8 +32,7 @@
           android:id="@+id/is_finished_view"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:buttonTint="@color/colorPrimary"
-          android:clickable="false" />
+          android:buttonTint="@color/colorPrimary" />
 
         <LinearLayout
           android:id="@+id/header"
@@ -54,7 +53,7 @@
             android:id="@+id/end_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="6dp"
             android:textSize="15sp" />
 
         </LinearLayout>
@@ -74,10 +73,10 @@
             android:id="@+id/action_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="6dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         </LinearLayout>
 

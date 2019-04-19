@@ -4,6 +4,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Tag;
@@ -13,13 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class ActionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   public interface OnActionClickListener {
     void onItemExpand(View view);
+
+    void onCheckClick(Action action);
 
     void onEditClick(Action action);
 

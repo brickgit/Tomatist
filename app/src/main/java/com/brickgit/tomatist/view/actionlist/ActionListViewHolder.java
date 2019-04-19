@@ -4,6 +4,9 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Tag;
@@ -14,9 +17,6 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class ActionListViewHolder extends RecyclerView.ViewHolder {
 
@@ -46,6 +46,12 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
     super(view);
 
     mIsFinishedView = view.findViewById(R.id.is_finished_view);
+    mIsFinishedView.setOnClickListener(
+        (v) -> {
+          if (onActionClickListener != null) {
+            onActionClickListener.onCheckClick(mAction);
+          }
+        });
 
     mHeaderView = view.findViewById(R.id.header);
     mStartDateTime = view.findViewById(R.id.start_time);
@@ -111,7 +117,7 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
     mTagListAdapter.updateTagIds(action.getTagList());
     mTagListAdapter.updateTagMap(tags);
 
-    if (action.isFinished() && action.getStartTime() != null) {
+    if (action.getStartTime() != null) {
       mHeaderView.setVisibility(View.VISIBLE);
       mStartDateTime.setText(dateFormat.format(action.getStartTime()));
       mStartDateTime.setVisibility(View.VISIBLE);

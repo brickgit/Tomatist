@@ -5,6 +5,14 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.brickgit.tomatist.Initializer;
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
@@ -19,13 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 public class CalendarActivity extends BaseActivity {
@@ -132,6 +133,12 @@ public class CalendarActivity extends BaseActivity {
             if (position != RecyclerView.NO_POSITION) {
               mActionList.smoothScrollToPosition(position);
             }
+          }
+
+          @Override
+          public void onCheckClick(Action action) {
+            action.setFinished(!action.isFinished());
+            mCalendarActivityViewModel.updateAction(action);
           }
 
           @Override
