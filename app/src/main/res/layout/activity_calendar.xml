@@ -9,11 +9,39 @@
   android:fitsSystemWindows="true"
   tools:context=".view.activity.CalendarActivity">
 
-  <fragment
-    android:id="@+id/calendar_fragment"
-    class="com.brickgit.tomatist.view.fragment.CalendarFragment"
+  <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    tools:context=".view.activity.CalendarActivity">
+
+    <include layout="@layout/app_bar" />
+
+    <androidx.viewpager.widget.ViewPager
+      android:id="@+id/view_pager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+      <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabRippleColor="@android:color/transparent" />
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/add_action"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="end|bottom"
+      android:layout_margin="@dimen/fab_margin"
+      android:src="@drawable/ic_add_task" />
+
+  </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
   <com.google.android.material.navigation.NavigationView
     android:id="@+id/nav_view"

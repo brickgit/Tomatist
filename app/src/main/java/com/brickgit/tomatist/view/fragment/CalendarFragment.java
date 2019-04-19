@@ -32,9 +32,6 @@ public class CalendarFragment extends Fragment {
 
   private CalendarActivityViewModel mCalendarActivityViewModel;
 
-  @BindView(R.id.root_view)
-  View mRootView;
-
   @BindView(R.id.calendar_view)
   CollapsibleCalendar mCalendarView;
 
@@ -52,9 +49,6 @@ public class CalendarFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
     ButterKnife.bind(this, view);
-
-    view.findViewById(R.id.add_action)
-        .setOnClickListener((v) -> gotoAddActionActivity(null, false));
 
     mCalendarView.setCalendarListener(
         new CollapsibleCalendar.CalendarListener() {
@@ -161,7 +155,7 @@ public class CalendarFragment extends Fragment {
   }
 
   private void showActionDeletedConfirmation(Action action) {
-    Snackbar.make(mRootView, R.string.action_deleted, Snackbar.LENGTH_SHORT)
+    Snackbar.make(getView(), R.string.action_deleted, Snackbar.LENGTH_SHORT)
         .setAction(R.string.undo, (view) -> mCalendarActivityViewModel.insertAction(action))
         .show();
   }

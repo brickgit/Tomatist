@@ -33,6 +33,10 @@
   <string name="title_monthly">Monthly</string>
   <string name="title_yearly">Yearly</string>
 
+  <string name="title_plan">Plan</string>
+  <string name="title_sprint">Sprint</string>
+  <string name="title_review">Review</string>
+
   <string-array name="minutes_string">
     <item>0 minute</item>
     <item>30 minutes</item>
