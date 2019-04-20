@@ -14,12 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
-import com.brickgit.tomatist.data.viewmodel.CalendarActivityViewModel;
+import com.brickgit.tomatist.data.viewmodel.UnfinishedActionListViewModel;
 import com.brickgit.tomatist.view.actionlist.ActionListAdapter;
 import com.brickgit.tomatist.view.activity.AddActionActivity;
 import com.google.android.material.snackbar.Snackbar;
-import com.shrikanthravi.collapsiblecalendarview.data.Day;
-import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,48 +26,24 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CalendarFragment extends Fragment {
+public class PlanFragment extends Fragment {
 
-  private CalendarActivityViewModel mCalendarActivityViewModel;
+  private UnfinishedActionListViewModel mUnfinishedActionListViewModel;
 
-  @BindView(R.id.calendar_view)
-  CollapsibleCalendar mCalendarView;
-
-  @BindView(R.id.action_list)
+  @BindView(R.id.unfinished_action_list)
   RecyclerView mActionList;
 
   private LinearLayoutManager mLayoutManager;
   private ActionListAdapter mActionListAdapter;
 
-  private List<Action> mActions = new ArrayList<>();
+  private List<Action> mUnfinishedActionList = new ArrayList<>();
 
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_calendar, container, false);
+    View view = inflater.inflate(R.layout.fragment_unfinished_action_list, container, false);
 
     ButterKnife.bind(this, view);
-
-    mCalendarView.setCalendarListener(
-        new CollapsibleCalendar.CalendarListener() {
-          @Override
-          public void onDaySelect() {
-            Day day = mCalendarView.getSelectedDay();
-            mCalendarActivityViewModel.selectDate(day.getYear(), day.getMonth(), day.getDay());
-          }
-
-          @Override
-          public void onItemClick(View view) {}
-
-          @Override
-          public void onDataUpdate() {}
-
-          @Override
-          public void onMonthChange() {}
-
-          @Override
-          public void onWeekChange(int i) {}
-        });
 
     mActionList.setHasFixedSize(true);
 
@@ -103,10 +77,7 @@ public class CalendarFragment extends Fragment {
           }
 
           @Override
-          public void onCheckClick(Action action) {
-            action.setFinished(!action.isFinished());
-            mCalendarActivityViewModel.updateAction(action);
-          }
+          public void onCheckClick(Action action) {}
 
           @Override
           public void onEditClick(Action action) {
@@ -124,40 +95,22 @@ public class CalendarFragment extends Fragment {
           }
         });
 
-    mCalendarActivityViewModel = ViewModelProviders.of(this).get(CalendarActivityViewModel.class);
-    mCalendarActivityViewModel
-        .getTagMap()
-        .observe(this, (tags) -> mActionListAdapter.updateTags(tags));
-    mCalendarActivityViewModel
-        .getActionList()
+    mUnfinishedActionListViewModel =
+        ViewModelProviders.of(this).get(UnfinishedActionListViewModel.class);
+    mUnfinishedActionListViewModel
+        .getUnfinishedActions()
         .observe(
             this,
             (actions) -> {
-              mActions.clear();
-              mActions.addAll(actions);
-              mActionListAdapter.updateActions(
-                  mCalendarActivityViewModel.getSelectedDate(), mActions);
+              mUnfinishedActionList.clear();
+              mUnfinishedActionList.addAll(actions);
+              updateViews();
             });
-    Calendar today = Calendar.getInstance();
-    Day day =
-        new Day(
-            today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-    mCalendarView.select(day);
+    mUnfinishedActionListViewModel
+        .getTagMap()
+        .observe(this, (tags) -> mActionListAdapter.updateTags(tags));
 
     return view;
-  }
-
-  private void removeAction(Action action) {
-    if (action != null) {
-      mCalendarActivityViewModel.deleteAction(action);
-      showActionDeletedConfirmation(action);
-    }
-  }
-
-  private void showActionDeletedConfirmation(Action action) {
-    Snackbar.make(getView(), R.string.action_deleted, Snackbar.LENGTH_SHORT)
-        .setAction(R.string.undo, (view) -> mCalendarActivityViewModel.insertAction(action))
-        .show();
   }
 
   private void gotoAddActionActivity(String actionId, boolean isCopyingAction) {
@@ -166,13 +119,29 @@ public class CalendarFragment extends Fragment {
       intent.putExtra(AddActionActivity.SELECTED_ACTION_ID_KEY, actionId);
       intent.putExtra(AddActionActivity.IS_COPYING_ACTION, isCopyingAction);
     } else {
-      intent.putExtra(
-          AddActionActivity.SELECTED_YEAR_KEY, mCalendarActivityViewModel.getSelectedYear());
-      intent.putExtra(
-          AddActionActivity.SELECTED_MONTH_KEY, mCalendarActivityViewModel.getSelectedMonth());
-      intent.putExtra(
-          AddActionActivity.SELECTED_DAY_KEY, mCalendarActivityViewModel.getSelectedDay());
+      Calendar today = Calendar.getInstance();
+      intent.putExtra(AddActionActivity.SELECTED_YEAR_KEY, today.get(Calendar.YEAR));
+      intent.putExtra(AddActionActivity.SELECTED_MONTH_KEY, today.get(Calendar.MONTH));
+      intent.putExtra(AddActionActivity.SELECTED_DAY_KEY, today.get(Calendar.DAY_OF_MONTH));
     }
     startActivity(intent);
+  }
+
+  private void removeAction(Action action) {
+    if (action != null) {
+      mUnfinishedActionListViewModel.deleteAction(action);
+      showActionDeletedConfirmation(action);
+    }
+  }
+
+  private void showActionDeletedConfirmation(Action action) {
+    Snackbar.make(getView(), R.string.action_deleted, Snackbar.LENGTH_SHORT)
+        .setAction(R.string.undo, (view) -> mUnfinishedActionListViewModel.insertAction(action))
+        .show();
+  }
+
+  private void updateViews() {
+    String tag = getString(R.string.all);
+    mActionListAdapter.updateActions(tag, mUnfinishedActionList);
   }
 }

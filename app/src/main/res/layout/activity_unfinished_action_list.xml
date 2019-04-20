@@ -9,26 +9,11 @@
 
   <include layout="@layout/app_bar" />
 
-  <LinearLayout
+  <fragment
+    android:name="com.brickgit.tomatist.view.fragment.PlanFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-    <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/unfinished_action_list"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="@android:color/white"
-      android:paddingTop="6dp"
-      android:paddingBottom="6dp"
-      android:scrollbars="vertical"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintEnd_toStartOf="@+id/guideline"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
-
-  </LinearLayout>
+    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/add_action"

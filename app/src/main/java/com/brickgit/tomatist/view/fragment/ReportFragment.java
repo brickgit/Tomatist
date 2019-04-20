@@ -10,6 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.GroupedActionsItem;
@@ -34,8 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -163,7 +164,7 @@ public class ReportFragment extends Fragment {
 
   private void showDatePicker() {
     new DatePickerDialog(
-            getActivity(),
+            getContext(),
             (view, year, month, dayOfMonth) -> mReportViewModel.selectDate(year, month, dayOfMonth),
             mReportViewModel.getSelectedYear(),
             mReportViewModel.getSelectedMonth(),

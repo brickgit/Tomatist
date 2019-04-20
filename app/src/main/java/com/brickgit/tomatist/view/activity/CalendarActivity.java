@@ -15,6 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.view.fragment.CalendarFragment;
+import com.brickgit.tomatist.view.fragment.PlanFragment;
 import com.brickgit.tomatist.view.fragment.ReportFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -28,7 +29,7 @@ import butterknife.BindView;
 
 public class CalendarActivity extends BaseActivity {
 
-  private static int INDEX_REPORT_FRAGMENT = 1;
+  private static int INDEX_REPORT_FRAGMENT = 2;
 
   @BindView(R.id.root_view)
   View mRootView;
@@ -62,6 +63,8 @@ public class CalendarActivity extends BaseActivity {
     mAddButton.setOnClickListener((v) -> gotoAddActionActivity());
 
     MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager());
+    PlanFragment plan = new PlanFragment();
+    adapter.addFragment(plan, getString(R.string.title_plan));
     CalendarFragment sprint = new CalendarFragment();
     adapter.addFragment(sprint, getString(R.string.title_sprint));
     ReportFragment review = new ReportFragment();
