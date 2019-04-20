@@ -29,6 +29,7 @@ import butterknife.BindView;
 
 public class CalendarActivity extends BaseActivity {
 
+  private static int SIZE_FRAGMENTS = 3;
   private static int INDEX_REPORT_FRAGMENT = 2;
 
   @BindView(R.id.root_view)
@@ -71,6 +72,7 @@ public class CalendarActivity extends BaseActivity {
     review.setMode(ReportFragment.MODE_MONTHLY);
     adapter.addFragment(review, getString(R.string.title_review));
     mViewPager.setAdapter(adapter);
+    mViewPager.setOffscreenPageLimit(SIZE_FRAGMENTS);
     mViewPager.addOnPageChangeListener(
         new ViewPager.OnPageChangeListener() {
           @Override
