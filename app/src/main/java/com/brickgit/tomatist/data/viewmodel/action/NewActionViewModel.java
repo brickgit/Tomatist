@@ -2,13 +2,12 @@ package com.brickgit.tomatist.data.viewmodel.action;
 
 import android.content.Intent;
 
-import com.brickgit.tomatist.data.database.Action;
-
-import java.util.Calendar;
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.brickgit.tomatist.data.database.Action;
+
+import java.util.List;
 
 /** Created by Daniel Lin on 2019/3/11. */
 public class NewActionViewModel extends ActionViewModel {
@@ -26,23 +25,7 @@ public class NewActionViewModel extends ActionViewModel {
 
   @Override
   public void init(Intent intent) {
-    int year = intent.getIntExtra(ACTION_YEAR_KEY, INVALID_ACTION_DATE);
-    int month = intent.getIntExtra(ACTION_MONTH_KEY, INVALID_ACTION_DATE);
-    int day = intent.getIntExtra(ACTION_DAY_KEY, INVALID_ACTION_DATE);
-
-    if (year != INVALID_ACTION_DATE && month != INVALID_ACTION_DATE && day != INVALID_ACTION_DATE) {
-      mStartCalendar.set(Calendar.YEAR, year);
-      mStartCalendar.set(Calendar.MONTH, month);
-      mStartCalendar.set(Calendar.DAY_OF_MONTH, day);
-      mEndCalendar.set(Calendar.YEAR, year);
-      mEndCalendar.set(Calendar.MONTH, month);
-      mEndCalendar.set(Calendar.DAY_OF_MONTH, day);
-    }
-
     Action action = new Action();
-    action.setStartTime(mStartCalendar.getTime());
-    action.setEndTime(mEndCalendar.getTime());
-
     mAction.setValue(action);
   }
 
@@ -52,8 +35,16 @@ public class NewActionViewModel extends ActionViewModel {
     if (action == null) return;
     action.setNote(note);
     action.setFinished(isFinished);
-    action.setStartTime(mStartCalendar.getTime());
-    action.setEndTime(mEndCalendar.getTime());
+    if (mStartCalendar != null) {
+      action.setStartTime(mStartCalendar.getTime());
+    } else {
+      action.setStartTime(null);
+    }
+    if (mEndCalendar != null) {
+      action.setEndTime(mEndCalendar.getTime());
+    } else {
+      action.setEndTime(null);
+    }
     action.setTagList(tagList);
     mDataRepository.insertAction(action);
   }

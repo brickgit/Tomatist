@@ -2,6 +2,10 @@ package com.brickgit.tomatist.data.viewmodel.action;
 
 import android.content.Intent;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.viewmodel.BaseViewModel;
@@ -10,9 +14,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 
 /** Created by Daniel Lin on 2019/3/10. */
 public abstract class ActionViewModel extends BaseViewModel {
@@ -35,8 +36,8 @@ public abstract class ActionViewModel extends BaseViewModel {
             return map;
           });
 
-  protected Calendar mStartCalendar = Calendar.getInstance();
-  protected Calendar mEndCalendar = Calendar.getInstance();
+  @Nullable protected Calendar mStartCalendar;
+  @Nullable protected Calendar mEndCalendar;
 
   ActionViewModel() {
     super();
@@ -46,19 +47,21 @@ public abstract class ActionViewModel extends BaseViewModel {
     return mTagMap;
   }
 
+  @Nullable
   public Calendar getStartCalendar() {
     return mStartCalendar;
   }
 
-  public void setStartCalendar(Calendar startCalendar) {
+  public void setStartCalendar(@Nullable Calendar startCalendar) {
     mStartCalendar = startCalendar;
   }
 
+  @Nullable
   public Calendar getEndCalendar() {
     return mEndCalendar;
   }
 
-  public void setEndCalendar(Calendar endCalendar) {
+  public void setEndCalendar(@Nullable Calendar endCalendar) {
     mEndCalendar = endCalendar;
   }
 

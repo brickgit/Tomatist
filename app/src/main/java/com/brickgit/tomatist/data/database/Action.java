@@ -1,5 +1,12 @@
 package com.brickgit.tomatist.data.database;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -7,12 +14,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 
 @Entity(tableName = "actions")
 public class Action {
@@ -25,9 +26,11 @@ public class Action {
   private boolean isFinished;
 
   @ColumnInfo(name = "start_time")
+  @Nullable
   private Date startTime;
 
   @ColumnInfo(name = "end_time")
+  @Nullable
   private Date endTime;
 
   @ColumnInfo(name = "note")
@@ -63,19 +66,21 @@ public class Action {
     this.isFinished = isFinished;
   }
 
+  @Nullable
   public Date getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(Date startTime) {
+  public void setStartTime(@Nullable Date startTime) {
     this.startTime = startTime;
   }
 
+  @Nullable
   public Date getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(Date endTime) {
+  public void setEndTime(@Nullable Date endTime) {
     this.endTime = endTime;
   }
 

@@ -121,19 +121,19 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
       mHeaderView.setVisibility(View.VISIBLE);
       mStartDateTime.setText(dateFormat.format(action.getStartTime()));
       mStartDateTime.setVisibility(View.VISIBLE);
-      if (!action.getStartTime().equals(action.getEndTime())) {
+      if (action.getEndTime() != null) {
         mEndDateTime.setText(dateFormat.format(action.getEndTime()));
         mEndDateTime.setVisibility(View.VISIBLE);
       } else {
-        mEndDateTime.setText("");
+        mEndDateTime.setText("00:00");
         mEndDateTime.setVisibility(View.GONE);
       }
     } else {
-      mHeaderView.setVisibility(View.GONE);
-      mStartDateTime.setText("");
-      mStartDateTime.setVisibility(View.GONE);
-      mEndDateTime.setText("");
-      mEndDateTime.setVisibility(View.GONE);
+      mHeaderView.setVisibility(View.INVISIBLE);
+      mStartDateTime.setText("00:00");
+      mStartDateTime.setVisibility(View.INVISIBLE);
+      mEndDateTime.setText("00:00");
+      mEndDateTime.setVisibility(View.INVISIBLE);
     }
 
     mNoteView.setText(action.getNote());

@@ -8,8 +8,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.brickgit.tomatist.R;
 import com.brickgit.tomatist.data.database.Action;
@@ -35,9 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 
 public class AddActionActivity extends BaseActivity {
@@ -57,8 +59,14 @@ public class AddActionActivity extends BaseActivity {
   @BindView(R.id.is_finished)
   CheckBox mIsFinished;
 
-  @BindView(R.id.end_datetime_layout)
-  View mEndDatetimeLayout;
+  @BindView(R.id.start_datetime_edit)
+  ViewGroup mStartDateTimeLayout;
+
+  @BindView(R.id.start_datetime_set)
+  TextView mStartDateTimeSet;
+
+  @BindView(R.id.start_datetime_clear)
+  ImageView mStartDateTimeClear;
 
   @BindView(R.id.start_datetime_date)
   TextView mStartDate;
@@ -66,14 +74,20 @@ public class AddActionActivity extends BaseActivity {
   @BindView(R.id.start_datetime_time)
   TextView mStartTime;
 
+  @BindView(R.id.end_datetime_edit)
+  ViewGroup mEndDateTimeLayout;
+
+  @BindView(R.id.end_datetime_set)
+  TextView mEndDateTimeSet;
+
+  @BindView(R.id.end_datetime_clear)
+  ImageView mEndDateTimeClear;
+
   @BindView(R.id.end_datetime_date)
   TextView mEndDate;
 
   @BindView(R.id.end_datetime_time)
   TextView mEndTime;
-
-  @BindView(R.id.duration_minutes)
-  TextView mDurationMinutes;
 
   @BindView(R.id.new_action_note)
   TextInputEditText mActionNoteView;
@@ -129,17 +143,35 @@ public class AddActionActivity extends BaseActivity {
         (tag) ->
             TagSelectorActivity.startForResult(this, REQUEST_CODE_SELECT_TAG, mSelectedTagIdList));
 
-    mIsFinished.setOnCheckedChangeListener(
-        (view, isChecked) -> {
-          mAction.setFinished(isChecked);
-          mEndDatetimeLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-        });
+    mIsFinished.setOnCheckedChangeListener((view, isChecked) -> mAction.setFinished(isChecked));
 
+    mStartDateTimeSet.setOnClickListener(
+        (v) -> {
+          mActionViewModel.setStartCalendar(Calendar.getInstance());
+          updateViews();
+        });
+    mStartDateTimeClear.setOnClickListener(
+        (v) -> {
+          mActionViewModel.setStartCalendar(null);
+          mActionViewModel.setEndCalendar(null);
+          updateViews();
+        });
     mStartDate.setOnClickListener((v) -> showDatePicker(true));
     mStartTime.setOnClickListener((v) -> showTimePicker(true));
+
+    mEndDateTimeSet.setOnClickListener(
+        (v) -> {
+          mActionViewModel.setStartCalendar(Calendar.getInstance());
+          mActionViewModel.setEndCalendar(Calendar.getInstance());
+          updateViews();
+        });
+    mEndDateTimeClear.setOnClickListener(
+        (v) -> {
+          mActionViewModel.setEndCalendar(null);
+          updateViews();
+        });
     mEndDate.setOnClickListener((v) -> showDatePicker(false));
     mEndTime.setOnClickListener((v) -> showTimePicker(false));
-    findViewById(R.id.duration_layout).setOnClickListener((v) -> showMinuteList());
 
     mActionViewModel =
         isCopyingAction
@@ -223,8 +255,7 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void showDatePicker(final boolean isStartDate) {
-    final Calendar calendar =
-        isStartDate ? mActionViewModel.getStartCalendar() : mActionViewModel.getEndCalendar();
+    final Calendar calendar = Calendar.getInstance();
     new DatePickerDialog(
             this,
             (view, year, month, dayOfMonth) -> {
@@ -246,8 +277,7 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void showTimePicker(final boolean isStartTime) {
-    final Calendar calendar =
-        isStartTime ? mActionViewModel.getStartCalendar() : mActionViewModel.getEndCalendar();
+    final Calendar calendar = Calendar.getInstance();
     new TimePickerDialog(
             this,
             (view, hourOfDay, minute) -> {
@@ -259,22 +289,6 @@ public class AddActionActivity extends BaseActivity {
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
             true)
-        .show();
-  }
-
-  private void showMinuteList() {
-    new AlertDialog.Builder(this)
-        .setTitle(R.string.duration)
-        .setItems(
-            R.array.minutes_string,
-            (dialog, which) -> {
-              int selectedMinutes = getResources().getIntArray(R.array.minutes_int)[which];
-              mActionViewModel.setEndCalendar(
-                  (Calendar) mActionViewModel.getStartCalendar().clone());
-              mActionViewModel.getEndCalendar().add(Calendar.MINUTE, selectedMinutes);
-              updateViews();
-            })
-        .create()
         .show();
   }
 
@@ -294,22 +308,29 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void updateViews() {
-
-    if (mIsFinished.isChecked()) {
-      mEndDatetimeLayout.setVisibility(View.VISIBLE);
+    Calendar startCalendar = mActionViewModel.getStartCalendar();
+    if (startCalendar != null) {
+      mStartDateTimeSet.setVisibility(View.GONE);
+      mStartDateTimeLayout.setVisibility(View.VISIBLE);
+      Date startDate = startCalendar.getTime();
+      mStartDate.setText(mDateFormatter.format(startDate));
+      mStartTime.setText(mTimeFormatter.format(startDate));
     } else {
-      mEndDatetimeLayout.setVisibility(View.GONE);
+      mStartDateTimeSet.setVisibility(View.VISIBLE);
+      mStartDateTimeLayout.setVisibility(View.GONE);
     }
 
-    Date startDate = mActionViewModel.getStartCalendar().getTime();
-    Date endDate = mActionViewModel.getEndCalendar().getTime();
-    mStartDate.setText(mDateFormatter.format(startDate));
-    mStartTime.setText(mTimeFormatter.format(startDate));
-    mEndDate.setText(mDateFormatter.format(endDate));
-    mEndTime.setText(mTimeFormatter.format(endDate));
-
-    long minute = (endDate.getTime() - startDate.getTime()) / (60 * 1000);
-    mDurationMinutes.setText(String.format(Locale.getDefault(), "%d", minute));
+    Calendar endCalendar = mActionViewModel.getEndCalendar();
+    if (endCalendar != null) {
+      mEndDateTimeSet.setVisibility(View.GONE);
+      mEndDateTimeLayout.setVisibility(View.VISIBLE);
+      Date endDate = endCalendar.getTime();
+      mEndDate.setText(mDateFormatter.format(endDate));
+      mEndTime.setText(mTimeFormatter.format(endDate));
+    } else {
+      mEndDateTimeSet.setVisibility(View.VISIBLE);
+      mEndDateTimeLayout.setVisibility(View.GONE);
+    }
   }
 
   @Override

@@ -20,20 +20,5 @@
   <string name="undo">恢復</string>
 
   <string name="report">圖表</string>
-  <string name="minutes">分鐘</string>
-
-  <string-array name="minutes_string">
-    <item>0 分鐘</item>
-    <item>30 分鐘</item>
-    <item>60 分鐘</item>
-    <item>90 分鐘</item>
-    <item>120 分鐘</item>
-    <item>150 分鐘</item>
-    <item>180 分鐘</item>
-    <item>210 分鐘</item>
-    <item>240 分鐘</item>
-    <item>270 分鐘</item>
-    <item>300 分鐘</item>
-  </string-array>
 
 </resources>
