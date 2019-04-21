@@ -1,5 +1,8 @@
 package com.brickgit.tomatist.data.viewmodel.report;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.viewmodel.GroupedActionsItem;
 
@@ -10,9 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 
 /** Created by Daniel Lin on 2019/3/27. */
 public class MonthlyReportViewModel extends ReportViewModel {

@@ -77,7 +77,16 @@ public class PlanFragment extends Fragment {
           }
 
           @Override
-          public void onCheckClick(Action action) {}
+          public void onCheckClick(Action action) {
+            action.setFinished(!action.isFinished());
+            if (action.isFinished()) {
+              Calendar startCalendar = Calendar.getInstance();
+              action.setStartTime(startCalendar.getTime());
+            } else {
+              action.setStartTime(null);
+            }
+            mUnfinishedActionListViewModel.updateAction(action);
+          }
 
           @Override
           public void onEditClick(Action action) {

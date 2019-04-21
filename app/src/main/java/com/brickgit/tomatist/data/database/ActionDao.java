@@ -1,9 +1,5 @@
 package com.brickgit.tomatist.data.database;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -11,6 +7,10 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Dao
 public abstract class ActionDao {
@@ -99,7 +99,7 @@ public abstract class ActionDao {
     return getActionsForDate(cFrom.getTime(), cTo.getTime());
   }
 
-  @Query("SELECT * FROM `actions` WHERE is_finished = 0")
+  @Query("SELECT * FROM `actions` WHERE start_time is null")
   public abstract LiveData<List<Action>> getUnfinishedActions();
 
   @Query("SELECT * FROM `actions` WHERE id = :id")

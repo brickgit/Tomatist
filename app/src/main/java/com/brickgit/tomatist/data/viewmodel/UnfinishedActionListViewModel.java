@@ -1,14 +1,14 @@
 package com.brickgit.tomatist.data.viewmodel;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.Tag;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
 
 /** Created by Daniel Lin on 2019/3/10. */
 public class UnfinishedActionListViewModel extends BaseViewModel {
@@ -42,6 +42,10 @@ public class UnfinishedActionListViewModel extends BaseViewModel {
 
   public void insertAction(Action action) {
     mDataRepository.insertAction(action);
+  }
+
+  public void updateAction(Action action) {
+    mDataRepository.updateAction(action);
   }
 
   public void deleteAction(Action action) {

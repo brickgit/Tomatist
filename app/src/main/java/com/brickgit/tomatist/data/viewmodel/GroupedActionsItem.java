@@ -34,6 +34,10 @@ public class GroupedActionsItem {
   }
 
   public void addAction(Action action) {
+    if (action.getStartTime() == null || action.getEndTime() == null) {
+      return;
+    }
+
     mActionList.add(action);
     mTotalMinutes +=
         (action.getEndTime().getTime() - action.getStartTime().getTime()) / (60 * 1000);

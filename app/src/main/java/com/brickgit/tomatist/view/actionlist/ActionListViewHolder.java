@@ -125,14 +125,14 @@ public class ActionListViewHolder extends RecyclerView.ViewHolder {
         mEndDateTime.setText(dateFormat.format(action.getEndTime()));
         mEndDateTime.setVisibility(View.VISIBLE);
       } else {
-        mEndDateTime.setText("00:00");
+        mEndDateTime.setText("");
         mEndDateTime.setVisibility(View.GONE);
       }
     } else {
       mHeaderView.setVisibility(View.INVISIBLE);
-      mStartDateTime.setText("00:00");
+      mStartDateTime.setText("");
       mStartDateTime.setVisibility(View.INVISIBLE);
-      mEndDateTime.setText("00:00");
+      mEndDateTime.setText("");
       mEndDateTime.setVisibility(View.INVISIBLE);
     }
 
