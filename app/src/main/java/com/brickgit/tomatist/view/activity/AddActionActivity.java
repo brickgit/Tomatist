@@ -255,7 +255,9 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void showDatePicker(final boolean isStartDate) {
-    final Calendar calendar = Calendar.getInstance();
+    Calendar currentCalendar =
+        isStartDate ? mActionViewModel.getStartCalendar() : mActionViewModel.getEndCalendar();
+    final Calendar calendar = currentCalendar != null ? currentCalendar : Calendar.getInstance();
     new DatePickerDialog(
             this,
             (view, year, month, dayOfMonth) -> {
@@ -264,9 +266,9 @@ public class AddActionActivity extends BaseActivity {
               calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
               checkCalendars(isStartDate);
               if (isStartDate) {
-                mAction.setStartTime(calendar.getTime());
+                mActionViewModel.setStartCalendar(calendar);
               } else {
-                mAction.setEndTime(calendar.getTime());
+                mActionViewModel.setEndCalendar(calendar);
               }
               updateViews();
             },
@@ -277,12 +279,19 @@ public class AddActionActivity extends BaseActivity {
   }
 
   private void showTimePicker(final boolean isStartTime) {
-    final Calendar calendar = Calendar.getInstance();
+    Calendar currentCalendar =
+        isStartTime ? mActionViewModel.getStartCalendar() : mActionViewModel.getEndCalendar();
+    final Calendar calendar = currentCalendar != null ? currentCalendar : Calendar.getInstance();
     new TimePickerDialog(
             this,
             (view, hourOfDay, minute) -> {
               calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
               calendar.set(Calendar.MINUTE, minute);
+              if (isStartTime) {
+                mActionViewModel.setStartCalendar(calendar);
+              } else {
+                mActionViewModel.setEndCalendar(calendar);
+              }
               checkCalendars(isStartTime);
               updateViews();
             },
