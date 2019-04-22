@@ -69,7 +69,7 @@ public class CalendarActivity extends BaseActivity {
     CalendarFragment sprint = new CalendarFragment();
     adapter.addFragment(sprint, getString(R.string.title_sprint));
     ReportFragment review = new ReportFragment();
-    review.setMode(ReportFragment.MODE_MONTHLY);
+    review.setMode(ReportFragment.MODE_WEEKLY);
     adapter.addFragment(review, getString(R.string.title_review));
     mViewPager.setAdapter(adapter);
     mViewPager.setOffscreenPageLimit(SIZE_FRAGMENTS);

@@ -19,6 +19,7 @@ import com.brickgit.tomatist.data.viewmodel.GroupedActionsItem;
 import com.brickgit.tomatist.data.viewmodel.report.DailyReportViewModel;
 import com.brickgit.tomatist.data.viewmodel.report.MonthlyReportViewModel;
 import com.brickgit.tomatist.data.viewmodel.report.ReportViewModel;
+import com.brickgit.tomatist.data.viewmodel.report.WeeklyReportViewModel;
 import com.brickgit.tomatist.data.viewmodel.report.YearlyReportViewModel;
 import com.brickgit.tomatist.view.activity.TagSelectorActivity;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -44,8 +45,9 @@ import butterknife.ButterKnife;
 public class ReportFragment extends Fragment {
 
   public static final int MODE_DAILY = 0;
-  public static final int MODE_MONTHLY = 1;
-  public static final int MODE_YEARLY = 2;
+  public static final int MODE_WEEKLY = 1;
+  public static final int MODE_MONTHLY = 2;
+  public static final int MODE_YEARLY = 3;
 
   private static final int REQUEST_CODE_SELECT_TAG = 0;
 
@@ -89,12 +91,22 @@ public class ReportFragment extends Fragment {
                 TagSelectorActivity.startForResult(
                     this, Activity.RESULT_CANCELED, mSelectedTagIdList));
 
-    mReportViewModel =
-        mMode == MODE_DAILY
-            ? ViewModelProviders.of(this).get(DailyReportViewModel.class)
-            : mMode == MODE_MONTHLY
-                ? ViewModelProviders.of(this).get(MonthlyReportViewModel.class)
-                : ViewModelProviders.of(this).get(YearlyReportViewModel.class);
+    switch (mMode) {
+      case MODE_WEEKLY:
+        mReportViewModel = ViewModelProviders.of(this).get(WeeklyReportViewModel.class);
+        break;
+      case MODE_MONTHLY:
+        mReportViewModel = ViewModelProviders.of(this).get(MonthlyReportViewModel.class);
+        break;
+      case MODE_YEARLY:
+        mReportViewModel = ViewModelProviders.of(this).get(YearlyReportViewModel.class);
+        break;
+      case MODE_DAILY:
+      default:
+        mReportViewModel = ViewModelProviders.of(this).get(DailyReportViewModel.class);
+        break;
+    }
+
     mReportViewModel
         .getTagMap()
         .observe(

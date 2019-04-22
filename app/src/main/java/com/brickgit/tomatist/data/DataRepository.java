@@ -1,5 +1,7 @@
 package com.brickgit.tomatist.data;
 
+import androidx.lifecycle.LiveData;
+
 import com.brickgit.tomatist.data.database.Action;
 import com.brickgit.tomatist.data.database.ActionDao;
 import com.brickgit.tomatist.data.database.Database;
@@ -8,8 +10,6 @@ import com.brickgit.tomatist.data.database.Tag;
 import com.brickgit.tomatist.data.database.TagDao;
 
 import java.util.List;
-
-import androidx.lifecycle.LiveData;
 
 /** Created by Daniel Lin on 2019/1/7. */
 public class DataRepository {
@@ -60,6 +60,10 @@ public class DataRepository {
 
   public LiveData<List<Action>> getFinishedActions(int year, int month, int day) {
     return mActionDao.getFinishedActionsForDate(year, month, day);
+  }
+
+  public LiveData<List<Action>> getFinishedActionsForWeek(int year, int month, int day) {
+    return mActionDao.getFinishedActionsForWeek(year, month, day);
   }
 
   public LiveData<List<Action>> getActions(int year, int month, int day) {

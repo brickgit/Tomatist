@@ -58,6 +58,30 @@ public abstract class ActionDao {
   }
 
   @Transaction
+  public LiveData<List<Action>> getFinishedActionsForWeek(int year, int month, int day) {
+    Calendar date = Calendar.getInstance();
+    date.set(Calendar.YEAR, year);
+    date.set(Calendar.MONTH, month);
+    date.set(Calendar.DAY_OF_MONTH, day);
+
+    Calendar cFrom = Calendar.getInstance();
+    cFrom.setTime(date.getTime());
+    cFrom.set(Calendar.HOUR_OF_DAY, cFrom.getActualMinimum(Calendar.HOUR_OF_DAY));
+    cFrom.set(Calendar.MINUTE, cFrom.getActualMinimum(Calendar.MINUTE));
+    cFrom.set(Calendar.SECOND, cFrom.getActualMinimum(Calendar.SECOND));
+    cFrom.set(Calendar.DAY_OF_WEEK, cFrom.getFirstDayOfWeek());
+
+    Calendar cTo = Calendar.getInstance();
+    cTo.setTime(date.getTime());
+    cTo.set(Calendar.HOUR_OF_DAY, cTo.getActualMaximum(Calendar.HOUR_OF_DAY));
+    cTo.set(Calendar.MINUTE, cTo.getActualMaximum(Calendar.MINUTE));
+    cTo.set(Calendar.SECOND, cTo.getActualMaximum(Calendar.SECOND));
+    cTo.set(Calendar.DAY_OF_WEEK, 7);
+
+    return getFinishedActionsForDate(cFrom.getTime(), cTo.getTime());
+  }
+
+  @Transaction
   public LiveData<List<Action>> getFinishedActionsForDate(int year, int month, int day) {
     Calendar cFrom = Calendar.getInstance();
     cFrom.set(Calendar.YEAR, year);
